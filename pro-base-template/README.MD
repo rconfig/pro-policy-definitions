@@ -1,0 +1,1 @@
+This foler contains the base default template for rConfig Compliance Policy Definitions feature.

@@ -19,6 +19,8 @@ Please add to a defined folder structure, starting with Vendor name.
 
 └── Fortinet
 
+All folders must contian a `README.MD` with details of each .policy template
+
 Files do not have specific naming convetions, but all must end in `.policy`. It is suggested to start the file names with vendor models, follow by definition type
 > isr4400-pci-dss.policy
 
