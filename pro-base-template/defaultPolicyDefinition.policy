@@ -1,0 +1,75 @@
+// Description: must_match_single_string SNMP Policy
+#[must_match_single_string]
+snmp-server host 1.1.1.1 TESTCOMMUNITY
+
+// Description: must_match_single_string Disable CDP
+#[must_match_single_string]
+no cdp run
+
+// Description: must_match_single_string Disable HTTP Server
+#[must_match_single_string]
+no ip http server
+
+// Description: must_match_single_string Disable HTTPS Server
+#[must_match_single_string]
+no ip http secure-server
+
+// Description: must_match_single_string SSH Configuration
+#[must_match_single_string]
+ip ssh version 2
+
+// Description: must_match_single_string Enable AAA new-model
+#[must_match_single_string]
+aaa new-model
+
+// Description: must_match_all_from_array AAA Authentication
+#[must_match_all_from_array]
+aaa authentication login default local
+aaa authentication enable default none
+
+// Description: must_match_single_string Logging Host
+#[must_match_single_string]
+logging host 2.2.2.2
+
+// Description: must_match_single_string Enable NTP
+#[must_match_single_string]
+ntp server 3.3.3.3
+
+// Description: must_match_single_string Enable Encryption Password
+#[must_match_single_string]
+service password-encryption
+
+// Description: must_match_single_string Enable IP Source Route
+#[must_match_single_string]
+no ip source-route
+
+// Description: must_match_single_string Enable ICMP Redirects
+#[must_match_single_string]
+no ip redirects
+
+// Description: must_match_single_string Enable Unicast Reverse Path Forwarding (uRPF)
+#[must_match_single_string]
+ip verify unicast source reachable-via rx
+
+// Description: must_match_all_from_array Access Lists
+#[must_match_all_from_array]
+access-list 101 permit ip any any
+access-list 102 permit ip any host 3.3.3.3
+
+// Description: must_match_all_from_array VTY Line Configuration
+#[must_match_all_from_array]
+line vty 0 4
+ transport input ssh
+
+// Description: must_match_all_from_array Auxiliary Line Configuration
+#[must_match_all_from_array]
+line aux 0
+ no exec
+ transport input none
+
+// Description: must_match_all_from_array Console Line Configuration
+#[must_match_all_from_array]
+line con 0
+ exec-timeout 5 0
+ logging synchronous
+ transport input none
