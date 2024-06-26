@@ -1,4 +1,4 @@
-# rCOnfig Professional Policy Templates
+# rConfig Professional Policy Templates
 
 ## Overview
 A repository to store standard rConfig Policy templates for Professional level rConfig products Compliance feature.
