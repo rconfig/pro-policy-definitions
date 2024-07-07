@@ -1,0 +1,145 @@
+// Description: must_match_single_string Reset Configuration
+#[must_match_single_string]
+execute factoryreset
+
+// Description: must_match_single_string Set Hostname
+#[must_match_single_string]
+config system global
+    set hostname MyFortinet
+end
+
+// Description: must_match_single_string Set Timezone
+#[must_match_single_string]
+config system global
+    set timezone 32
+end
+
+// Description: must_match_all_from_array Secure Access Settings
+#[must_match_all_from_array]
+config system admin
+    edit admin
+        set password YourStrongPassword
+    next
+end
+config system global
+    set admin-scp enable
+    set admin-https-redirect disable
+end
+config system interface
+    edit "mgmt"
+        set allowaccess ping https ssh
+    next
+end
+
+// Description: must_match_all_from_array Configure LAN Interface
+#[must_match_all_from_array]
+config system interface
+    edit "lan"
+        set ip 192.168.88.1/24
+        set allowaccess ping https ssh
+    next
+end
+
+// Description: must_match_all_from_array DHCP Server Setup
+#[must_match_all_from_array]
+config system dhcp server
+    edit 1
+        set default-gateway 192.168.88.1
+        set netmask 255.255.255.0
+        set interface "lan"
+        config ip-range
+            edit 1
+                set start-ip 192.168.88.10
+                set end-ip 192.168.88.254
+            next
+        end
+    next
+end
+
+// Description: must_match_all_from_array DNS Setup
+#[must_match_all_from_array]
+config system dns
+    set primary 8.8.8.8
+    set secondary 8.8.4.4
+end
+
+// Description: must_match_single_string Enable NAT
+#[must_match_single_string]
+config firewall policy
+    edit 1
+        set srcintf "lan"
+        set dstintf "wan1"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+        set nat enable
+    next
+end
+
+// Description: must_match_all_from_array Basic Firewall Rules
+#[must_match_all_from_array]
+config firewall policy
+    edit 2
+        set srcintf "lan"
+        set dstintf "wan1"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action accept
+        set schedule "always"
+        set service "ALL"
+    next
+end
+config firewall policy
+    edit 3
+        set srcintf "wan1"
+        set dstintf "lan"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action deny
+        set schedule "always"
+        set service "ALL"
+    next
+end
+
+// Description: must_match_all_from_array SNMP Configuration
+#[must_match_all_from_array]
+config system snmp sysinfo
+    set status enable
+    set location "Data Center"
+    set contact-info "admin@example.com"
+end
+config system snmp community
+    edit 1
+        set name "public"
+        set query-v1-status enable
+        set query-v2c-status enable
+    next
+end
+
+// Description: must_match_all_from_array Enable NTP Client
+#[must_match_all_from_array]
+config system ntp
+    set server1 216.239.35.0
+    set server2 216.239.36.0
+    set syncinterval 60
+    set status enable
+end
+
+// Description: must_match_all_from_array Set Up Logging
+#[must_match_all_from_array]
+config log disk setting
+    set status enable
+    set diskfull overwrite
+end
+config log setting
+    set fwpolicy-implicit-log enable
+end
+config log memory setting
+    set status enable
+end
+config log syslogd setting
+    set status enable
+    set server 192.168.88.2
+end

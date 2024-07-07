@@ -1,0 +1,70 @@
+// Description: must_match_single_string Reset Configuration
+#[must_match_single_string]
+/system reset-configuration no-defaults=yes skip-backup=yes
+
+// Description: must_match_single_string Set Identity
+#[wildcard_match_single_string]
+/system identity set name=*
+
+// Description: must_match_single_string Set Timezone
+#[must_match_single_string]
+/system clock set time-zone-name=Europe/Dublin
+
+// Description: must_match_all_from_array Secure Access Settings
+#[must_match_all_from_array]
+/user add name=admin group=full password=YourStrongPassword
+/user set 0 password=YourStrongPassword
+/ip service set telnet disabled=yes
+/ip service set ftp disabled=yes
+/ip service set www disabled=yes
+/ip service set www-ssl disabled=yes
+/ip service set api disabled=yes
+/ip service set api-ssl disabled=yes
+/ip ssh set strong-crypto=yes
+
+// Description: must_match_all_from_array Configure LAN Interface
+#[wildcard_match_all_from_array]
+/interface bridge add name=bridge1
+/interface bridge port add bridge=bridge1 interface=ether1
+/ip address add address=*/24 interface=bridge1
+
+// Description: must_match_all_from_array DHCP Server Setup
+#[wildcard_match_all_from_array]
+/ip pool add name=dhcp_pool ranges=*.10-*.254
+/ip dhcp-server add address-pool=dhcp_pool interface=bridge1 name=dhcp1
+/ip dhcp-server network add address=*.0/24 gateway=*.1
+
+// Description: must_match_all_from_array DNS Setup
+#[must_match_all_from_array]
+/ip dns set servers=8.8.8.8,8.8.4.4 allow-remote-requests=yes
+
+// Description: must_match_single_string Enable NAT
+#[must_match_single_string]
+/ip firewall nat add chain=srcnat out-interface=ether1 action=masquerade
+
+// Description: must_match_all_from_array Basic Firewall Rules
+#[must_match_all_from_array]
+/ip firewall filter add chain=input connection-state=established,related action=accept
+/ip firewall filter add chain=input connection-state=invalid action=drop
+/ip firewall filter add chain=input protocol=icmp action=accept
+/ip firewall filter add chain=input src-address=192.168.88.0/24 action=accept
+/ip firewall filter add chain=input action=drop
+/ip firewall filter add chain=forward connection-state=established,related action=accept
+/ip firewall filter add chain=forward connection-state=invalid action=drop
+/ip firewall filter add chain=forward connection-state=new src-address=192.168.88.0/24 in-interface=bridge1 action=accept
+/ip firewall filter add chain=forward action=drop
+
+// Description: must_match_all_from_array SNMP Configuration
+#[must_match_all_from_array]
+/snmp set enabled=yes location=Data Center contact=admin@example.com trap-community=public
+
+// Description: must_match_all_from_array Enable NTP Client
+#[must_match_all_from_array]
+/system ntp client set enabled=yes primary-ntp=216.239.35.0 secondary-ntp=216.239.36.0
+
+// Description: must_match_all_from_array Set Up Logging
+#[must_match_all_from_array]
+/system logging action set 3 remote=192.168.88.2
+/system logging add topics=info action=remote
+/system logging add topics=warning action=remote
+/system logging add topics=error action=remote

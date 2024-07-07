@@ -1,0 +1,79 @@
+// Description: must_match_single_string Reset Configuration
+#[must_match_single_string]
+write erase
+reload
+
+// Description: must_match_single_string Set Hostname
+#[must_match_single_string]
+hostname MyCiscoRouter
+
+// Description: must_match_single_string Set Timezone
+#[must_match_single_string]
+clock timezone GMT 0
+
+// Description: must_match_all_from_array Secure Access Settings
+#[must_match_all_from_array]
+username admin privilege 15 secret YourStrongPassword
+line vty 0 4
+ login local
+ transport input ssh
+line console 0
+ logging synchronous
+login local
+ip domain-name example.com
+crypto key generate rsa general-keys modulus 2048
+ip ssh version 2
+ip ssh time-out 60
+ip ssh authentication-retries 2
+
+// Description: must_match_all_from_array Configure LAN Interface
+#[must_match_all_from_array]
+interface GigabitEthernet0/0
+ description LAN Interface
+ ip address 192.168.88.1 255.255.255.0
+ no shutdown
+
+// Description: must_match_all_from_array DHCP Server Setup
+#[must_match_all_from_array]
+ip dhcp excluded-address 192.168.88.1 192.168.88.9
+ip dhcp pool DHCP_POOL
+ network 192.168.88.0 255.255.255.0
+ default-router 192.168.88.1
+ dns-server 8.8.8.8 8.8.4.4
+
+// Description: must_match_all_from_array DNS Setup
+#[must_match_all_from_array]
+ip name-server 8.8.8.8
+ip name-server 8.8.4.4
+
+// Description: must_match_single_string Enable NAT
+#[must_match_single_string]
+ip nat inside source list 1 interface GigabitEthernet0/1 overload
+
+// Description: must_match_all_from_array Basic Firewall Rules
+#[must_match_all_from_array]
+access-list 101 permit icmp any any echo-reply
+access-list 101 permit icmp any any time-exceeded
+access-list 101 permit icmp any any unreachable
+access-list 101 permit tcp any any established
+access-list 101 deny ip any any log
+line vty 0 4
+ access-class 101 in
+
+// Description: must_match_all_from_array SNMP Configuration
+#[must_match_all_from_array]
+snmp-server community public RO
+snmp-server location Data Center
+snmp-server contact admin@example.com
+
+// Description: must_match_all_from_array Enable NTP Client
+#[must_match_all_from_array]
+ntp server 216.239.35.0
+ntp server 216.239.36.0
+
+// Description: must_match_all_from_array Set Up Logging
+#[must_match_all_from_array]
+logging buffered 4096
+logging console informational
+logging trap informational
+logging host 192.168.88.2
