@@ -1,0 +1,51 @@
+// ==========================================================
+// rConfig Policy Definition
+// PCI DSS Cisco IOS Policy
+// Version: 1.0
+// ==========================================================
+
+// -----------------------------
+// PCI DSS Req. 2: Secure Configurations
+// -----------------------------
+
+// PCI-2.1: Disable insecure services
+#[must_not_match_single_string]
+ip http server
+#[must_not_match_single_string]
+ip bootp server
+#[must_not_match_single_string]
+service finger
+
+// PCI-2.2: AAA enabled
+#[must_match_single_string]
+aaa new-model
+
+// -----------------------------
+// PCI DSS Req. 6: Access Control
+// -----------------------------
+
+// PCI-6.1: SSH required, Telnet disabled
+#[must_match_single_string]
+ip ssh version 2
+#[must_not_match_single_string]
+transport input telnet
+
+// PCI-6.2: User accounts must not use plaintext passwords
+#[must_not_match_regex]
+^username .* password 0 .+
+
+// -----------------------------
+// PCI DSS Req. 10: Logging & Monitoring
+// -----------------------------
+
+// PCI-10.1: Syslog to remote server
+#[must_match_single_string]
+logging host *
+
+// PCI-10.2: Logging timestamps enabled
+#[must_match_single_string]
+service timestamps log datetime msec
+
+// PCI-10.3: Console logging disabled
+#[must_not_match_single_string]
+logging console
