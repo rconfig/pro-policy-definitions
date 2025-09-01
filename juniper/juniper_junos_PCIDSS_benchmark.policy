@@ -1,0 +1,54 @@
+// ==========================================================
+// juniper_junos_PCIDSS_benchmark.policy
+// PCI DSS mapped to JunOS
+// Version: 1.0
+// ==========================================================
+
+// PCI-2.1/2.2: Secure configurations — disable insecure services
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*(ftp|telnet|finger|rlogin|rsh|rexec);\s*}\s*}
+
+// PCI-6.x: SSH required for admin interfaces
+#[match_code_block_flexible]
+system {
+ services {
+  ssh;
+ }
+}
+
+// PCI-7.x: AAA for admin access
+#[match_code_block_flexible]
+system {
+ authentication-order [ radius tacplus password ];
+}
+
+// PCI-10.x: Centralized logging with timestamps
+#[match_code_block_flexible]
+system {
+ syslog {
+  host * {
+   any notice;
+   authorization info;
+  }
+  time-format millisecond;
+ }
+}
+
+// PCI-10.x: Console logging disabled/minimized
+#[must_not_match_regex]
+^\s*system\s*{\s*syslog\s*{\s*console\s+.+;\s*}\s*}
+
+// PCI-4.1: SNMPv3 only; no communities
+#[must_not_match_regex]
+^\s*snmp\s*{\s*community\s+.+;\s*}
+#[match_code_block_flexible]
+snmp {
+ v3 {
+  usm {
+   local-engine user * {
+    authentication-sha;
+    privacy-aes128;
+   }
+  }
+ }
+}
