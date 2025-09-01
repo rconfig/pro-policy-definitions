@@ -1,0 +1,60 @@
+// ==========================================================
+// rConfig Policy Definition
+// Cisco SAFE Baseline Policy for Cisco IOS
+// Version: 1.0
+// ==========================================================
+
+// -----------------------------
+// SAFE: Identity & Access
+// -----------------------------
+
+// SAFE-IA-1: Enable AAA
+#[must_match_single_string]
+aaa new-model
+
+// SAFE-IA-2: Use SSH for all management
+#[must_match_single_string]
+ip ssh version 2
+#[must_not_match_single_string]
+transport input telnet
+
+// SAFE-IA-3: Enforce exec timeout (≤10 min)
+#[match_code_block_from_array]
+line vty 0 4
+ exec-timeout 10 0
+
+// -----------------------------
+// SAFE: Visibility & Logging
+// -----------------------------
+
+// SAFE-VL-1: Enable syslog remote logging
+#[must_match_single_string]
+logging host *
+
+// SAFE-VL-2: Enable timestamped logging
+#[must_match_single_string]
+service timestamps log datetime msec
+
+// SAFE-VL-3: Disable console logging
+#[must_not_match_single_string]
+logging console
+
+// -----------------------------
+// SAFE: Threat Defense
+// -----------------------------
+
+// SAFE-TD-1: Disable HTTP server
+#[must_not_match_single_string]
+ip http server
+#[must_not_match_single_string]
+ip http secure-server
+
+// SAFE-TD-2: Disable legacy services (finger, bootp)
+#[must_not_match_single_string]
+service finger
+#[must_not_match_single_string]
+ip bootp server
+
+// SAFE-TD-3: Disable source routing
+#[must_not_match_single_string]
+ip source-route
