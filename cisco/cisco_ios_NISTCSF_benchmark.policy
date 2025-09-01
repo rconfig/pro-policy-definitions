@@ -1,0 +1,55 @@
+// ==========================================================
+// rConfig Policy Definition
+// NIST CSF Cisco IOS Policy
+// Version: 1.0
+// ==========================================================
+
+// -----------------------------
+// ID.AM: Asset Management
+// -----------------------------
+
+// CSF-IDAM-1: Banner configured for identification
+#[must_match_regex]
+^banner motd .+
+
+// -----------------------------
+// PR.AC: Access Control
+// -----------------------------
+
+// CSF-PRAC-1: AAA must be enabled
+#[must_match_single_string]
+aaa new-model
+
+// CSF-PRAC-2: SSH must be enabled, Telnet disabled
+#[must_match_single_string]
+ip ssh version 2
+#[must_not_match_single_string]
+transport input telnet
+
+// CSF-PRAC-3: User accounts must not use plaintext passwords
+#[must_not_match_regex]
+^username .* password 0 .+
+
+// -----------------------------
+// PR.PT: Protective Technology
+// -----------------------------
+
+// CSF-PRPT-1: Insecure services disabled
+#[must_not_match_single_string]
+service finger
+#[must_not_match_single_string]
+ip bootp server
+#[must_not_match_single_string]
+service tcp-small-servers
+
+// -----------------------------
+// DE.CM: Security Continuous Monitoring
+// -----------------------------
+
+// CSF-DECM-1: Syslog server configured
+#[must_match_single_string]
+logging host *
+
+// CSF-DECM-2: Timestamping logs
+#[must_match_single_string]
+service timestamps log datetime msec
