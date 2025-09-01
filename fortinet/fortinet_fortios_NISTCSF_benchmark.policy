@@ -1,0 +1,52 @@
+// ==========================================================
+// fortinet_fortios_NISTCSF_benchmark.policy
+// NIST Cybersecurity Framework mapped to FortiOS
+// Version: 1.0
+// ==========================================================
+
+// CSF-ID.AM-1: Identification banner/MOTD enabled
+#[match_code_block_from_array]
+config system global
+ set login-banner enable
+ set motd enable
+end
+
+// CSF-PR.AC-1: Secure admin plane (HTTPS/SSH only)
+#[match_code_block_from_array]
+config system global
+ set admin-https enable
+ set admin-http disable
+ set strong-crypto enable
+end
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\btelnet\b.*$
+
+// CSF-PR.PT-1: Disable insecure protocols on interfaces
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\b(http|telnet|rsh|rexec)\b.*$
+
+// CSF-DE.CM-1: Centralized logging via syslog
+#[match_code_block_from_array]
+config log syslogd setting
+ set status enable
+ set server *
+ set port 514
+ set mode udp
+end
+
+// CSF-DE.CM-2: Syslog severity configured
+#[match_code_block_from_array]
+config log syslogd filter
+ set severity notice
+end
+
+// CSF-PR.DS-1: SNMPv3 authPriv; no v1/v2c
+#[must_not_match_regex]
+^\s*config\s+system\s+snmp\s+community\b
+#[match_code_block_from_array]
+config system snmp user
+ edit *
+  set auth-proto sha
+  set priv-proto aes
+ next
+end
