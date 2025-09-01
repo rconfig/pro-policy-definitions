@@ -1,0 +1,53 @@
+// ==========================================================
+// fortinet_fortios_HIPAA_benchmark.policy
+// HIPAA Technical Safeguards mapped to FortiOS
+// Version: 1.0
+// ==========================================================
+
+// HIPAA-AC-1 (164.312(a)(1)): Secure admin channels (HTTPS/SSH), strong crypto
+#[match_code_block_from_array]
+config system global
+ set admin-https enable
+ set admin-http disable
+ set strong-crypto enable
+end
+
+// HIPAA-AC-2: Admin idle timeout ≤ 10 minutes
+#[match_code_block_from_array]
+config system global
+ set admintimeout 10
+end
+
+// HIPAA-AC-3: Interface allowaccess must NOT include Telnet
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\btelnet\b.*$
+
+// HIPAA-AU-1 (164.312(b)): Centralized logging to syslog
+#[match_code_block_from_array]
+config log syslogd setting
+ set status enable
+ set server *
+ set port 514
+ set mode udp
+end
+
+// HIPAA-AU-2: Syslog severity configured
+#[match_code_block_from_array]
+config log syslogd filter
+ set severity notice
+end
+
+// HIPAA-IN-1 (164.312(c)(1)): Disable insecure legacy protocols
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\b(http|telnet|rsh|rexec)\b.*$
+
+// HIPAA-TS-1 (164.312(e)(1)): SNMPv3 authPriv only; no communities
+#[must_not_match_regex]
+^\s*config\s+system\s+snmp\s+community\b
+#[match_code_block_from_array]
+config system snmp user
+ edit *
+  set auth-proto sha
+  set priv-proto aes
+ next
+end
