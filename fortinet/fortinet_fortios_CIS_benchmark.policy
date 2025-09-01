@@ -1,0 +1,56 @@
+// ==========================================================
+// fortinet_fortios_CIS_benchmark.policy
+// CIS-style Baseline mapped to FortiOS (coverage aligned with IOS CIS)
+// Version: 1.0
+// ==========================================================
+
+// CIS-1.1.1: Secure management — HTTPS/SSH only, disable HTTP
+#[match_code_block_from_array]
+config system global
+ set admin-https enable
+ set admin-http disable
+ set strong-crypto enable
+end
+
+// CIS-1.1.2: Admin idle timeout ≤ 10 minutes
+#[match_code_block_from_array]
+config system global
+ set admintimeout 10
+end
+
+// CIS-1.1.3: Login banner enabled
+#[match_code_block_from_array]
+config system global
+ set login-banner enable
+ set motd enable
+end
+
+// CIS-2.1.1: SNMPv3 authPriv enabled; SNMP v1/v2c disabled
+#[must_not_match_regex]
+^\s*config\s+system\s+snmp\s+community\b
+#[match_code_block_from_array]
+config system snmp user
+ edit *
+  set auth-proto sha
+  set priv-proto aes
+ next
+end
+
+// CIS-3.1.1: Remote syslog to centralized collector
+#[match_code_block_from_array]
+config log syslogd setting
+ set status enable
+ set server *
+ set port 514
+ set mode udp
+end
+
+// CIS-3.1.2: Syslog severity set (informational or stricter)
+#[match_code_block_from_array]
+config log syslogd filter
+ set severity information
+end
+
+// CIS-4.1.1: Disable insecure management protocols on interfaces
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\b(telnet|http|rsh|rexec)\b.*$
