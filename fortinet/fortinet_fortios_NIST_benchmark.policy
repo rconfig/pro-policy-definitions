@@ -1,0 +1,54 @@
+// ==========================================================
+// fortinet_fortios_NIST_benchmark.policy
+// NIST SP 800-53 Technical Controls mapped to FortiOS
+// Version: 1.0
+// ==========================================================
+
+// NIST-AC-17: Secure remote admin (HTTPS/SSH), strong crypto
+#[match_code_block_from_array]
+config system global
+ set admin-https enable
+ set admin-http disable
+ set strong-crypto enable
+end
+
+// NIST-AC-2: Admin session timeout (≤10 minutes)
+#[match_code_block_from_array]
+config system global
+ set admintimeout 10
+end
+
+// NIST-IA-5: Password policy enabled (minimum length ≥ 12)
+#[match_code_block_from_array]
+config system password-policy
+ set status enable
+ set min-length 12
+end
+
+// NIST-AU-2/AU-12: Remote syslog with severity filter
+#[match_code_block_from_array]
+config log syslogd setting
+ set status enable
+ set server *
+ set port 514
+ set mode udp
+end
+#[match_code_block_from_array]
+config log syslogd filter
+ set severity information
+end
+
+// NIST-CM-7: Disable unnecessary/insecure services
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\b(telnet|http|rsh|rexec)\b.*$
+
+// NIST-SC-12: SNMPv3 authPriv only; communities absent
+#[must_not_match_regex]
+^\s*config\s+system\s+snmp\s+community\b
+#[match_code_block_from_array]
+config system snmp user
+ edit *
+  set auth-proto sha
+  set priv-proto aes
+ next
+end
