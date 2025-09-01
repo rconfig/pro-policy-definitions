@@ -1,0 +1,53 @@
+// ==========================================================
+// rConfig Policy Definition
+// Cisco Security Baseline Guides Policy for IOS
+// Version: 1.0
+// ==========================================================
+
+// -----------------------------
+// SBG: Management Plane
+// -----------------------------
+
+// SBG-MP-1: AAA enabled
+#[must_match_single_string]
+aaa new-model
+
+// SBG-MP-2: SSH required, disable Telnet
+#[must_match_single_string]
+ip ssh version 2
+#[must_not_match_single_string]
+transport input telnet
+
+// SBG-MP-3: Banner MOTD set
+#[must_match_regex]
+^banner motd .+
+
+// -----------------------------
+// SBG: Logging
+// -----------------------------
+
+// SBG-LOG-1: Remote syslog configured
+#[must_match_single_string]
+logging host *
+
+// SBG-LOG-2: Timestamps enabled
+#[must_match_single_string]
+service timestamps log datetime msec
+
+// -----------------------------
+// SBG: Insecure Services
+// -----------------------------
+
+// SBG-IS-1: Disable HTTP/HTTPS server if not used
+#[must_not_match_single_string]
+ip http server
+#[must_not_match_single_string]
+ip http secure-server
+
+// SBG-IS-2: Disable small servers, finger
+#[must_not_match_single_string]
+service finger
+#[must_not_match_single_string]
+service tcp-small-servers
+#[must_not_match_single_string]
+service udp-small-servers
