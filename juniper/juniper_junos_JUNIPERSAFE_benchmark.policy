@@ -1,0 +1,97 @@
+// ==========================================================
+// juniper_junos_JUNIPERSAFE_benchmark.policy
+// Cisco SAFE-aligned Baseline adapted for Juniper JunOS
+// Version: 1.0
+// ==========================================================
+
+// SAFE-IA-1: AAA / central auth enabled (RADIUS/TACACS+)
+#[match_code_block_flexible]
+system {
+ authentication-order [ *radius* *tacplus* *password* ];
+}
+
+// SAFE-IA-2: SSH required; Telnet must NOT be enabled
+#[match_code_block_flexible]
+system {
+ services {
+  ssh;
+ }
+}
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}
+
+// SAFE-IA-3: Login class idle-timeout ≤ 10 minutes
+#[match_code_block_flexible]
+system {
+ login {
+  class * {
+   idle-timeout (10|[0-9]);
+  }
+ }
+}
+
+// SAFE-VL-1: Remote syslog to SIEM
+#[match_code_block_flexible]
+system {
+ syslog {
+  host * {
+   any info;
+  }
+ }
+}
+
+// SAFE-VL-2: Timestamps (RFC3339) and UTC
+#[match_code_block_flexible]
+system {
+ syslog {
+  time-format millisecond;
+ }
+}
+#[match_code_block_flexible]
+system {
+ time-zone UTC;
+}
+
+// SAFE-VL-3: Console logging minimized/disabled
+#[must_not_match_regex]
+^\s*system\s*{\s*syslog\s*{\s*console\s+.+;\s*}\s*}
+
+// SAFE-TD-1: Insecure/legacy services disabled
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*(finger|rsh|rexec|ftp|telnet);\s*}\s*}
+
+// SAFE-TD-2: SNMPv1/v2c communities not present; use v3 only
+#[must_not_match_regex]
+^\s*snmp\s*{\s*community\s+.+;\s*}
+#[match_code_block_flexible]
+snmp {
+ v3 {
+  usm {
+   local-engine user * {
+    authentication-sha;
+    privacy-aes128;
+   }
+  }
+ }
+}
+
+// SAFE-NET-1: Source routing / redirects mitigations
+#[match_code_block_flexible]
+interfaces {
+ * {
+  unit * {
+   family inet {
+    no-redirects;
+    no-source-route-option;
+   }
+  }
+ }
+}
+
+// SAFE-NET-2: Unused interfaces disabled (no unit / disable)
+#[match_code_block_from_array]
+interfaces {
+ * {
+  disable;
+ }
+}
