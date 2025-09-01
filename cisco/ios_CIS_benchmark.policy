@@ -1,0 +1,199 @@
+// ==========================================================
+// rConfig Policy Definition
+// CIS Cisco IOS Benchmark Policy
+// Version: 1.0
+// ==========================================================
+
+// -----------------------------
+// Section 1: Initial Setup
+// -----------------------------
+
+// CIS-1.1.1: Enable AAA
+#[must_match_single_string]
+aaa new-model
+
+// CIS-1.1.2: Set enable secret (hashed)
+#[must_match_regex]
+^enable secret [0-9]+ .+$
+
+// CIS-1.1.3: Service password-encryption enabled
+#[must_match_single_string]
+service password-encryption
+
+// CIS-1.1.4: Configure no service pad
+#[must_not_match_single_string]
+service pad
+
+// CIS-1.1.5: Disable IP source routing
+#[must_not_match_single_string]
+ip source-route
+
+// CIS-1.1.6: Disable gratuitous ARP proxy
+#[match_code_block_flexible]
+interface *
+ no ip proxy-arp
+
+// CIS-1.1.7: Disable small TCP/UDP servers
+#[must_not_match_single_string]
+service tcp-small-servers
+#[must_not_match_single_string]
+service udp-small-servers
+
+// CIS-1.1.8: Disable finger service
+#[must_not_match_single_string]
+service finger
+
+// CIS-1.1.9: Disable BOOTP server
+#[must_not_match_single_string]
+ip bootp server
+
+// -----------------------------
+// Section 2: Banner & Identification
+// -----------------------------
+
+// CIS-2.1.1: Configure MOTD banner
+#[must_match_regex]
+^banner motd .+
+
+// CIS-2.1.2: Configure login banner
+#[must_match_regex]
+^banner login .+
+
+// -----------------------------
+// Section 3: Authentication & Access
+// -----------------------------
+
+// CIS-3.1.1: Require AAA authentication for console
+#[match_code_block_from_array]
+line con 0
+ login authentication default
+
+// CIS-3.1.2: Require AAA authentication for VTY
+#[match_code_block_from_array]
+line vty 0 4
+ login authentication default
+
+// CIS-3.1.3: Ensure exec-timeout ≤ 10 minutes (console)
+#[match_code_block_from_array]
+line con 0
+ exec-timeout 10 0
+
+// CIS-3.1.4: Ensure exec-timeout ≤ 10 minutes (VTY)
+#[match_code_block_from_array]
+line vty 0 4
+ exec-timeout 10 0
+
+// CIS-3.1.5: Ensure transport input excludes Telnet
+#[must_not_match_single_string]
+transport input telnet
+
+// CIS-3.1.6: Ensure SSH version 2 is enabled
+#[must_match_single_string]
+ip ssh version 2
+
+// CIS-3.1.7: Ensure local user accounts use secret not password 0
+#[must_not_match_regex]
+^username .* password 0 .+
+
+// -----------------------------
+// Section 4: SNMP
+// -----------------------------
+
+// CIS-4.1.1: Disable SNMPv1/v2 community strings
+#[must_not_match_single_string]
+snmp-server community *
+
+// CIS-4.1.2: Configure SNMPv3 with authPriv
+#[must_match_regex]
+^snmp-server group .+ v3 priv
+
+// CIS-4.1.3: Ensure SNMPv3 users configured
+#[must_match_regex]
+^snmp-server user .+ .+ v3 auth .+ priv .+$
+
+// -----------------------------
+// Section 5: Logging & Auditing
+// -----------------------------
+
+// CIS-5.1.1: Configure logging buffered
+#[must_match_single_string]
+logging buffered *
+
+// CIS-5.1.2: Configure remote syslog host
+#[must_match_single_string]
+logging host *
+
+// CIS-5.1.3: Ensure logging trap severity level set
+#[must_match_regex]
+^logging trap (warnings|errors|informational|notifications|alerts|critical|emergencies)$
+
+// CIS-5.1.4: Ensure timestamps are enabled
+#[must_match_single_string]
+service timestamps log datetime msec
+
+// CIS-5.1.5: Ensure console logging disabled
+#[must_not_match_single_string]
+logging console
+
+// -----------------------------
+// Section 6: Services & Protocols
+// -----------------------------
+
+// CIS-6.1.1: Disable HTTP server
+#[must_not_match_single_string]
+ip http server
+
+// CIS-6.1.2: Disable HTTPS server (if not required)
+#[must_not_match_single_string]
+ip http secure-server
+
+// CIS-6.1.3: Disable CDP globally (if not required)
+#[must_not_match_single_string]
+cdp run
+
+// CIS-6.1.4: Disable directed broadcast
+#[must_match_single_string]
+no ip directed-broadcast
+
+// CIS-6.1.5: Disable gratuitous ARP proxy globally
+#[must_match_single_string]
+no ip proxy-arp
+
+// -----------------------------
+// Section 7: Interfaces
+// -----------------------------
+
+// CIS-7.1.1: Ensure all unused interfaces are shutdown
+#[match_code_block_from_array]
+interface *
+ shutdown
+
+// CIS-7.1.2: Ensure no unused switchports active
+#[match_code_block_flexible]
+interface FastEthernet*
+ shutdown
+
+// -----------------------------
+// Section 8: Routing
+// -----------------------------
+
+// CIS-8.1.1: Ensure routing protocols use authentication
+#[match_code_block_flexible]
+router ospf *
+ area * authentication message-digest
+
+// CIS-8.1.2: Ensure BGP uses MD5 authentication
+#[must_match_regex]
+^neighbor .+ password .+$
+
+// -----------------------------
+// Section 9: Miscellaneous
+// -----------------------------
+
+// CIS-9.1.1: Disable IP bootp server
+#[must_not_match_single_string]
+ip bootp server
+
+// CIS-9.1.2: Disable IP identd service
+#[must_not_match_single_string]
+ip identd
