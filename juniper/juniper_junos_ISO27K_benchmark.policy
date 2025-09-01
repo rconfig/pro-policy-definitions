@@ -1,0 +1,54 @@
+// ==========================================================
+// juniper_junos_ISO27K_benchmark.policy
+// ISO/IEC 27001/27002 Annex A mapped to JunOS
+// Version: 1.0
+// ==========================================================
+
+// ISO-A9-1: Access control — AAA
+#[match_code_block_flexible]
+system {
+ authentication-order [ radius tacplus password ];
+}
+
+// ISO-A9-2: Strong management channels (SSH only)
+#[match_code_block_flexible]
+system {
+ services {
+  ssh {
+   protocol-version v2;
+  }
+ }
+}
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}
+
+// ISO-A12-1: Logging — remote syslog + time format
+#[match_code_block_flexible]
+system {
+ syslog {
+  host * {
+   any info;
+   authorization info;
+  }
+  time-format millisecond;
+ }
+}
+
+// ISO-A12-2: Disable insecure/legacy services
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*(ftp|telnet|finger|rexec|rlogin|rsh);\s*}\s*}
+
+// ISO-A13-1: SNMPv3 with crypto; no communities
+#[must_not_match_regex]
+^\s*snmp\s*{\s*community\s+.+;\s*}
+#[match_code_block_flexible]
+snmp {
+ v3 {
+  usm {
+   local-engine user * {
+    authentication-sha;
+    privacy-aes128;
+   }
+  }
+ }
+}
