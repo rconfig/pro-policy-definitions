@@ -1,0 +1,51 @@
+// ==========================================================
+// fortinet_fortios_ISO27K_benchmark.policy
+// ISO/IEC 27001/27002 Annex A mapped to FortiOS
+// Version: 1.0
+// ==========================================================
+
+// ISO-A9-1: Access control — secure management channels
+#[match_code_block_from_array]
+config system global
+ set admin-http disable
+ set admin-https enable
+ set strong-crypto enable
+end
+
+// ISO-A9-2: Central authentication presence (RADIUS/TACACS+)
+#[match_code_block_from_array]
+config user radius
+ edit *
+  set server *
+ next
+end
+
+// ISO-A12-1: Operations logging — remote syslog
+#[match_code_block_from_array]
+config log syslogd setting
+ set status enable
+ set server *
+ set mode udp
+ set port 514
+end
+
+// ISO-A12-2: Logging severity configured
+#[match_code_block_from_array]
+config log syslogd filter
+ set severity information
+end
+
+// ISO-A12-3: Disable insecure services
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\b(telnet|http|rsh|rexec)\b.*$
+
+// ISO-A13-1: Communication security — SNMPv3 only
+#[must_not_match_regex]
+^\s*config\s+system\s+snmp\s+community\b
+#[match_code_block_from_array]
+config system snmp user
+ edit *
+  set auth-proto sha
+  set priv-proto aes
+ next
+end
