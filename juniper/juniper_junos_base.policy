@@ -1,0 +1,72 @@
+// ==========================================================
+// juniper_junos_base.policy
+// rConfig Base Coverage for JunOS (generic hardening)
+// Version: 1.0
+// ==========================================================
+
+// BASE-1: SSH enabled; strong crypto
+#[match_code_block_flexible]
+system {
+ services {
+  ssh {
+   protocol-version v2;
+   ciphers [ aes256-ctr aes192-ctr aes128-ctr ];
+   macs [ hmac-sha2-256 hmac-sha2-512 ];
+  }
+ }
+}
+// Ensure Telnet absent
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}
+
+// BASE-2: AAA order with RADIUS/TACACS+ fallback to password
+#[match_code_block_flexible]
+system {
+ authentication-order [ radius tacplus password ];
+}
+
+// BASE-3: Banner / login message
+#[match_code_block_flexible]
+system {
+ login {
+  message *;
+ }
+}
+
+// BASE-4: Syslog remote + timestamps
+#[match_code_block_flexible]
+system {
+ syslog {
+  host * {
+   any info;
+  }
+  time-format millisecond;
+ }
+}
+
+// BASE-5: SNMPv3 authPriv only; communities absent
+#[must_not_match_regex]
+^\s*snmp\s*{\s*community\s+.+;\s*}
+#[match_code_block_flexible]
+snmp {
+ v3 {
+  usm {
+   local-engine user * {
+    authentication-sha;
+    privacy-aes128;
+   }
+  }
+ }
+}
+
+// BASE-6: Disable insecure legacy services
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*(ftp|finger|rlogin|rsh|rexec);\s*}\s*}
+
+// BASE-7: Unused interfaces disabled
+#[match_code_block_from_array]
+interfaces {
+ * {
+  disable;
+ }
+}
