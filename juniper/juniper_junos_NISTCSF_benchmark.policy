@@ -1,0 +1,44 @@
+// ==========================================================
+// juniper_junos_NISTCSF_benchmark.policy
+// NIST Cybersecurity Framework mapped to JunOS
+// Version: 1.0
+// ==========================================================
+
+// CSF-ID.AM-1: Identification banner
+#[match_code_block_flexible]
+system {
+ login {
+  message *;
+ }
+}
+
+// CSF-PR.AC-1: AAA enabled
+#[match_code_block_flexible]
+system {
+ authentication-order [ radius tacplus password ];
+}
+
+// CSF-PR.AC-2: SSH only; Telnet absent
+#[match_code_block_flexible]
+system {
+ services {
+  ssh;
+ }
+}
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}
+
+// CSF-PR.PT-1: Disable insecure services
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*(ftp|telnet|finger|rsh|rexec);\s*}\s*}
+
+// CSF-DE.CM-1: Remote logging with timestamps
+#[match_code_block_flexible]
+system {
+ syslog {
+  host * {
+   any notice;
+  }
+  time-format millisecond;
+ }
+}
