@@ -1,0 +1,143 @@
+// ==========================================================
+// rConfig Policy Definition
+// NIST 800-53 Cisco IOS Benchmark Policy
+// Version: 1.0
+// ==========================================================
+
+// -----------------------------
+// Section AC: Access Control
+// -----------------------------
+
+// NIST-AC-2.1: Enable AAA for centralized authentication
+#[must_match_single_string]
+aaa new-model
+
+// NIST-AC-2.2: Require AAA authentication on console
+#[match_code_block_from_array]
+line con 0
+ login authentication default
+
+// NIST-AC-2.3: Require AAA authentication on VTY
+#[match_code_block_from_array]
+line vty 0 4
+ login authentication default
+
+// NIST-AC-3.1: Set exec-timeout ≤ 10 minutes (console)
+#[match_code_block_from_array]
+line con 0
+ exec-timeout 10 0
+
+// NIST-AC-3.2: Set exec-timeout ≤ 10 minutes (VTY)
+#[match_code_block_from_array]
+line vty 0 4
+ exec-timeout 10 0
+
+// NIST-AC-17.1: SSH version 2 must be enabled
+#[must_match_single_string]
+ip ssh version 2
+
+// NIST-AC-17.2: Telnet must be disabled
+#[must_not_match_single_string]
+transport input telnet
+
+// -----------------------------
+// Section IA: Identification & Authentication
+// -----------------------------
+
+// NIST-IA-5.1: Local users must not use weak/plaintext passwords
+#[must_not_match_regex]
+^username .* password 0 .+
+
+// NIST-IA-5.2: Enable secret must be set (hashed)
+#[must_match_regex]
+^enable secret [0-9]+ .+$
+
+// -----------------------------
+// Section AU: Audit & Accountability
+// -----------------------------
+
+// NIST-AU-2.1: Configure logging buffered
+#[must_match_single_string]
+logging buffered *
+
+// NIST-AU-2.2: Configure remote syslog host
+#[must_match_single_string]
+logging host *
+
+// NIST-AU-3.1: Configure logging severity (trap level)
+#[must_match_regex]
+^logging trap (warnings|errors|informational|notifications|alerts|critical|emergencies)$
+
+// NIST-AU-3.2: Enable timestamping for logs
+#[must_match_single_string]
+service timestamps log datetime msec
+
+// NIST-AU-6.1: Disable console logging (prevent log flooding)
+#[must_not_match_single_string]
+logging console
+
+// -----------------------------
+// Section CM: Configuration Management
+// -----------------------------
+
+// NIST-CM-6.1: Service password-encryption enabled
+#[must_match_single_string]
+service password-encryption
+
+// NIST-CM-7.1: Disable small TCP/UDP servers
+#[must_not_match_single_string]
+service tcp-small-servers
+#[must_not_match_single_string]
+service udp-small-servers
+
+// NIST-CM-7.2: Disable finger service
+#[must_not_match_single_string]
+service finger
+
+// NIST-CM-7.3: Disable BOOTP server
+#[must_not_match_single_string]
+ip bootp server
+
+// NIST-CM-7.4: Disable CDP if not required
+#[must_not_match_single_string]
+cdp run
+
+// NIST-CM-7.5: Disable HTTP/HTTPS server if not required
+#[must_not_match_single_string]
+ip http server
+#[must_not_match_single_string]
+ip http secure-server
+
+// -----------------------------
+// Section SC: System & Communications Protection
+// -----------------------------
+
+// NIST-SC-5.1: Disable IP source routing
+#[must_not_match_single_string]
+ip source-route
+
+// NIST-SC-7.1: Disable directed broadcast
+#[must_match_single_string]
+no ip directed-broadcast
+
+// NIST-SC-7.2: Disable gratuitous ARP proxy
+#[match_code_block_flexible]
+interface *
+ no ip proxy-arp
+
+// NIST-SC-12.1: Use SNMPv3 with authPriv
+#[must_match_regex]
+^snmp-server group .+ v3 priv
+
+// NIST-SC-12.2: SNMPv1/v2 must be disabled
+#[must_not_match_single_string]
+snmp-server community *
+
+// -----------------------------
+// Section SI: System Integrity
+// -----------------------------
+
+// NIST-SI-4.1: All unused interfaces must be administratively shutdown
+#[match_code_block_from_array]
+interface *
+ shutdown
