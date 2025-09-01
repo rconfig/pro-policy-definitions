@@ -1,0 +1,61 @@
+// ==========================================================
+// fortinet_fortios_FORTINETSAFE_benchmark.policy
+// Cisco SAFE-aligned Baseline adapted for Fortinet FortiOS
+// Version: 1.0
+// ==========================================================
+
+// SAFE-IA-1: Secure admin plane — HTTPS/SSH only, strong crypto, short idle timeout
+#[match_code_block_from_array]
+config system global
+ set admin-https enable
+ set admin-http disable
+ set strong-crypto enable
+ set admintimeout 10
+end
+
+// SAFE-IA-2: Interface management — no Telnet in allowaccess anywhere
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\btelnet\b.*$
+
+// SAFE-IA-3: Enforce admin login banner/MOTD
+#[match_code_block_from_array]
+config system global
+ set login-banner enable
+ set motd enable
+end
+
+// SAFE-VL-1: Remote syslog enabled with server set
+#[match_code_block_from_array]
+config log syslogd setting
+ set status enable
+ set server *
+ set port 514
+ set mode udp
+end
+
+// SAFE-VL-2: Syslog severity filter set (min = information or stricter)
+#[match_code_block_from_array]
+config log syslogd filter
+ set severity information
+end
+
+// SAFE-TD-1: Disable insecure legacy services on management
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\b(rsh|rexec|telnet|http)\b.*$
+
+// SAFE-TD-2: SNMPv3 authPriv only; no v1/v2c communities
+#[must_not_match_regex]
+^\s*config\s+system\s+snmp\s+community\b
+#[match_code_block_from_array]
+config system snmp user
+ edit *
+  set auth-proto sha
+  set priv-proto aes
+ next
+end
+
+// SAFE-NET-1: Implicit deny for administrative access from untrusted (admin-addrgrp configured)
+#[match_code_block_from_array]
+config system global
+ set admin-addrgrp *
+end
