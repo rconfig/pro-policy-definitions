@@ -1,0 +1,58 @@
+// ==========================================================
+// juniper_junos_NIST_benchmark.policy
+// NIST SP 800-53 Technical Controls mapped to JunOS
+// Version: 1.0
+// ==========================================================
+
+// NIST-AC-2: AAA central authentication
+#[match_code_block_flexible]
+system {
+ authentication-order [ radius tacplus password ];
+}
+
+// NIST-AC-17: SSH v2 required; no Telnet
+#[match_code_block_flexible]
+system {
+ services {
+  ssh {
+   protocol-version v2;
+  }
+ }
+}
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}
+
+// NIST-IA-5: No plaintext passwords for users
+#[must_not_match_regex]
+^\s*system\s*{\s*login\s*{\s*user\s+.+\s*{\s*authentication\s*{\s*plain-text-password\s*;\s*}\s*}\s*}\s*}
+
+// NIST-AU-2/AU-12: Syslog remote + timestamps
+#[match_code_block_flexible]
+system {
+ syslog {
+  host * {
+   any info;
+   authorization info;
+  }
+  time-format millisecond;
+ }
+}
+
+// NIST-CM-7: Disable unnecessary services
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*(ftp|telnet|finger|rlogin|rsh|rexec);\s*}\s*}
+
+// NIST-SC-12: SNMPv3 authPriv; no communities
+#[must_not_match_regex]
+^\s*snmp\s*{\s*community\s+.+;\s*}
+#[match_code_block_flexible]
+snmp {
+ v3 {
+  usm {
+   local-engine user * {
+    authentication-sha;
+    privacy-aes128;
+   }
+  }
+ }
+}
