@@ -1,0 +1,56 @@
+// ==========================================================
+// juniper_junos_HIPAA_benchmark.policy
+// HIPAA Technical Safeguards mapped to JunOS
+// Version: 1.0
+// ==========================================================
+
+// HIPAA-AC-1 (164.312(a)(1)): Centralized authentication (AAA)
+#[match_code_block_flexible]
+system {
+ authentication-order [ radius tacplus password ];
+}
+
+// HIPAA-AC-2: SSH required; Telnet absent
+#[match_code_block_flexible]
+system {
+ services {
+  ssh;
+ }
+}
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}
+
+// HIPAA-AU-1 (164.312(b)): Remote syslog with timestamps
+#[match_code_block_flexible]
+system {
+ syslog {
+  host * {
+   any notice;
+   authorization info;
+  }
+  time-format millisecond;
+ }
+}
+
+// HIPAA-AU-2: Console logging disabled
+#[must_not_match_regex]
+^\s*system\s*{\s*syslog\s*{\s*console\s+.+;\s*}\s*}
+
+// HIPAA-IN-1 (164.312(c)(1)): Disable insecure services
+#[must_not_match_regex]
+^\s*system\s*{\s*services\s*{\s*(ftp|telnet|finger|rsh|rexec);\s*}\s*}
+
+// HIPAA-TS-1 (164.312(e)(1)): SNMPv3 authPriv only
+#[must_not_match_regex]
+^\s*snmp\s*{\s*community\s+.+;\s*}
+#[match_code_block_flexible]
+snmp {
+ v3 {
+  usm {
+   local-engine user * {
+    authentication-sha;
+    privacy-aes128;
+   }
+  }
+ }
+}
