@@ -1,0 +1,67 @@
+// ==========================================================
+// rConfig Policy Definition
+// HIPAA Cisco IOS Policy
+// Version: 1.0
+// ==========================================================
+
+// -----------------------------
+// HIPAA: Access Control (164.312(a)(1))
+// -----------------------------
+
+// HIPAA-AC-1: AAA enabled
+#[must_match_single_string]
+aaa new-model
+
+// HIPAA-AC-2: Authentication on console and VTY
+#[match_code_block_from_array]
+line con 0
+ login authentication default
+
+#[match_code_block_from_array]
+line vty 0 4
+ login authentication default
+
+// HIPAA-AC-3: SSH required, Telnet disabled
+#[must_match_single_string]
+ip ssh version 2
+#[must_not_match_single_string]
+transport input telnet
+
+// -----------------------------
+// HIPAA: Audit Controls (164.312(b))
+// -----------------------------
+
+// HIPAA-AU-1: Remote syslog configured
+#[must_match_single_string]
+logging host *
+
+// HIPAA-AU-2: Timestamping logs
+#[must_match_single_string]
+service timestamps log datetime msec
+
+// HIPAA-AU-3: Console logging disabled
+#[must_not_match_single_string]
+logging console
+
+// -----------------------------
+// HIPAA: Integrity (164.312(c)(1))
+// -----------------------------
+
+// HIPAA-IN-1: Disable insecure services
+#[must_not_match_single_string]
+service finger
+#[must_not_match_single_string]
+ip bootp server
+#[must_not_match_single_string]
+service tcp-small-servers
+
+// -----------------------------
+// HIPAA: Transmission Security (164.312(e)(1))
+// -----------------------------
+
+// HIPAA-TS-1: SNMPv3 must be enabled (authPriv)
+// HIPAA-TS-2: SNMPv1/v2 must not be used
+#[must_match_regex]
+^snmp-server group .+ v3 priv
+#[must_not_match_single_string]
+snmp-server community *
