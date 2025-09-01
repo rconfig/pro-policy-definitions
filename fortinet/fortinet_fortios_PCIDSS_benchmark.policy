@@ -1,0 +1,55 @@
+// ==========================================================
+// fortinet_fortios_PCIDSS_benchmark.policy
+// PCI DSS mapped to FortiOS
+// Version: 1.0
+// ==========================================================
+
+// PCI-2.2: Secure configurations — HTTPS/SSH only
+#[match_code_block_from_array]
+config system global
+ set admin-http disable
+ set admin-https enable
+ set strong-crypto enable
+end
+
+// PCI-6.x: Admin session timeout (≤10 minutes)
+#[match_code_block_from_array]
+config system global
+ set admintimeout 10
+end
+
+// PCI-7.x: Central authentication (RADIUS) present
+#[match_code_block_from_array]
+config user radius
+ edit *
+  set server *
+ next
+end
+
+// PCI-10.x: Centralized logging (syslog) with severity
+#[match_code_block_from_array]
+config log syslogd setting
+ set status enable
+ set server *
+ set port 514
+ set mode udp
+end
+#[match_code_block_from_array]
+config log syslogd filter
+ set severity notice
+end
+
+// PCI-4.1: Encrypt management traffic; disallow Telnet/HTTP on interfaces
+#[must_not_match_regex]
+^\s*set\s+allowaccess\s+.*\b(telnet|http)\b.*$
+
+// PCI-3.x: SNMPv3 only; no communities
+#[must_not_match_regex]
+^\s*config\s+system\s+snmp\s+community\b
+#[match_code_block_from_array]
+config system snmp user
+ edit *
+  set auth-proto sha
+  set priv-proto aes
+ next
+end
