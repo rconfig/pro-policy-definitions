@@ -1,0 +1,11 @@
+// F5 - WAF Logging: WAF-enabled virtual servers must carry the required security-log-profiles (edit the profile names for your environment; disabled servers are skipped)
+#[evaluate_block]
+scope: ^ltm virtual
+any:
+  - equals: disabled
+  - not: ASM_WAF_
+  - all:
+      - withsecure_logos_collector
+      - netlog_tcp
+      - Log illegal requests
+      - telemetry_asm_security_log_profile
