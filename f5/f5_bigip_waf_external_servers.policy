@@ -1,7 +1,0 @@
-// F5 - WAF Policies for external Servers: externally reachable (source 0.0.0.0/0) virtual servers must have a WAF policy (disabled servers are skipped)
-#[evaluate_block]
-scope: ^ltm virtual
-any:
-  - equals: disabled
-  - not: source 0.0.0.0/0
-  - ASM_WAF_
