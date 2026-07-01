@@ -1,0 +1,53 @@
+// F5 BigIP - Security Baseline
+// REQUIRES rCONFIG V8.3.0 OR LATER. This definition uses the evaluate_block
+// method (nested any/all/not with per-block scoping), which is not available
+// in earlier releases and will be skipped by them.
+
+// F5 - Core services are configured (NTP, syslog, SNMP objects present)
+#[must_match_all_from_array]
+sys ntp
+sys syslog
+sys snmp
+
+// F5 - An NTP object exists for accurate log timestamps
+#[wildcard_match_single_string]
+sys ntp *
+
+// F5 - No default or public/private SNMP community strings anywhere
+#[evaluate_block]
+not:
+  any:
+    - community-name public
+    - community-name private
+
+// F5 - The SSH daemon enforces a non-zero idle timeout
+#[evaluate_block]
+scope: ^sys sshd
+all:
+  - "re:inactivity-timeout [1-9]"
+
+// F5 - Remote syslog is configured (logs leave the box)
+#[evaluate_block]
+scope: ^sys syslog
+all:
+  - remote-servers
+
+// F5 - WAF Logging: WAF-enabled virtual servers carry the required security-log-profiles (disabled servers skipped)
+#[evaluate_block]
+scope: ^ltm virtual
+any:
+  - equals: disabled
+  - not: ASM_WAF_
+  - all:
+      - withsecure_logos_collector
+      - netlog_tcp
+      - Log illegal requests
+      - telemetry_asm_security_log_profile
+
+// F5 - WAF on external servers: externally reachable virtual servers have a WAF policy (disabled servers skipped)
+#[evaluate_block]
+scope: ^ltm virtual
+any:
+  - equals: disabled
+  - not: source 0.0.0.0/0
+  - ASM_WAF_
