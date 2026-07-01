@@ -1,0 +1,39 @@
+// F5 BigIP - SSL/TLS and Virtual Server Hardening
+// REQUIRES rCONFIG V8.3.0 OR LATER. Uses the evaluate_block method
+// (per-block scoping over each ltm profile / pool / virtual). Earlier
+// releases do not support this method.
+
+// F5 - Every client-SSL profile disables SSLv3 and TLSv1.0/1.1
+#[evaluate_block]
+scope: ^ltm profile client-ssl
+all:
+  - no-sslv3
+  - no-tlsv1
+
+// F5 - No client-SSL profile falls back to a permissive DEFAULT/ALL cipher set
+#[evaluate_block]
+scope: ^ltm profile client-ssl
+not:
+  any:
+    - ciphers DEFAULT
+    - ciphers ALL
+
+// F5 - Every pool has at least one health monitor assigned
+#[evaluate_block]
+scope: ^ltm pool
+all:
+  - monitor
+
+// F5 - Every HTTPS (:443) virtual server terminates TLS with a client-SSL profile
+#[evaluate_block]
+scope: ^ltm virtual
+any:
+  - not: "destination /Common/*:443"
+  - clientssl
+
+// F5 - HTTPS virtual servers do not disable source address translation
+#[evaluate_block]
+scope: ^ltm virtual
+any:
+  - not: "destination /Common/*:443"
+  - not: type none
