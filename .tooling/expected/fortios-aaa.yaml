@@ -9,9 +9,11 @@ rules:
     method: evaluate_block
     results:
       fortinet/fg100f-fortios744-synthetic.txt: fail
+      fortinet/fortios744-operational-standards-synthetic.txt: fail
   -
     rule: 2
     description: 'The password policy is enabled with a minimum length of 12 (set min-length 12 or set minimum-length 12)'
     method: evaluate_block
     results:
       fortinet/fg100f-fortios744-synthetic.txt: pass
+      fortinet/fortios744-operational-standards-synthetic.txt: fail

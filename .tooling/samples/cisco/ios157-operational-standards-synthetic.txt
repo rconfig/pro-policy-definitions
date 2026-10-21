@@ -1,0 +1,98 @@
+Building configuration...
+
+Current configuration : 2214 bytes
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname dub-rtr01
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 64000 informational
+no logging console
+enable secret 9 $9$ExampleOnlyFakeHash$ExampleOnlyFakeHashExampleOnlyFakeHash
+!
+aaa new-model
+!
+aaa authentication login default local
+aaa authorization exec default local
+!
+aaa session-id common
+!
+ip domain name example.com
+ip name-server 192.0.2.30 192.0.2.31
+ip cef
+no ipv6 cef
+!
+username netadmin privilege 15 secret 9 $9$ExampleOnlyFakeHash$ExampleOnlyFakeHashExampleOnlyFakeHash
+!
+ip ssh version 2
+!
+interface Loopback0
+ description Router ID and management source
+ ip address 198.51.100.1 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description WAN uplink to provider
+ ip address 203.0.113.2 255.255.255.252
+ no ip proxy-arp
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ description LAN core
+ ip address 192.0.2.1 255.255.255.0
+ no ip proxy-arp
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/3
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+!
+ip forward-protocol nd
+no ip http server
+no ip http secure-server
+!
+ip route 0.0.0.0 0.0.0.0 203.0.113.1
+!
+logging trap informational
+logging source-interface Loopback0
+logging host 192.0.2.20
+logging host 192.0.2.21
+!
+snmp-server group NETOPS v3 priv
+snmp-server location Example data centre, rack 12 (example.com)
+snmp-server contact noc@example.com
+!
+banner login ^C
+Authorised access only. Activity is logged. Contact noc@example.com.
+^C
+banner motd ^C
+Scheduled maintenance windows are published at https://status.example.com.
+^C
+!
+line con 0
+ login authentication default
+line aux 0
+line vty 0 4
+ login authentication default
+ transport input ssh
+!
+ntp source Loopback0
+ntp server 192.0.2.10 prefer
+ntp server 192.0.2.11
+!
+end

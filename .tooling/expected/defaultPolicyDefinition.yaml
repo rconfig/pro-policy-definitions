@@ -10,6 +10,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 2
     description: 'Description: must_match_single_string Disable CDP'
@@ -17,6 +18,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 3
     description: 'Description: must_match_single_string Disable HTTP Server'
@@ -24,6 +26,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 4
     description: 'Description: must_match_single_string Disable HTTPS Server'
@@ -31,6 +34,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 5
     description: 'Description: must_match_single_string SSH Configuration'
@@ -38,6 +42,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 6
     description: 'Description: must_match_single_string Enable AAA new-model'
@@ -45,6 +50,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 7
     description: 'Description: must_match_all_from_array AAA Authentication'
@@ -52,6 +58,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 8
     description: 'Description: must_match_single_string Logging Host'
@@ -59,6 +66,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 9
     description: 'Description: must_match_single_string Enable NTP'
@@ -66,6 +74,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 10
     description: 'Description: must_match_single_string Enable Encryption Password'
@@ -73,6 +82,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 11
     description: 'Description: must_match_single_string Disable IP Source Route'
@@ -80,6 +90,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 12
     description: 'Description: must_match_single_string Disable ICMP Redirects'
@@ -87,6 +98,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 13
     description: 'Description: must_match_single_string Enable Unicast Reverse Path Forwarding (uRPF)'
@@ -94,6 +106,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 14
     description: 'Description: must_match_all_from_array Access Lists'
@@ -101,6 +114,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 15
     description: 'Description: must_match_all_from_array VTY Line Configuration'
@@ -108,6 +122,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 16
     description: 'Description: must_match_all_from_array Auxiliary Line Configuration'
@@ -115,6 +130,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 17
     description: 'Description: must_match_all_from_array Console Line Configuration'
@@ -122,3 +138,4 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail

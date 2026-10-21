@@ -11,6 +11,7 @@ FortiOS CLI configuration as returned by `show full-configuration` (or `show`): 
 | File | Purpose | Rules | Minimum rConfig |
 |---|---|---|---|
 | `fortios-build-template.policy` | Starting template for a new build, not a compliance check. Example values for hostname, timezone, admin access, LAN interface, DHCP, DNS, NAT and firewall policies, NTP and logging (for example `set hostname MyFortinet`, 192.168.88.0/24). Replace them with your own before use. | 10 | V8.0.0 |
+| `fortios-operational-standards.policy` | Drift from your own operational standard, not a hardening check. Example values for NTP servers (192.0.2.10 and 192.0.2.11), syslog servers (192.0.2.20 in `syslogd`, 192.0.2.21 in `syslogd2`), DNS servers (192.0.2.30 and 192.0.2.31) and a hostname pattern (`[a-z]{3}-fw[0-9]{2}`, for example `dub-fw01`), plus a pre-login banner, a description on every interface that is not set to status down, and an SNMP location. Replace the example values with your own before use. | 7 | V8.3.0 |
 | `fortios-management-access.policy` | Admin HTTPS with strong crypto and no admin HTTP, a 10-minute admin idle timeout, login banner and MOTD, no insecure protocols in interface `allowaccess`, and an admin address group. | 5 | V8.3.0 |
 | `fortios-aaa.policy` | A RADIUS server with an address, and an enabled password policy with a minimum length of 12. | 2 | V8.3.0 |
 | `fortios-snmp.policy` | No SNMPv1 or SNMPv2c communities, and SHA authentication with AES privacy for every SNMPv3 user. | 2 | V8.3.0 |
@@ -30,4 +31,6 @@ Not stated by the policy authors.
 - `equals:` compares the whole trimmed line, so `set admintimeout 10` does not match `set admintimeout 100`.
 - A scoped rule fails when no config section matches its scope. A config with no `config user radius` section therefore fails the RADIUS rule.
 - The password rule accepts `set min-length 12` (older FortiOS) or `set minimum-length 12` (FortiOS 7).
+- The operational standards interface rule checks every `edit` entry in `config system interface`. It expects FortiOS's four-space indentation and counts `set description`, not `set alias`. An empty `set description ""` does not count.
+- The operational standards NTP, syslog and DNS rules check that each standard server is configured, not that no other server is. In the syslog rule, escape the dots when you replace an address, for example `192\.0\.2\.20`.
 - The SNMPv3 rule checks the whole `config system snmp user` section, so one user with a non-SHA `auth-proto` or a non-AES `priv-proto` fails it.

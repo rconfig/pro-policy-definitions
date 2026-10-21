@@ -36,7 +36,7 @@ rConfig's Import Templates shows every top-level folder that does not start with
 
 Each vendor folder's README lists its policy files, what each covers, the minimum rConfig version and the expected config format.
 
-Files are named `{vendor}/{os}-{topic}.policy`, in lower case with hyphens, for example `cisco/ios-snmp.policy`. Each hardening file covers one topic, such as management access, AAA, SNMP, logging or services. Each `{os}-build-template.policy` is a starting template for a new device build with example values to replace, not a compliance check. The `.meta.yaml` of each topic file lists the published references for each rule (NIST SP 800-53 control, HIPAA section, NIST CSF subcategory) where one exists.
+Files are named `{vendor}/{os}-{topic}.policy`, in lower case with hyphens, for example `cisco/ios-snmp.policy`. Each hardening file covers one topic, such as management access, AAA, SNMP, logging or services. Each `{os}-build-template.policy` is a starting template for a new device build with example values to replace, not a compliance check. Each `{os}-operational-standards.policy` checks drift from your own operational standard (NTP, syslog and DNS servers, login banner, interface descriptions, hostname pattern, SNMP location), using RFC 5737 example values that you replace with your own. The `.meta.yaml` of each topic file lists the published references for each rule (NIST SP 800-53 control, HIPAA section, NIST CSF subcategory) where one exists.
 
 Policy files must use LF line endings. rConfig's parser expects `\n` after each `#[method]` line, so a file saved with CRLF endings loads with zero rules.
 

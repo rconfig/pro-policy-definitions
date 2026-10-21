@@ -1,0 +1,100 @@
+#config-version=FG100F-7.4.4-FW-build2662-240514:opmode=0:vdom=0:user=netadmin
+#conf_file_ver=1000001
+#buildno=2662
+#global_vdom=1
+config system global
+    set admin-https-redirect enable
+    set admin-scp enable
+    set admin-sport 443
+    set admin-telnet disable
+    set admintimeout 10
+    set alias "dub-fw01"
+    set hostname "dub-fw01"
+    set pre-login-banner enable
+    set strong-crypto enable
+    set timezone "Europe/Dublin"
+end
+config system interface
+    edit "wan1"
+        set vdom "root"
+        set ip 203.0.113.2 255.255.255.248
+        set allowaccess ping
+        set type physical
+        set description "WAN uplink to provider"
+        set role wan
+    next
+    edit "wan2"
+        set vdom "root"
+        set status down
+        set type physical
+        set role wan
+    next
+    edit "mgmt"
+        set vdom "root"
+        set ip 192.0.2.2 255.255.255.0
+        set allowaccess ping https ssh
+        set type physical
+        set description "Out-of-band management"
+        set dedicated-to management
+        set role lan
+    next
+    edit "port1"
+        set vdom "root"
+        set ip 198.51.100.1 255.255.255.0
+        set allowaccess ping https ssh
+        set type physical
+        set description "LAN core"
+        set role lan
+        config ipv6
+            set ip6-mode static
+        end
+    next
+    edit "ssl.root"
+        set vdom "root"
+        set type tunnel
+        set description "SSL VPN interface"
+    next
+end
+config system dns
+    set primary 192.0.2.30
+    set secondary 192.0.2.31
+    set domain "example.com"
+end
+config system ntp
+    set ntpsync enable
+    set type custom
+    set syncinterval 60
+    config ntpserver
+        edit 1
+            set server "192.0.2.10"
+        next
+        edit 2
+            set server "192.0.2.11"
+        next
+    end
+    set source-ip 192.0.2.2
+end
+config system snmp sysinfo
+    set status enable
+    set description "Example perimeter firewall"
+    set contact-info "noc@example.com"
+    set location "Example data centre, rack 12"
+end
+config log syslogd setting
+    set status enable
+    set server "192.0.2.20"
+    set mode udp
+    set port 514
+end
+config log syslogd2 setting
+    set status enable
+    set server "192.0.2.21"
+    set mode udp
+    set port 514
+end
+config router static
+    edit 1
+        set gateway 203.0.113.1
+        set device "wan1"
+    next
+end

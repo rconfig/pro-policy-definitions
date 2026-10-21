@@ -10,6 +10,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 2
     description: 'An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)'
@@ -17,3 +18,4 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass

@@ -9,9 +9,11 @@ rules:
     method: evaluate_block
     results:
       fortinet/fg100f-fortios744-synthetic.txt: fail
+      fortinet/fortios744-operational-standards-synthetic.txt: pass
   -
     rule: 2
     description: 'The syslog filter severity is information or notice (config log syslogd filter)'
     method: evaluate_block
     results:
       fortinet/fg100f-fortios744-synthetic.txt: fail
+      fortinet/fortios744-operational-standards-synthetic.txt: fail

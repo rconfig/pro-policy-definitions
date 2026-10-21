@@ -16,3 +16,11 @@ samples:
     source: synthetic
     hardened: true
     origin: rConfig Pro demo generator IosXeGenerator, show running-config, seed seed-a, at Pro commit ac2d993a2d, sanitised
+  - file: ios157-operational-standards-synthetic.txt
+    name: IOS router built from the operational standards example values
+    os: ios
+    os_version: "15.7"
+    config_format: ios-running-config
+    source: synthetic
+    hardened: true
+    origin: Written by hand in show running-config form from the example values in cisco/ios-operational-standards.policy, with ntp server ... prefer and a one-line ip name-server so the rules are tested against those forms. No device data. Hardened here means it meets the operational standard example values; it is not built to pass every hardening topic file.

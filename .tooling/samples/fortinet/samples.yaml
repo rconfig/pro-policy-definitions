@@ -1,5 +1,6 @@
 # Fortinet sample configs. Addresses and names are sanitised.
-# Gap: only one sample, and it is not hardened. A hardened FortiOS sample is needed.
+# Gap: fortios744-operational-standards-synthetic.txt is hardened only against the operational
+# standards example values. A FortiOS sample hardened against the hardening topic files is needed.
 samples:
   - file: fg100f-fortios744-synthetic.txt
     name: FortiGate 100F office firewall
@@ -9,3 +10,11 @@ samples:
     source: synthetic
     hardened: false
     origin: rConfig Pro demo generator FortiOsGenerator, show full-configuration, seed seed-a, at Pro commit ac2d993a2d, sanitised
+  - file: fortios744-operational-standards-synthetic.txt
+    name: FortiGate built from the operational standards example values
+    os: fortios
+    os_version: "7.4.4"
+    config_format: fortios-full-config
+    source: synthetic
+    hardened: true
+    origin: Written by hand in FortiOS CLI form from the example values in fortinet/fortios-operational-standards.policy, with one interface set to status down and one interface with a nested config block, so the interface rule is tested against both. No device data. Hardened here means it meets the operational standard example values; it is not built to pass every hardening topic file.

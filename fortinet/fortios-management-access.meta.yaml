@@ -22,7 +22,7 @@ rules:
     references:
       nist_800_53: ["AC-2"]
       hipaa: ["164.312(a)(1)"]
-  - description: "The login banner and MOTD are enabled (set login-banner enable, set motd enable)"
+  - description: "The login banner and MOTD are enabled (set pre-login-banner enable, set motd enable)"
     references: {}
   - description: "No interface allowaccess line permits telnet, http, rsh or rexec"
     references:

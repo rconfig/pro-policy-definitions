@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-21
+
+### Added
+- Operational standards files `cisco/ios-operational-standards` and `fortinet/fortios-operational-standards` (`kind: operational`, `status: synthetic-tested`, rConfig V8.3.0). Each has seven rules that check drift from your own standard: NTP, syslog and DNS servers, a login banner (FortiOS: pre-login banner), a description on every interface that is not shut down (FortiOS: not set to status down), a hostname naming pattern, and an SNMP location. The servers and hostname pattern are RFC 5737 and example values, and each rule description says what to replace.
+- Synthetic samples `ios157-operational-standards-synthetic.txt` (Cisco) and `fortios744-operational-standards-synthetic.txt` (Fortinet), built from those example values. Expected results for every Cisco and FortiOS policy now include them; no existing result changed.
+
+### Fixed
+- FortiOS management access: the login banner rule checked `set login-banner enable`, which is not a FortiOS `config system global` setting, so it could never pass. It now checks `set pre-login-banner enable`, with `set motd enable` as before.
+
 ## [1.0.0] - 2026-10-21
 
 ### Added

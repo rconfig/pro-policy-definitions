@@ -1,0 +1,47 @@
+// NTP servers are set to your standard (replace 192.0.2.10 and 192.0.2.11)
+#[evaluate_block]
+scope: ^config system ntp$
+all:
+  - equals: set ntpsync enable
+  - equals: set type custom
+  - equals: set server "192.0.2.10"
+  - equals: set server "192.0.2.11"
+
+// Syslog servers are set to your standard (replace 192.0.2.20 in syslogd and 192.0.2.21 in syslogd2)
+#[evaluate_block]
+all:
+  - regex: '/^config log syslogd setting\n(?:(?!end$)[^\n]*\n)*?\s*set status enable$/m'
+  - regex: '/^config log syslogd setting\n(?:(?!end$)[^\n]*\n)*?\s*set server "192\.0\.2\.20"$/m'
+  - regex: '/^config log syslogd2 setting\n(?:(?!end$)[^\n]*\n)*?\s*set status enable$/m'
+  - regex: '/^config log syslogd2 setting\n(?:(?!end$)[^\n]*\n)*?\s*set server "192\.0\.2\.21"$/m'
+
+// DNS servers are set to your standard (replace 192.0.2.30 and 192.0.2.31)
+#[evaluate_block]
+scope: ^config system dns$
+all:
+  - equals: set primary 192.0.2.30
+  - equals: set secondary 192.0.2.31
+
+// A pre-login banner is enabled (set pre-login-banner enable; nothing to replace)
+#[evaluate_block]
+scope: ^config system global$
+all:
+  - equals: set pre-login-banner enable
+
+// Every interface that is not set to status down has a description (nothing to replace)
+#[evaluate_block]
+scope: ^config system interface$
+not:
+  regex: '/^ {4}edit "[^"]+"\n(?:(?! {4}next$)(?! {8}set (?:description "[^"]|status down$))[^\n]*\n)* {4}next$/m'
+
+// The hostname follows your naming pattern (replace the example pattern [a-z]{3}-fw[0-9]{2}, for example dub-fw01)
+#[evaluate_block]
+scope: ^config system global$
+all:
+  - regex: '/^\s*set hostname "[a-z]{3}-fw[0-9]{2}"$/m'
+
+// An SNMP location is set (set location in config system snmp sysinfo, any text; nothing to replace)
+#[evaluate_block]
+scope: ^config system snmp sysinfo$
+all:
+  - regex: '/^\s*set location "[^"]/m'

@@ -10,6 +10,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 2
     description: 'Description: must_match_single_string Set Timezone'
@@ -17,6 +18,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 3
     description: 'Description: must_match_all_from_array Secure Access Settings'
@@ -24,6 +26,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 4
     description: 'Description: must_match_all_from_array Configure LAN Interface'
@@ -31,6 +34,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 5
     description: 'Description: must_match_all_from_array DHCP Server Setup'
@@ -38,6 +42,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 6
     description: 'Description: must_match_all_from_array DNS Setup'
@@ -45,6 +50,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 7
     description: 'Description: must_match_single_string Enable NAT'
@@ -52,6 +58,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 8
     description: 'Description: must_match_all_from_array Basic Firewall Rules'
@@ -59,6 +66,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 9
     description: 'Description: must_match_all_from_array Enable NTP Client'
@@ -66,6 +74,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail
   -
     rule: 10
     description: 'Description: must_match_all_from_array Set Up Logging'
@@ -73,3 +82,4 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: fail

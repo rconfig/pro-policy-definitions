@@ -1,0 +1,36 @@
+// NTP servers are set to your standard (replace 192.0.2.10 and 192.0.2.11)
+#[evaluate_block]
+all:
+  - regex: '/^ntp server (vrf \S+ )?192\.0\.2\.10(?= |$)/m'
+  - regex: '/^ntp server (vrf \S+ )?192\.0\.2\.11(?= |$)/m'
+
+// Syslog servers are set to your standard (replace 192.0.2.20 and 192.0.2.21)
+#[evaluate_block]
+all:
+  - regex: '/^logging host 192\.0\.2\.20(?= |$)/m'
+  - regex: '/^logging host 192\.0\.2\.21(?= |$)/m'
+
+// DNS servers are set to your standard (replace 192.0.2.30 and 192.0.2.31)
+#[evaluate_block]
+all:
+  - regex: '/^ip name-server( \S+)* 192\.0\.2\.30(?= |$)/m'
+  - regex: '/^ip name-server( \S+)* 192\.0\.2\.31(?= |$)/m'
+
+// A login banner is set (banner login, any text; nothing to replace)
+#[must_match_regex]
+/^banner login .+/m
+
+// Every interface that is not shut down has a description (nothing to replace)
+#[evaluate_block]
+scope: ^interface
+any:
+  - equals: shutdown
+  - regex: '/^\s*description \S/m'
+
+// The hostname follows your naming pattern (replace the example pattern [a-z]{3}-(rtr|sw)[0-9]{2}, for example dub-rtr01)
+#[must_match_regex]
+/^hostname [a-z]{3}-(rtr|sw)[0-9]{2}$/m
+
+// An SNMP location is set (snmp-server location, any text; nothing to replace)
+#[must_match_regex]
+/^snmp-server location \S/m

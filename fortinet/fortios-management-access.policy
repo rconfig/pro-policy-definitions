@@ -12,11 +12,11 @@ scope: ^config system global$
 all:
   - equals: set admintimeout 10
 
-// The login banner and MOTD are enabled (set login-banner enable, set motd enable)
+// The login banner and MOTD are enabled (set pre-login-banner enable, set motd enable)
 #[evaluate_block]
 scope: ^config system global$
 all:
-  - equals: set login-banner enable
+  - equals: set pre-login-banner enable
   - equals: set motd enable
 
 // No interface allowaccess line permits telnet, http, rsh or rexec

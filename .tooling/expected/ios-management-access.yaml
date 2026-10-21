@@ -10,6 +10,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 2
     description: 'No transport input line permits Telnet (telnet or all)'
@@ -17,6 +18,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 3
     description: 'No VTY line block sets an exec-timeout other than the 10 0 default'
@@ -24,6 +26,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 4
     description: 'The console line does not set an exec-timeout other than the 10 0 default'
@@ -31,6 +34,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 5
     description: 'A MOTD banner is configured (banner motd)'
@@ -38,6 +42,7 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/ios157-operational-standards-synthetic.txt: pass
   -
     rule: 6
     description: 'A login banner is configured (banner login)'
@@ -45,3 +50,4 @@ rules:
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
+      cisco/ios157-operational-standards-synthetic.txt: pass
