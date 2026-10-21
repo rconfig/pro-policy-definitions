@@ -39,11 +39,11 @@ ntp server 3.3.3.3
 #[must_match_single_string]
 service password-encryption
 
-// Description: must_match_single_string Enable IP Source Route
+// Description: must_match_single_string Disable IP Source Route
 #[must_match_single_string]
 no ip source-route
 
-// Description: must_match_single_string Enable ICMP Redirects
+// Description: must_match_single_string Disable ICMP Redirects
 #[must_match_single_string]
 no ip redirects
 

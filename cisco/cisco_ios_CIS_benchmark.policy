@@ -1,20 +1,10 @@
-// ==========================================================
-// rConfig Policy Definition
-// CIS Cisco IOS Benchmark Policy
-// Version: 1.0
-// ==========================================================
-
-// -----------------------------
-// Section 1: Initial Setup
-// -----------------------------
-
 // CIS-1.1.1: Enable AAA
 #[must_match_single_string]
 aaa new-model
 
 // CIS-1.1.2: Set enable secret (hashed)
 #[must_match_regex]
-^enable secret [0-9]+ .+$
+/^enable secret [0-9]+ .+$/m
 
 // CIS-1.1.3: Service password-encryption enabled
 #[must_match_single_string]
@@ -28,14 +18,16 @@ service pad
 #[must_not_match_single_string]
 ip source-route
 
-// CIS-1.1.6: Disable gratuitous ARP proxy
+// CIS-1.1.6: Disable proxy ARP on interfaces
 #[match_code_block_flexible]
 interface *
  no ip proxy-arp
 
-// CIS-1.1.7: Disable small TCP/UDP servers
+// CIS-1.1.7: Disable TCP small servers
 #[must_not_match_single_string]
 service tcp-small-servers
+
+// CIS-1.1.7: Disable UDP small servers
 #[must_not_match_single_string]
 service udp-small-servers
 
@@ -47,21 +39,13 @@ service finger
 #[must_not_match_single_string]
 ip bootp server
 
-// -----------------------------
-// Section 2: Banner & Identification
-// -----------------------------
-
 // CIS-2.1.1: Configure MOTD banner
 #[must_match_regex]
-^banner motd .+
+/^banner motd .+/m
 
 // CIS-2.1.2: Configure login banner
 #[must_match_regex]
-^banner login .+
-
-// -----------------------------
-// Section 3: Authentication & Access
-// -----------------------------
+/^banner login .+/m
 
 // CIS-3.1.1: Require AAA authentication for console
 #[match_code_block_from_array]
@@ -73,12 +57,12 @@ line con 0
 line vty 0 4
  login authentication default
 
-// CIS-3.1.3: Ensure exec-timeout ≤ 10 minutes (console)
+// CIS-3.1.3: Console line exec-timeout set to 10 minutes (exec-timeout 10 0)
 #[match_code_block_from_array]
 line con 0
  exec-timeout 10 0
 
-// CIS-3.1.4: Ensure exec-timeout ≤ 10 minutes (VTY)
+// CIS-3.1.4: VTY 0 4 exec-timeout set to 10 minutes (exec-timeout 10 0)
 #[match_code_block_from_array]
 line vty 0 4
  exec-timeout 10 0
@@ -93,39 +77,31 @@ ip ssh version 2
 
 // CIS-3.1.7: Ensure local user accounts use secret not password 0
 #[must_not_match_regex]
-^username .* password 0 .+
-
-// -----------------------------
-// Section 4: SNMP
-// -----------------------------
+/^username .* password 0 .+/m
 
 // CIS-4.1.1: Disable SNMPv1/v2 community strings
-#[must_not_match_single_string]
-snmp-server community *
+#[must_not_match_regex]
+/^snmp-server community /m
 
 // CIS-4.1.2: Configure SNMPv3 with authPriv
 #[must_match_regex]
-^snmp-server group .+ v3 priv
+/^snmp-server group .+ v3 priv/m
 
 // CIS-4.1.3: Ensure SNMPv3 users configured
 #[must_match_regex]
-^snmp-server user .+ .+ v3 auth .+ priv .+$
-
-// -----------------------------
-// Section 5: Logging & Auditing
-// -----------------------------
+/^snmp-server user .+ .+ v3 auth .+ priv .+$/m
 
 // CIS-5.1.1: Configure logging buffered
-#[must_match_single_string]
-logging buffered *
+#[must_match_regex]
+/^logging buffered \S+/m
 
 // CIS-5.1.2: Configure remote syslog host
-#[must_match_single_string]
-logging host *
+#[must_match_regex]
+/^logging host \S+/m
 
 // CIS-5.1.3: Ensure logging trap severity level set
 #[must_match_regex]
-^logging trap (warnings|errors|informational|notifications|alerts|critical|emergencies)$
+/^logging trap (warnings|errors|informational|notifications|alerts|critical|emergencies)$/m
 
 // CIS-5.1.4: Ensure timestamps are enabled
 #[must_match_single_string]
@@ -134,10 +110,6 @@ service timestamps log datetime msec
 // CIS-5.1.5: Ensure console logging disabled
 #[must_not_match_single_string]
 logging console
-
-// -----------------------------
-// Section 6: Services & Protocols
-// -----------------------------
 
 // CIS-6.1.1: Disable HTTP server
 #[must_not_match_single_string]
@@ -155,13 +127,9 @@ cdp run
 #[must_match_single_string]
 no ip directed-broadcast
 
-// CIS-6.1.5: Disable gratuitous ARP proxy globally
+// CIS-6.1.5: Disable proxy ARP (no ip proxy-arp configured)
 #[must_match_single_string]
 no ip proxy-arp
-
-// -----------------------------
-// Section 7: Interfaces
-// -----------------------------
 
 // CIS-7.1.1: Ensure all unused interfaces are shutdown
 #[match_code_block_from_array]
@@ -173,10 +141,6 @@ interface *
 interface FastEthernet*
  shutdown
 
-// -----------------------------
-// Section 8: Routing
-// -----------------------------
-
 // CIS-8.1.1: Ensure routing protocols use authentication
 #[match_code_block_flexible]
 router ospf *
@@ -184,11 +148,7 @@ router ospf *
 
 // CIS-8.1.2: Ensure BGP uses MD5 authentication
 #[must_match_regex]
-^neighbor .+ password .+$
-
-// -----------------------------
-// Section 9: Miscellaneous
-// -----------------------------
+/^\s*neighbor .+ password .+$/m
 
 // CIS-9.1.1: Disable IP bootp server
 #[must_not_match_single_string]

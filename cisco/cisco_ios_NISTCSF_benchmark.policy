@@ -1,54 +1,38 @@
-// ==========================================================
-// rConfig Policy Definition
-// NIST CSF Cisco IOS Policy
-// Version: 1.0
-// ==========================================================
-
-// -----------------------------
-// ID.AM: Asset Management
-// -----------------------------
-
 // CSF-IDAM-1: Banner configured for identification
 #[must_match_regex]
-^banner motd .+
-
-// -----------------------------
-// PR.AC: Access Control
-// -----------------------------
+/^banner motd .+/m
 
 // CSF-PRAC-1: AAA must be enabled
 #[must_match_single_string]
 aaa new-model
 
-// CSF-PRAC-2: SSH must be enabled, Telnet disabled
+// CSF-PRAC-2: SSH version 2 enabled
 #[must_match_single_string]
 ip ssh version 2
+
+// CSF-PRAC-2: Telnet disabled (no transport input telnet line)
 #[must_not_match_single_string]
 transport input telnet
 
 // CSF-PRAC-3: User accounts must not use plaintext passwords
 #[must_not_match_regex]
-^username .* password 0 .+
+/^username .* password 0 .+/m
 
-// -----------------------------
-// PR.PT: Protective Technology
-// -----------------------------
-
-// CSF-PRPT-1: Insecure services disabled
+// CSF-PRPT-1: Disable finger service
 #[must_not_match_single_string]
 service finger
+
+// CSF-PRPT-1: Disable BOOTP server
 #[must_not_match_single_string]
 ip bootp server
+
+// CSF-PRPT-1: Disable TCP small servers
 #[must_not_match_single_string]
 service tcp-small-servers
 
-// -----------------------------
-// DE.CM: Security Continuous Monitoring
-// -----------------------------
-
 // CSF-DECM-1: Syslog server configured
-#[must_match_single_string]
-logging host *
+#[must_match_regex]
+/^logging host \S+/m
 
 // CSF-DECM-2: Timestamping logs
 #[must_match_single_string]

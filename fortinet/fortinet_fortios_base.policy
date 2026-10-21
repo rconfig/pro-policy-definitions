@@ -1,9 +1,3 @@
-// ==========================================================
-// fortinet_fortios_base.policy
-// rConfig Base Coverage for FortiOS (generic hardening)
-// Version: 1.0
-// ==========================================================
-
 // BASE-1: HTTPS-only admin + strong crypto
 #[match_code_block_from_array]
 config system global
@@ -12,11 +6,11 @@ config system global
  set strong-crypto enable
 end
 
-// BASE-2: SSH allowed; no Telnet on any interface
+// BASE-2: No Telnet in any interface allowaccess
 #[must_not_match_regex]
-^\s*set\s+allowaccess\s+.*\btelnet\b.*$
+/^\s*set\s+allowaccess\s+.*\btelnet\b.*$/m
 
-// BASE-3: Admin idle timeout ≤ 10 minutes
+// BASE-3: Admin idle timeout set to 10 minutes (set admintimeout 10)
 #[match_code_block_from_array]
 config system global
  set admintimeout 10
@@ -38,9 +32,11 @@ config log syslogd setting
  set mode udp
 end
 
-// BASE-6: SNMPv3 authPriv only; communities absent
+// BASE-6: No SNMP v1/v2c community configured
 #[must_not_match_regex]
-^\s*config\s+system\s+snmp\s+community\b
+/^\s*config\s+system\s+snmp\s+community\b/m
+
+// BASE-6: SNMPv3 user uses SHA authentication and AES privacy
 #[match_code_block_from_array]
 config system snmp user
  edit *
@@ -49,7 +45,7 @@ config system snmp user
  next
 end
 
-// BASE-7: Password policy enabled (min-length ≥ 12)
+// BASE-7: Password policy enabled with min-length 12
 #[match_code_block_from_array]
 config system password-policy
  set status enable

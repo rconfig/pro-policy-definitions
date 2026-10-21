@@ -1,8 +1,3 @@
-// F5 BigIP - Security Baseline
-// REQUIRES rCONFIG V8.3.0 OR LATER. This definition uses the evaluate_block
-// method (nested any/all/not with per-block scoping), which is not available
-// in earlier releases and will be skipped by them.
-
 // F5 - Core services are configured (NTP, syslog, SNMP objects present)
 #[must_match_all_from_array]
 sys ntp

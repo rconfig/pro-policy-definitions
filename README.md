@@ -10,21 +10,53 @@ Welcome to the community-driven repository for rConfig Professional Policy Templ
 We maintain a clean, vendor-organized structure to ensure easy navigation and discovery:
 
 ```
-├── Cisco/
+├── .gitattributes                  # forces LF line endings on *.policy
+├── README.md
+├── cisco/
 │   ├── README.md
-│   ├── isr4400-pci-dss.policy
-│   ├── catalyst-soc2.policy
-│   └── asa-hipaa.policy
-├── F5/
+│   ├── cisco_ios_base.policy
+│   ├── cisco_ios_CIS_benchmark.policy
+│   ├── cisco_ios_CISCOSAFE_benchmark.policy
+│   ├── cisco_ios_CISCOSBG_benchmark.policy
+│   ├── cisco_ios_HIPAA_benchmark.policy
+│   ├── cisco_ios_ISO27K_benchmark.policy
+│   ├── cisco_ios_NIST_benchmark.policy
+│   ├── cisco_ios_NISTCSF_benchmark.policy
+│   └── cisco_ios_PCIDSS_benchmark.policy
+├── f5/
 │   ├── README.md
-│   └── bigip-gdpr.policy
-├── Extreme/
+│   ├── f5_bigip_security_baseline.policy
+│   └── f5_bigip_ssl_virtual_hardening.policy
+├── fortinet/
 │   ├── README.md
-│   └── exos-nist.policy
-└── Fortinet/
+│   ├── fortigate_base.policy
+│   ├── fortinet_fortios_base.policy
+│   ├── fortinet_fortios_CIS_benchmark.policy
+│   ├── fortinet_fortios_FORTINETSAFE_benchmark.policy
+│   ├── fortinet_fortios_HIPAA_benchmark.policy
+│   ├── fortinet_fortios_ISO27K_benchmark.policy
+│   ├── fortinet_fortios_NIST_benchmark.policy
+│   ├── fortinet_fortios_NISTCSF_benchmark.policy
+│   └── fortinet_fortios_PCIDSS_benchmark.policy
+├── juniper/
+│   ├── README.md
+│   ├── juniper_junos_base.policy
+│   ├── juniper_junos_CIS_benchmark.policy
+│   ├── juniper_junos_HIPAA_benchmark.policy
+│   ├── juniper_junos_ISO27K_benchmark.policy
+│   ├── juniper_junos_JUNIPERSAFE_benchmark.policy
+│   ├── juniper_junos_NIST_benchmark.policy
+│   ├── juniper_junos_NISTCSF_benchmark.policy
+│   └── juniper_junos_PCIDSS_benchmark.policy
+├── mikrotik/
+│   ├── README.md
+│   └── mikrotik_base.policy
+└── pro-base-template/
     ├── README.md
-    └── fortigate-iso27001.policy
+    └── defaultPolicyDefinition.policy
 ```
+
+Policy files must use LF line endings. rConfig's parser expects `\n` after each `#[method]` line, so a file saved with CRLF endings loads with zero rules.
 
 ## 📋 File Naming Conventions
 - All policy files **must** end with `.policy` extension
@@ -118,9 +150,6 @@ If you prefer not to use GitHub or need assistance:
 
 ## Implementation Notes
 Ensure SNMP v3 is configured before applying security policies.
-
-## Contact
-Maintained by: John Doe (john@company.com)
 ```
 
 ## 🌟 Why Contribute?

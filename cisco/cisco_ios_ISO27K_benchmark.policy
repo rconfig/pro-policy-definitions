@@ -1,60 +1,49 @@
-// ==========================================================
-// rConfig Policy Definition
-// ISO/IEC 27001 / 27002 Annex A Policy for Cisco IOS
-// Version: 1.0
-// ==========================================================
-
-// -----------------------------
-// Annex A.9: Access Control
-// -----------------------------
-
 // ISO-A9-1: AAA enabled
 #[must_match_single_string]
 aaa new-model
 
-// ISO-A9-2: Authentication on console and VTY
+// ISO-A9-2: AAA login authentication on console line
 #[match_code_block_from_array]
 line con 0
  login authentication default
 
+// ISO-A9-2: AAA login authentication on VTY lines 0-4
 #[match_code_block_from_array]
 line vty 0 4
  login authentication default
 
-// ISO-A9-3: SSH required, Telnet disabled
+// ISO-A9-3: SSH version 2 enabled
 #[must_match_single_string]
 ip ssh version 2
+
+// ISO-A9-3: Telnet disabled (no transport input telnet line)
 #[must_not_match_single_string]
 transport input telnet
 
-// -----------------------------
-// Annex A.12: Operations Security
-// -----------------------------
-
 // ISO-A12-1: Logging to syslog
-#[must_match_single_string]
-logging host *
+#[must_match_regex]
+/^logging host \S+/m
 
 // ISO-A12-2: Timestamps on logs
 #[must_match_single_string]
 service timestamps log datetime msec
 
-// ISO-A12-3: Disable insecure services
+// ISO-A12-3: Disable TCP small servers
 #[must_not_match_single_string]
 service tcp-small-servers
+
+// ISO-A12-3: Disable UDP small servers
 #[must_not_match_single_string]
 service udp-small-servers
+
+// ISO-A12-3: Disable finger service
 #[must_not_match_single_string]
 service finger
 
-// -----------------------------
-// Annex A.13: Communications Security
-// -----------------------------
-
 // ISO-A13-1: SNMPv3 must be used
 #[must_match_regex]
-^snmp-server group .+ v3 priv
+/^snmp-server group .+ v3 priv/m
 
 // ISO-A13-2: Disable SNMPv1/v2c
-#[must_not_match_single_string]
-snmp-server community *
+#[must_not_match_regex]
+/^snmp-server community /m

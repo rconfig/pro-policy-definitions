@@ -1,9 +1,3 @@
-// ==========================================================
-// fortinet_fortios_NISTCSF_benchmark.policy
-// NIST Cybersecurity Framework mapped to FortiOS
-// Version: 1.0
-// ==========================================================
-
 // CSF-ID.AM-1: Identification banner/MOTD enabled
 #[match_code_block_from_array]
 config system global
@@ -11,19 +5,21 @@ config system global
  set motd enable
 end
 
-// CSF-PR.AC-1: Secure admin plane (HTTPS/SSH only)
+// CSF-PR.AC-1: Admin HTTPS enabled, HTTP disabled, strong crypto enabled
 #[match_code_block_from_array]
 config system global
  set admin-https enable
  set admin-http disable
  set strong-crypto enable
 end
+
+// CSF-PR.AC-1: No Telnet in interface allowaccess
 #[must_not_match_regex]
-^\s*set\s+allowaccess\s+.*\btelnet\b.*$
+/^\s*set\s+allowaccess\s+.*\btelnet\b.*$/m
 
 // CSF-PR.PT-1: Disable insecure protocols on interfaces
 #[must_not_match_regex]
-^\s*set\s+allowaccess\s+.*\b(http|telnet|rsh|rexec)\b.*$
+/^\s*set\s+allowaccess\s+.*\b(http|telnet|rsh|rexec)\b.*$/m
 
 // CSF-DE.CM-1: Centralized logging via syslog
 #[match_code_block_from_array]
@@ -40,9 +36,11 @@ config log syslogd filter
  set severity notice
 end
 
-// CSF-PR.DS-1: SNMPv3 authPriv; no v1/v2c
+// CSF-PR.DS-1: No SNMP v1/v2c community configured
 #[must_not_match_regex]
-^\s*config\s+system\s+snmp\s+community\b
+/^\s*config\s+system\s+snmp\s+community\b/m
+
+// CSF-PR.DS-1: SNMPv3 user uses SHA authentication and AES privacy
 #[match_code_block_from_array]
 config system snmp user
  edit *

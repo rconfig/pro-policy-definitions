@@ -1,9 +1,3 @@
-// ==========================================================
-// fortinet_fortios_NIST_benchmark.policy
-// NIST SP 800-53 Technical Controls mapped to FortiOS
-// Version: 1.0
-// ==========================================================
-
 // NIST-AC-17: Secure remote admin (HTTPS/SSH), strong crypto
 #[match_code_block_from_array]
 config system global
@@ -12,20 +6,20 @@ config system global
  set strong-crypto enable
 end
 
-// NIST-AC-2: Admin session timeout (≤10 minutes)
+// NIST-AC-2: Admin idle timeout set to 10 minutes (set admintimeout 10)
 #[match_code_block_from_array]
 config system global
  set admintimeout 10
 end
 
-// NIST-IA-5: Password policy enabled (minimum length ≥ 12)
+// NIST-IA-5: Password policy enabled with min-length 12
 #[match_code_block_from_array]
 config system password-policy
  set status enable
  set min-length 12
 end
 
-// NIST-AU-2/AU-12: Remote syslog with severity filter
+// NIST-AU-2/AU-12: Remote syslog enabled with a server on UDP port 514
 #[match_code_block_from_array]
 config log syslogd setting
  set status enable
@@ -33,6 +27,8 @@ config log syslogd setting
  set port 514
  set mode udp
 end
+
+// NIST-AU-2/AU-12: Syslog severity filter set to information
 #[match_code_block_from_array]
 config log syslogd filter
  set severity information
@@ -40,11 +36,13 @@ end
 
 // NIST-CM-7: Disable unnecessary/insecure services
 #[must_not_match_regex]
-^\s*set\s+allowaccess\s+.*\b(telnet|http|rsh|rexec)\b.*$
+/^\s*set\s+allowaccess\s+.*\b(telnet|http|rsh|rexec)\b.*$/m
 
-// NIST-SC-12: SNMPv3 authPriv only; communities absent
+// NIST-SC-12: No SNMP v1/v2c community configured
 #[must_not_match_regex]
-^\s*config\s+system\s+snmp\s+community\b
+/^\s*config\s+system\s+snmp\s+community\b/m
+
+// NIST-SC-12: SNMPv3 user uses SHA authentication and AES privacy
 #[match_code_block_from_array]
 config system snmp user
  edit *

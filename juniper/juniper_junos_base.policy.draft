@@ -1,9 +1,3 @@
-// ==========================================================
-// juniper_junos_base.policy
-// rConfig Base Coverage for JunOS (generic hardening)
-// Version: 1.0
-// ==========================================================
-
 // BASE-1: SSH enabled; strong crypto
 #[match_code_block_flexible]
 system {
@@ -17,7 +11,7 @@ system {
 }
 // Ensure Telnet absent
 #[must_not_match_regex]
-^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}
+/^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}/m
 
 // BASE-2: AAA order with RADIUS/TACACS+ fallback to password
 #[match_code_block_flexible]
@@ -44,9 +38,11 @@ system {
  }
 }
 
-// BASE-5: SNMPv3 authPriv only; communities absent
+// BASE-5: No SNMP community configured
 #[must_not_match_regex]
-^\s*snmp\s*{\s*community\s+.+;\s*}
+/^\s*snmp\s*{\s*community\s+.+;\s*}/m
+
+// BASE-5: SNMPv3 USM user uses SHA authentication and AES-128 privacy
 #[match_code_block_flexible]
 snmp {
  v3 {
@@ -61,7 +57,7 @@ snmp {
 
 // BASE-6: Disable insecure legacy services
 #[must_not_match_regex]
-^\s*system\s*{\s*services\s*{\s*(ftp|finger|rlogin|rsh|rexec);\s*}\s*}
+/^\s*system\s*{\s*services\s*{\s*(ftp|finger|rlogin|rsh|rexec);\s*}\s*}/m
 
 // BASE-7: Unused interfaces disabled
 #[match_code_block_from_array]

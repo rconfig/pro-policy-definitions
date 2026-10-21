@@ -1,16 +1,10 @@
-// ==========================================================
-// juniper_junos_ISO27K_benchmark.policy
-// ISO/IEC 27001/27002 Annex A mapped to JunOS
-// Version: 1.0
-// ==========================================================
-
 // ISO-A9-1: Access control — AAA
 #[match_code_block_flexible]
 system {
  authentication-order [ radius tacplus password ];
 }
 
-// ISO-A9-2: Strong management channels (SSH only)
+// ISO-A9-2: SSH protocol version 2 configured
 #[match_code_block_flexible]
 system {
  services {
@@ -19,8 +13,10 @@ system {
   }
  }
 }
+
+// ISO-A9-2: Telnet service absent
 #[must_not_match_regex]
-^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}
+/^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}/m
 
 // ISO-A12-1: Logging — remote syslog + time format
 #[match_code_block_flexible]
@@ -36,11 +32,13 @@ system {
 
 // ISO-A12-2: Disable insecure/legacy services
 #[must_not_match_regex]
-^\s*system\s*{\s*services\s*{\s*(ftp|telnet|finger|rexec|rlogin|rsh);\s*}\s*}
+/^\s*system\s*{\s*services\s*{\s*(ftp|telnet|finger|rexec|rlogin|rsh);\s*}\s*}/m
 
-// ISO-A13-1: SNMPv3 with crypto; no communities
+// ISO-A13-1: No SNMP community configured
 #[must_not_match_regex]
-^\s*snmp\s*{\s*community\s+.+;\s*}
+/^\s*snmp\s*{\s*community\s+.+;\s*}/m
+
+// ISO-A13-1: SNMPv3 USM user uses SHA authentication and AES-128 privacy
 #[match_code_block_flexible]
 snmp {
  v3 {

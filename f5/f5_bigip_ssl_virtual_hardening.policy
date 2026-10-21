@@ -1,14 +1,10 @@
-// F5 BigIP - SSL/TLS and Virtual Server Hardening
-// REQUIRES rCONFIG V8.3.0 OR LATER. Uses the evaluate_block method
-// (per-block scoping over each ltm profile / pool / virtual). Earlier
-// releases do not support this method.
-
 // F5 - Every client-SSL profile disables SSLv3 and TLSv1.0/1.1
 #[evaluate_block]
 scope: ^ltm profile client-ssl
 all:
   - no-sslv3
-  - no-tlsv1
+  - regex: '/no-tlsv1(\s|$)/m'
+  - no-tlsv1.1
 
 // F5 - No client-SSL profile falls back to a permissive DEFAULT/ALL cipher set
 #[evaluate_block]
