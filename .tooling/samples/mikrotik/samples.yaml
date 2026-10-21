@@ -1,5 +1,5 @@
 # MikroTik sample configs. Serial number is sanitised.
-# Gap: only one sample, and it is hardened. An unhardened RouterOS sample is needed.
+# Gap: both samples are hardened. An unhardened RouterOS sample is needed.
 samples:
   - file: ccr2004-routeros7153-synthetic.txt
     name: MikroTik CCR2004 edge router
@@ -9,3 +9,11 @@ samples:
     source: synthetic
     hardened: true
     origin: rConfig Pro demo generator RouterOsGenerator, /export, seed seed-a, at Pro commit ac2d993a2d, sanitised
+  - file: routeros7153-build-template-synthetic.txt
+    name: RouterOS router built from the build template example values
+    os: routeros
+    os_version: "7.15.3"
+    config_format: routeros-export
+    source: synthetic
+    hardened: true
+    origin: Written by hand in /export form from the example values in mikrotik/routeros-build-template.policy, with one wrapped line and one line with its arguments out of order. No device data. The addresses are the template's example values (MikroTik default LAN 192.168.88.0/24, public DNS 8.8.8.8 and 8.8.4.4, public NTP 216.239.35.0 and 216.239.36.0), not RFC 5737 addresses, so that the template rules can pass.

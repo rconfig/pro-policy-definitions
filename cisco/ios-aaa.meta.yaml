@@ -1,0 +1,36 @@
+title: "Cisco IOS AAA and local credentials"
+description: "AAA enabled, login authentication default on the console and every VTY line, a hashed enable secret, password encryption and no plaintext local passwords."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: lab-tested
+framework_claim: null
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "AAA is enabled (aaa new-model)"
+    references:
+      nist_800_53: ["AC-2"]
+      hipaa: ["164.312(a)(1)"]
+  - description: "The console line uses login authentication default"
+    references:
+      nist_800_53: ["AC-2"]
+      hipaa: ["164.312(a)(1)"]
+  - description: "Every VTY line block uses login authentication default"
+    references:
+      nist_800_53: ["AC-2"]
+      hipaa: ["164.312(a)(1)"]
+  - description: "The enable secret is set with a hash type (enable secret <type> ...)"
+    references:
+      nist_800_53: ["IA-5"]
+  - description: "Password encryption is enabled (service password-encryption)"
+    references:
+      nist_800_53: ["CM-6"]
+  - description: "No local user has a type 0 plaintext password (username ... password 0)"
+    references:
+      nist_800_53: ["IA-5"]

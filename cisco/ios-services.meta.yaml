@@ -1,0 +1,49 @@
+title: "Cisco IOS services"
+description: "HTTP and HTTPS servers, finger (service finger or ip finger), TCP and UDP small servers, identd and directed broadcast are not enabled; BOOTP, source routing, CDP and PAD are disabled with their no lines."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: lab-tested
+framework_claim: null
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "The HTTP server is not enabled (line ip http server is absent)"
+    references:
+      nist_800_53: ["CM-7"]
+  - description: "The HTTPS server is not enabled (line ip http secure-server is absent)"
+    references:
+      nist_800_53: ["CM-7"]
+  - description: "The finger service is not enabled (fails on a service finger or ip finger line)"
+    references:
+      nist_800_53: ["CM-7"]
+      hipaa: ["164.312(c)(1)"]
+  - description: "The BOOTP server is disabled (no ip bootp server)"
+    references:
+      nist_800_53: ["CM-7"]
+      hipaa: ["164.312(c)(1)"]
+  - description: "TCP small servers are not enabled (line service tcp-small-servers is absent)"
+    references:
+      nist_800_53: ["CM-7"]
+      hipaa: ["164.312(c)(1)"]
+  - description: "UDP small servers are not enabled (line service udp-small-servers is absent)"
+    references:
+      nist_800_53: ["CM-7"]
+  - description: "The PAD service is disabled (no service pad)"
+    references: {}
+  - description: "IP source routing is disabled (no ip source-route)"
+    references:
+      nist_800_53: ["SC-5"]
+  - description: "The identd service is not enabled (line ip identd is absent)"
+    references: {}
+  - description: "CDP is disabled globally (no cdp run)"
+    references:
+      nist_800_53: ["CM-7"]
+  - description: "Directed broadcast is not enabled on any interface (fails on any ip directed-broadcast line)"
+    references:
+      nist_800_53: ["SC-7"]

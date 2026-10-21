@@ -1,0 +1,33 @@
+title: "Cisco IOS management access"
+description: "SSH version 2, no Telnet on any line, no exec-timeout other than the 10 0 default on the console or any VTY line, and MOTD and login banners."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: lab-tested
+framework_claim: null
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "SSH version 2 is enabled (ip ssh version 2)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+  - description: "No transport input line permits Telnet (telnet or all)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+  - description: "No VTY line block sets an exec-timeout other than the 10 0 default"
+    references:
+      nist_800_53: ["AC-3"]
+  - description: "The console line does not set an exec-timeout other than the 10 0 default"
+    references:
+      nist_800_53: ["AC-3"]
+  - description: "A MOTD banner is configured (banner motd)"
+    references: {}
+  - description: "A login banner is configured (banner login)"
+    references: {}

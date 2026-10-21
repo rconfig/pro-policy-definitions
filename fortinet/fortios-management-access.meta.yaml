@@ -1,0 +1,32 @@
+title: "FortiOS management access"
+description: "Admin HTTPS with strong crypto and no admin HTTP, a 10-minute admin idle timeout, login banner and MOTD, no insecure protocols in interface allowaccess, and an admin address group."
+vendor: fortinet
+os: fortios
+config_format: fortios-full-config
+# collection_command: Pro app/Demo/Platforms/FortiOs/FortiOsGenerator.php:53 (primaryCommand)
+collection_command: "show full-configuration"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "Admin HTTPS is enabled, admin HTTP is disabled and strong crypto is enabled (config system global)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      nist_csf: ["PR.AC-1"]
+  - description: "The admin idle timeout is 10 minutes (set admintimeout 10)"
+    references:
+      nist_800_53: ["AC-2"]
+      hipaa: ["164.312(a)(1)"]
+  - description: "The login banner and MOTD are enabled (set login-banner enable, set motd enable)"
+    references: {}
+  - description: "No interface allowaccess line permits telnet, http, rsh or rexec"
+    references:
+      nist_800_53: ["CM-7"]
+      hipaa: ["164.312(c)(1)"]
+  - description: "An admin address group is set (set admin-addrgrp)"
+    references: {}

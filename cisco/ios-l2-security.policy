@@ -1,0 +1,14 @@
+// Every interface with an IP address has proxy ARP disabled (no ip proxy-arp)
+#[evaluate_block]
+scope: ^interface
+any:
+  - not:
+      regex: '/^\s*ip address /m'
+  - equals: no ip proxy-arp
+
+// Every interface is shut down or has a description
+#[evaluate_block]
+scope: ^interface
+any:
+  - equals: shutdown
+  - regex: '/^\s*description \S/m'

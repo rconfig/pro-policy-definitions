@@ -1,0 +1,74 @@
+// Identity is set (/system identity, set name=)
+#[evaluate_block]
+all:
+  - regex: '/^\/system identity\n(?:(?!\/)[^\n]*\n)*?^set(?![^\s\\])(?=(?:[^\n]|\\\n)*? name=[^\s\\]+(?![^\s\\]))/m'
+
+// Timezone is Europe/Dublin (/system clock, set time-zone-name=Europe/Dublin)
+#[evaluate_block]
+all:
+  - regex: '/^\/system clock\n(?:(?!\/)[^\n]*\n)*?^set(?![^\s\\])(?=(?:[^\n]|\\\n)*? time-zone-name=Europe\/Dublin(?![^\s\\]))/m'
+
+// Telnet, FTP, www, www-ssl, API and API-SSL services are disabled and SSH strong crypto is on
+#[evaluate_block]
+all:
+  - regex: '/^\/ip service\n(?:(?!\/)[^\n]*\n)*?^set telnet(?![^\s\\])(?=(?:[^\n]|\\\n)*? disabled=yes(?![^\s\\]))/m'
+  - regex: '/^\/ip service\n(?:(?!\/)[^\n]*\n)*?^set ftp(?![^\s\\])(?=(?:[^\n]|\\\n)*? disabled=yes(?![^\s\\]))/m'
+  - regex: '/^\/ip service\n(?:(?!\/)[^\n]*\n)*?^set www(?![^\s\\])(?=(?:[^\n]|\\\n)*? disabled=yes(?![^\s\\]))/m'
+  - regex: '/^\/ip service\n(?:(?!\/)[^\n]*\n)*?^set www-ssl(?![^\s\\])(?=(?:[^\n]|\\\n)*? disabled=yes(?![^\s\\]))/m'
+  - regex: '/^\/ip service\n(?:(?!\/)[^\n]*\n)*?^set api(?![^\s\\])(?=(?:[^\n]|\\\n)*? disabled=yes(?![^\s\\]))/m'
+  - regex: '/^\/ip service\n(?:(?!\/)[^\n]*\n)*?^set api-ssl(?![^\s\\])(?=(?:[^\n]|\\\n)*? disabled=yes(?![^\s\\]))/m'
+  - regex: '/^\/ip ssh\n(?:(?!\/)[^\n]*\n)*?^set(?![^\s\\])(?=(?:[^\n]|\\\n)*? strong-crypto=yes(?![^\s\\]))/m'
+
+// LAN bridge bridge1 holds ether1 and has a /24 address
+#[evaluate_block]
+all:
+  - regex: '/^\/interface bridge\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? name=bridge1(?![^\s\\]))/m'
+  - regex: '/^\/interface bridge port\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? bridge=bridge1(?![^\s\\]))(?=(?:[^\n]|\\\n)*? interface=ether1(?![^\s\\]))/m'
+  - regex: '/^\/ip address\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? address=[^\s\\]+\/24(?![^\s\\]))(?=(?:[^\n]|\\\n)*? interface=bridge1(?![^\s\\]))/m'
+
+// DHCP server dhcp1 on bridge1 uses pool dhcp_pool (.10 to .254) and a /24 network with a .1 gateway
+#[evaluate_block]
+all:
+  - regex: '/^\/ip pool\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? name=dhcp_pool(?![^\s\\]))(?=(?:[^\n]|\\\n)*? ranges=[^\s\\]*\.10-[^\s\\]*\.254(?![^\s\\]))/m'
+  - regex: '/^\/ip dhcp-server\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? address-pool=dhcp_pool(?![^\s\\]))(?=(?:[^\n]|\\\n)*? interface=bridge1(?![^\s\\]))(?=(?:[^\n]|\\\n)*? name=dhcp1(?![^\s\\]))/m'
+  - regex: '/^\/ip dhcp-server network\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? address=[^\s\\]*\.0\/24(?![^\s\\]))(?=(?:[^\n]|\\\n)*? gateway=[^\s\\]*\.1(?![^\s\\]))/m'
+
+// DNS servers are 8.8.8.8 and 8.8.4.4 with remote requests allowed (/ip dns)
+#[evaluate_block]
+all:
+  - regex: '/^\/ip dns\n(?:(?!\/)[^\n]*\n)*?^set(?![^\s\\])(?=(?:[^\n]|\\\n)*? allow-remote-requests=yes(?![^\s\\]))(?=(?:[^\n]|\\\n)*? servers=8\.8\.8\.8,8\.8\.4\.4(?![^\s\\]))/m'
+
+// Source NAT masquerades out ether1 (/ip firewall nat)
+#[evaluate_block]
+all:
+  - regex: '/^\/ip firewall nat\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=masquerade(?![^\s\\]))(?=(?:[^\n]|\\\n)*? chain=srcnat(?![^\s\\]))(?=(?:[^\n]|\\\n)*? out-interface=ether1(?![^\s\\]))/m'
+
+// Input and forward firewall filter rules accept established, related and LAN traffic and drop the rest
+#[evaluate_block]
+all:
+  - regex: '/^\/ip firewall filter\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=accept(?![^\s\\]))(?=(?:[^\n]|\\\n)*? chain=input(?![^\s\\]))(?=(?:[^\n]|\\\n)*? connection-state=established,related(?![^\s\\]))/m'
+  - regex: '/^\/ip firewall filter\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=drop(?![^\s\\]))(?=(?:[^\n]|\\\n)*? chain=input(?![^\s\\]))(?=(?:[^\n]|\\\n)*? connection-state=invalid(?![^\s\\]))/m'
+  - regex: '/^\/ip firewall filter\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=accept(?![^\s\\]))(?=(?:[^\n]|\\\n)*? chain=input(?![^\s\\]))(?=(?:[^\n]|\\\n)*? protocol=icmp(?![^\s\\]))/m'
+  - regex: '/^\/ip firewall filter\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=accept(?![^\s\\]))(?=(?:[^\n]|\\\n)*? chain=input(?![^\s\\]))(?=(?:[^\n]|\\\n)*? src-address=192\.168\.88\.0\/24(?![^\s\\]))/m'
+  - regex: '/^\/ip firewall filter\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\]) action=drop chain=input$/m'
+  - regex: '/^\/ip firewall filter\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=accept(?![^\s\\]))(?=(?:[^\n]|\\\n)*? chain=forward(?![^\s\\]))(?=(?:[^\n]|\\\n)*? connection-state=established,related(?![^\s\\]))/m'
+  - regex: '/^\/ip firewall filter\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=drop(?![^\s\\]))(?=(?:[^\n]|\\\n)*? chain=forward(?![^\s\\]))(?=(?:[^\n]|\\\n)*? connection-state=invalid(?![^\s\\]))/m'
+  - regex: '/^\/ip firewall filter\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=accept(?![^\s\\]))(?=(?:[^\n]|\\\n)*? chain=forward(?![^\s\\]))(?=(?:[^\n]|\\\n)*? connection-state=new(?![^\s\\]))(?=(?:[^\n]|\\\n)*? in-interface=bridge1(?![^\s\\]))(?=(?:[^\n]|\\\n)*? src-address=192\.168\.88\.0\/24(?![^\s\\]))/m'
+  - regex: '/^\/ip firewall filter\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\]) action=drop chain=forward$/m'
+
+// NTP client is enabled with servers 216.239.35.0 and 216.239.36.0 (RouterOS 6 or 7 form)
+#[evaluate_block]
+any:
+  - regex: '/^\/system ntp client\n(?:(?!\/)[^\n]*\n)*?^set(?![^\s\\])(?=(?:[^\n]|\\\n)*? enabled=yes(?![^\s\\]))(?=(?:[^\n]|\\\n)*? primary-ntp=216\.239\.35\.0(?![^\s\\]))(?=(?:[^\n]|\\\n)*? secondary-ntp=216\.239\.36\.0(?![^\s\\]))/m'
+  - all:
+      - regex: '/^\/system ntp client\n(?:(?!\/)[^\n]*\n)*?^set(?![^\s\\])(?=(?:[^\n]|\\\n)*? enabled=yes(?![^\s\\]))/m'
+      - regex: '/^\/system ntp client servers\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? address=216\.239\.35\.0(?![^\s\\]))/m'
+      - regex: '/^\/system ntp client servers\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? address=216\.239\.36\.0(?![^\s\\]))/m'
+
+// Info, warning and error topics log to a remote action at 192.168.88.2 (/system logging)
+#[evaluate_block]
+all:
+  - regex: '/^\/system logging action\n(?:(?!\/)[^\n]*\n)*?^(?:set|add)(?![^\s\\])(?=(?:[^\n]|\\\n)*? remote=192\.168\.88\.2(?![^\s\\]))/m'
+  - regex: '/^\/system logging\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=remote(?![^\s\\]))(?=(?:[^\n]|\\\n)*? topics=info(?![^\s\\]))/m'
+  - regex: '/^\/system logging\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=remote(?![^\s\\]))(?=(?:[^\n]|\\\n)*? topics=warning(?![^\s\\]))/m'
+  - regex: '/^\/system logging\n(?:(?!\/)[^\n]*\n)*?^add(?![^\s\\])(?=(?:[^\n]|\\\n)*? action=remote(?![^\s\\]))(?=(?:[^\n]|\\\n)*? topics=error(?![^\s\\]))/m'

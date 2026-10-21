@@ -1,0 +1,14 @@
+// A RADIUS server entry sets a server address (config user radius)
+#[evaluate_block]
+scope: ^config user radius$
+all:
+  - regex: '/^\s*set server "?[^"\s]/m'
+
+// The password policy is enabled with a minimum length of 12 (set min-length 12 or set minimum-length 12)
+#[evaluate_block]
+scope: ^config system password-policy$
+all:
+  - equals: set status enable
+  - any:
+      - equals: set min-length 12
+      - equals: set minimum-length 12

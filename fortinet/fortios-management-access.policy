@@ -1,0 +1,30 @@
+// Admin HTTPS is enabled, admin HTTP is disabled and strong crypto is enabled (config system global)
+#[evaluate_block]
+scope: ^config system global$
+all:
+  - equals: set admin-https enable
+  - equals: set admin-http disable
+  - equals: set strong-crypto enable
+
+// The admin idle timeout is 10 minutes (set admintimeout 10)
+#[evaluate_block]
+scope: ^config system global$
+all:
+  - equals: set admintimeout 10
+
+// The login banner and MOTD are enabled (set login-banner enable, set motd enable)
+#[evaluate_block]
+scope: ^config system global$
+all:
+  - equals: set login-banner enable
+  - equals: set motd enable
+
+// No interface allowaccess line permits telnet, http, rsh or rexec
+#[must_not_match_regex]
+/^\s*set\s+allowaccess\s+.*\b(telnet|http|rsh|rexec)\b.*$/m
+
+// An admin address group is set (set admin-addrgrp)
+#[evaluate_block]
+scope: ^config system global$
+all:
+  - regex: '/^\s*set admin-addrgrp "?[^"\s]/m'

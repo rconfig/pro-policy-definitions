@@ -1,0 +1,20 @@
+title: "FortiOS AAA and password policy"
+description: "A RADIUS server with an address, and an enabled password policy with a minimum length of 12."
+vendor: fortinet
+os: fortios
+config_format: fortios-full-config
+# collection_command: Pro app/Demo/Platforms/FortiOs/FortiOsGenerator.php:53 (primaryCommand)
+collection_command: "show full-configuration"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "A RADIUS server entry sets a server address (config user radius)"
+    references: {}
+  - description: "The password policy is enabled with a minimum length of 12 (set min-length 12 or set minimum-length 12)"
+    references:
+      nist_800_53: ["IA-5"]

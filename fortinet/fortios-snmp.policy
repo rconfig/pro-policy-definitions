@@ -1,0 +1,14 @@
+// No SNMPv1 or SNMPv2c community is configured (config system snmp community is absent)
+#[must_not_match_regex]
+/^\s*config\s+system\s+snmp\s+community\b/m
+
+// Every SNMPv3 user uses SHA authentication and AES privacy
+#[evaluate_block]
+scope: ^config system snmp user$
+all:
+  - regex: '/^\s*set auth-proto sha/m'
+  - regex: '/^\s*set priv-proto aes/m'
+  - not:
+      regex: '/^\s*set auth-proto (?!sha)/m'
+  - not:
+      regex: '/^\s*set priv-proto (?!aes)/m'

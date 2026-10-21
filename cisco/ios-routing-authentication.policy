@@ -1,0 +1,9 @@
+// Every OSPF process enables message-digest authentication for an area (area ... authentication message-digest)
+#[evaluate_block]
+scope: ^router ospf
+all:
+  - regex: '/^\s*area \S+ authentication message-digest/m'
+
+// At least one BGP neighbor has a password (neighbor ... password)
+#[must_match_regex]
+/^\s*neighbor .+ password .+$/m

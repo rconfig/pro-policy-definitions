@@ -1,0 +1,27 @@
+// AAA is enabled (aaa new-model)
+#[must_match_single_string]
+aaa new-model
+
+// The console line uses login authentication default
+#[evaluate_block]
+scope: ^line con
+all:
+  - equals: login authentication default
+
+// Every VTY line block uses login authentication default
+#[evaluate_block]
+scope: ^line vty
+all:
+  - equals: login authentication default
+
+// The enable secret is set with a hash type (enable secret <type> ...)
+#[must_match_regex]
+/^enable secret [0-9]+ .+$/m
+
+// Password encryption is enabled (service password-encryption)
+#[must_match_single_string]
+service password-encryption
+
+// No local user has a type 0 plaintext password (username ... password 0)
+#[must_not_match_regex]
+/^username .* password 0 .+/m

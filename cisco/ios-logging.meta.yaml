@@ -1,0 +1,33 @@
+title: "Cisco IOS logging"
+description: "Remote syslog host, millisecond log timestamps, no console logging, buffered logging and a trap severity level."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: lab-tested
+framework_claim: null
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "A remote syslog host is configured (logging host)"
+    references:
+      nist_800_53: ["AU-2"]
+      hipaa: ["164.312(b)"]
+  - description: "Log timestamps use datetime msec (service timestamps log datetime msec)"
+    references:
+      nist_800_53: ["AU-3"]
+      hipaa: ["164.312(b)"]
+  - description: "Console logging is off (no logging console line at any level)"
+    references:
+      nist_800_53: ["AU-6"]
+      hipaa: ["164.312(b)"]
+  - description: "Buffered logging is configured (logging buffered)"
+    references:
+      nist_800_53: ["AU-2"]
+  - description: "The logging trap severity level is set (logging trap <level>)"
+    references:
+      nist_800_53: ["AU-3"]

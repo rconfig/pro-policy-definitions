@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-21
+
 ### Added
 - Lint for policy files (`.tooling/scripts/lint.py`) that mirrors rConfig Pro's save check, editor check, parser and method list, with a test suite (`.tooling/scripts/test_lint.py`) and a GitHub Actions workflow that runs both on every push and pull request.
 - Lint check that every visible top-level folder holds at least one `.policy` file, so Import Templates never shows a folder without templates.
@@ -13,6 +15,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Sanitised sample configs in `.tooling/samples/` for Cisco, F5, Fortinet, MikroTik and Juniper.
 - Expected results per rule and per sample in `.tooling/expected/`, and `.tooling/scripts/verify_with_pro.php` to check them against rConfig Pro.
 - `CONTRIBUTING.md` and this changelog.
+- Topic-based hardening files for Cisco IOS (`cisco/ios-management-access`, `ios-aaa`, `ios-snmp`, `ios-logging`, `ios-l2-security`, `ios-routing-authentication`, `ios-services`) and FortiOS (`fortinet/fortios-management-access`, `fortios-aaa`, `fortios-snmp`, `fortios-logging`). They replace the per-framework files: each rule appears once, its description says plainly what it checks, and its `.meta.yaml` lists the rule's published references (NIST SP 800-53 control, HIPAA 45 CFR section, NIST CSF 1.1 subcategory) under `rules`.
+- `LICENSE`: the repository is licensed under the Apache License, Version 2.0, and the README says so.
+- RouterOS sample `routeros7153-build-template-synthetic.txt`, a hardened synthetic `/export` config built from the build template's example values, so the expected results record every RouterOS template rule passing.
 
 ### Changed
 - Support content (samples, expected results and scripts) lives in the `.tooling/` dot-folder, so rConfig's Import Templates shows only vendor folders with importable templates.
@@ -23,6 +28,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - F5: the WAF logging rule in `f5_bigip_security_baseline.policy` and the F5 samples use the generic log profile name `siem_log_collector` instead of a site-specific one. Results are unchanged.
 - Rule descriptions no longer use spaced dashes or em dashes (for example `F5 - …` is now `F5: …`), in the F5 and Fortinet policies and the Juniper drafts. Expected results regenerated to match.
 - Cisco README and metadata: the Cisco SAFE and Cisco Security Baseline Guides policies now need rConfig V8.0.2, because their Telnet check uses `must_not_match_regex`.
+- Files are named `{vendor}/{os}-{topic}.policy`, in lower case with hyphens; each `.meta.yaml` and expected results file uses the same name. Renamed:
+  - `cisco/cisco_ios_base` to `cisco/ios-build-template`
+  - `fortinet/fortigate_base` to `fortinet/fortios-build-template`
+  - `mikrotik/mikrotik_base` to `mikrotik/routeros-build-template`
+  - `f5/f5_bigip_security_baseline` to `f5/bigip-security-baseline` (content unchanged)
+  - `f5/f5_bigip_ssl_virtual_hardening` to `f5/bigip-ssl-virtual-hardening` (content unchanged)
+- The three build templates are described as starting templates to edit, not compliance checks, in their README rows and `.meta.yaml`. None of them is `under-review` any more.
+- Rules that must hold for every interface, line, OSPF process or FortiOS section now use `evaluate_block` with a `scope:`, so every matching block is checked. Before, `match_code_block_from_array` checked only the first matching block and the lines directly after it, and `match_code_block_flexible` checked from the first match to the end of a Cisco config. Converted: VTY and console exec-timeout, console and VTY `login authentication default`, proxy ARP per interface, interfaces shut down, OSPF authentication, and FortiOS admin HTTPS and strong crypto, admin idle timeout, login banner and MOTD, admin address group, RADIUS server, password policy, SNMPv3 users, syslog setting and syslog filter. Files that use it need rConfig V8.3.0.
+- Interface rules now say which interfaces they cover: proxy ARP is checked on interfaces with an IP address, and the "unused interfaces shut down" rules accept an interface that is shut down or has a description.
+- FortiOS: the syslog severity rules (`information` in some framework files, `notice` in others) are merged into one rule that accepts either, because both cannot pass on one config.
+- FortiOS build template: the hostname, timezone and NAT rules used `must_match_single_string` with a multi-line body, which always fails. They now use `must_match_all_from_array` with the same body.
+- `CONTRIBUTING.md` describes the naming convention, plain descriptions without local IDs, and the `rules` references field.
+- RouterOS build template: every rule is rewritten to match `/export` output, a section line (for example `/ip service`) followed by a `set` or `add` line in that section, keeping each rule's intent and example values. Arguments may appear in any order, with other arguments between them and ` \` line continuations. The NTP rule accepts the RouterOS 6 (`primary-ntp=`, `secondary-ntp=`) or RouterOS 7 (`/system ntp client servers`) form. The template now uses `evaluate_block` and needs rConfig V8.3.0, and its status is `synthetic-tested`.
+- Cisco services: BOOTP, source routing, CDP and PAD are on by default and IOS does not print the enabling line, so the rules that checked `ip bootp server`, `ip source-route`, `cdp run` and `service pad` were absent always passed. They now require `no ip bootp server`, `no ip source-route`, `no cdp run` and `no service pad`.
+- Cisco exec-timeout: `exec-timeout 10 0` is the IOS default and is not printed, so the console and VTY rules failed on compliant configs. They now fail only when an `exec-timeout` other than `10 0` is set.
+- FortiOS password policy: the rule accepts `set minimum-length 12` (FortiOS 7) as well as `set min-length 12`.
+- Cisco services: the directed broadcast rule required a `no ip directed-broadcast` line, which IOS does not print because directed broadcast is off by default. It now fails only when an `ip directed-broadcast` line is present on any interface, with or without an access list.
+- Cisco services: the finger rule checked only `service finger`, but IOS 12.1 and later configure finger with `ip finger`. It now fails on either line. `cisco/ios-services` needs rConfig V8.0.2, because both rules use `must_not_match_regex`.
 
 ### Fixed
 - Cisco: the Telnet check in all eight benchmark policies (CIS, Cisco SAFE, Cisco Security Baseline Guides, HIPAA, ISO 27001, NIST 800-53, NIST CSF, PCI DSS) used `must_not_match_single_string` with `transport input telnet`, which compares whole lines and so passed on `transport input telnet ssh`. It is now `must_not_match_regex` with `/^\s*transport input .*\b(telnet|all)\b/m`, which fails on any `transport input` line that permits Telnet, including `telnet ssh`, `ssh telnet` and `all`. The Cisco 1921 lab sample, which has `transport input telnet ssh`, now fails this rule as it should.
@@ -30,6 +53,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Removed
 - README claims the repository could not back up: that every policy is tested and compatible with current rConfig versions, the naming convention example, the licence statement and the promotional closing lines.
+- Per-framework hardening files, with their `.meta.yaml` and expected results. Their rules moved to the topic files, and the local control IDs (`CIS-x`, `SAFE-x`, `SBG-x`, `HIPAA-x`, `ISO-x`, `NIST-x`, `CSF-x`, `PCI-x`, `BASE-x`) were dropped:
+  - `cisco/cisco_ios_CIS_benchmark`, `cisco_ios_CISCOSAFE_benchmark`, `cisco_ios_CISCOSBG_benchmark`, `cisco_ios_HIPAA_benchmark`, `cisco_ios_ISO27K_benchmark`, `cisco_ios_NIST_benchmark`, `cisco_ios_NISTCSF_benchmark`, `cisco_ios_PCIDSS_benchmark`
+  - `fortinet/fortinet_fortios_base`, `fortinet_fortios_CIS_benchmark`, `fortinet_fortios_FORTINETSAFE_benchmark`, `fortinet_fortios_HIPAA_benchmark`, `fortinet_fortios_ISO27K_benchmark`, `fortinet_fortios_NIST_benchmark`, `fortinet_fortios_NISTCSF_benchmark`, `fortinet_fortios_PCIDSS_benchmark`
+- Duplicate rules: Cisco went from 134 rules in eight files to 37 distinct rules, and FortiOS from 64 rules in eight files to 14. After the removals below, the topic files hold 31 Cisco rules and 11 FortiOS rules.
+- Build template rules that can never pass or that required SNMP community `public`:
+  - Cisco: the `write erase` / `reload` rule, the SNMP rule (`snmp-server community public RO`), and three lines of the secure access rule: `username admin privilege 15 secret YourStrongPassword` (the running config shows the hashed secret), `line console 0` (shown as `line con 0`) and `crypto key generate rsa general-keys modulus 2048` (an exec command).
+  - FortiOS: the `execute factoryreset` rule, the SNMP rule (community `public`), and the `config system admin` lines with `set password YourStrongPassword` (shown encrypted) from the secure access rule.
+  - RouterOS: the `/system reset-configuration` rule, the SNMP rule (`trap-community=public`), and the `/user add ... password=` and `/user set 0 password=` lines from the secure access rule.
+- Overlapping rules that a stronger rule already covers: in `cisco/ios-l2-security`, "at least one `no ip proxy-arp` line" and "every FastEthernet interface is shut down or has a description"; in `fortinet/fortios-management-access`, the combined admin HTTPS, strong crypto and idle timeout rule, and the "telnet" and "telnet or http" `allowaccess` rules.
+- Cisco SNMP: the SNMPv3 user rule, because `snmp-server user` lines are not shown in the running config.
+- FortiOS references to NIST CSF subcategories that do not fit their rules: ID.AM-1 on the login banner rule, DE.CM-2 on the syslog severity rule, PR.DS-1 on both SNMP rules and PR.PT-1 on the insecure protocols rule.
 
 ## 2026-10-21
 

@@ -1,0 +1,19 @@
+// A remote syslog host is configured (logging host)
+#[must_match_regex]
+/^logging host \S+/m
+
+// Log timestamps use datetime msec (service timestamps log datetime msec)
+#[must_match_single_string]
+service timestamps log datetime msec
+
+// Console logging is off (no logging console line at any level)
+#[must_not_match_regex]
+/^logging console\b/m
+
+// Buffered logging is configured (logging buffered)
+#[must_match_regex]
+/^logging buffered \S+/m
+
+// The logging trap severity level is set (logging trap <level>)
+#[must_match_regex]
+/^logging trap (warnings|errors|informational|notifications|alerts|critical|emergencies)$/m

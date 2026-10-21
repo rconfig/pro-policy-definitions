@@ -1,0 +1,12 @@
+title: "RouterOS build template"
+description: "Starting template for a new RouterOS build, not a compliance check: identity, timezone, service lockdown, LAN bridge, DHCP, DNS, NAT, firewall filter, NTP and remote logging. Replace the example values (for example 192.168.88.0/24 and Europe/Dublin) with your own before use."
+vendor: mikrotik
+os: routeros
+config_format: routeros-export
+# collection_command: Pro app/Demo/Platforms/RouterOs/RouterOsGenerator.php:106 (primaryCommand)
+collection_command: "/export"
+kind: template
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "Every rule uses example values, so most rules fail against the sample until they are edited. Each rule matches lines in /export form: the section line, then a set or add line in that section with the given arguments in any order."

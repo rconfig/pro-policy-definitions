@@ -1,0 +1,23 @@
+title: "FortiOS SNMP"
+description: "No SNMPv1 or SNMPv2c communities, and SHA authentication with AES privacy for every SNMPv3 user."
+vendor: fortinet
+os: fortios
+config_format: fortios-full-config
+# collection_command: Pro app/Demo/Platforms/FortiOs/FortiOsGenerator.php:53 (primaryCommand)
+collection_command: "show full-configuration"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "No SNMPv1 or SNMPv2c community is configured (config system snmp community is absent)"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]
+  - description: "Every SNMPv3 user uses SHA authentication and AES privacy"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]

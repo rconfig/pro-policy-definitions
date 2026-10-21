@@ -8,19 +8,17 @@ FortiOS CLI configuration as returned by `show full-configuration` (or `show`): 
 
 ## Available Policies
 
-| File | Framework | Purpose | Rules | Minimum rConfig |
-|---|---|---|---|---|
-| `fortigate_base.policy` | None (build template) | Example baseline build: hostname, timezone, admin access, LAN interface, DHCP, DNS, NAT and firewall policies, SNMP, NTP and logging. Uses fixed example values (for example `set hostname MyFortinet`, 192.168.88.0/24); edit them before use. | 12 | V8.0.0 |
-| `fortinet_fortios_base.policy` | None (generic hardening) | rConfig Base Coverage for FortiOS (generic hardening), version 1.0. | 8 | V8.0.2 |
-| `fortinet_fortios_CIS_benchmark.policy` | CIS-style | CIS-style Baseline mapped to FortiOS (coverage aligned with IOS CIS), version 1.0. | 8 | V8.0.2 |
-| `fortinet_fortios_FORTINETSAFE_benchmark.policy` | Cisco SAFE (adapted) | Cisco SAFE-aligned Baseline adapted for Fortinet FortiOS, version 1.0. | 9 | V8.0.2 |
-| `fortinet_fortios_HIPAA_benchmark.policy` | HIPAA | HIPAA Technical Safeguards mapped to FortiOS, version 1.0. | 8 | V8.0.2 |
-| `fortinet_fortios_ISO27K_benchmark.policy` | ISO/IEC 27001 / 27002 Annex A | ISO/IEC 27001/27002 Annex A mapped to FortiOS, version 1.0. | 7 | V8.0.2 |
-| `fortinet_fortios_NIST_benchmark.policy` | NIST SP 800-53 | NIST SP 800-53 Technical Controls mapped to FortiOS, version 1.0. | 8 | V8.0.2 |
-| `fortinet_fortios_NISTCSF_benchmark.policy` | NIST CSF | NIST Cybersecurity Framework mapped to FortiOS, version 1.0. | 8 | V8.0.2 |
-| `fortinet_fortios_PCIDSS_benchmark.policy` | PCI DSS | PCI DSS mapped to FortiOS, version 1.0. | 8 | V8.0.2 |
+| File | Purpose | Rules | Minimum rConfig |
+|---|---|---|---|
+| `fortios-build-template.policy` | Starting template for a new build, not a compliance check. Example values for hostname, timezone, admin access, LAN interface, DHCP, DNS, NAT and firewall policies, NTP and logging (for example `set hostname MyFortinet`, 192.168.88.0/24). Replace them with your own before use. | 10 | V8.0.0 |
+| `fortios-management-access.policy` | Admin HTTPS with strong crypto and no admin HTTP, a 10-minute admin idle timeout, login banner and MOTD, no insecure protocols in interface `allowaccess`, and an admin address group. | 5 | V8.3.0 |
+| `fortios-aaa.policy` | A RADIUS server with an address, and an enabled password policy with a minimum length of 12. | 2 | V8.3.0 |
+| `fortios-snmp.policy` | No SNMPv1 or SNMPv2c communities, and SHA authentication with AES privacy for every SNMPv3 user. | 2 | V8.3.0 |
+| `fortios-logging.policy` | Remote syslog enabled with a server on UDP port 514, and a syslog filter severity of information or notice. | 2 | V8.3.0 |
 
-The minimum version comes from the methods each file uses: `must_not_match_regex` needs V8.0.2 or later.
+The minimum version comes from the methods each file uses: `evaluate_block` needs V8.3.0 or later. Earlier releases skip the rules they do not support.
+
+Each topic file's `.meta.yaml` lists the published references for each rule, where one exists: the NIST SP 800-53 control, the HIPAA 45 CFR section and the NIST CSF 1.1 subcategory.
 
 ## Supported Models
 
@@ -28,6 +26,8 @@ Not stated by the policy authors.
 
 ## Implementation Notes
 
-- Control IDs are rConfig's own numbering. They are not taken from the published benchmark or standard documents.
-- `fortigate_base.policy` and `fortinet_fortios_base.policy` are separate files with different purposes: the first is a build template with fixed values, the second checks generic hardening settings.
-- `match_code_block_from_array` matches its lines as consecutive lines in the config. Settings that FortiOS prints between them (for example other `set` lines inside `config system global`) cause the rule to fail.
+- Rules on a `config ...` section use `evaluate_block` with a `scope:` such as `^config system global$`. The `set` lines can appear in any order inside the section, and other `set` lines between them do not matter.
+- `equals:` compares the whole trimmed line, so `set admintimeout 10` does not match `set admintimeout 100`.
+- A scoped rule fails when no config section matches its scope. A config with no `config user radius` section therefore fails the RADIUS rule.
+- The password rule accepts `set min-length 12` (older FortiOS) or `set minimum-length 12` (FortiOS 7).
+- The SNMPv3 rule checks the whole `config system snmp user` section, so one user with a non-SHA `auth-proto` or a non-AES `priv-proto` fails it.

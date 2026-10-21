@@ -1,0 +1,12 @@
+title: "FortiOS build template"
+description: "Starting template for a new FortiGate build, not a compliance check: hostname, timezone, admin access, LAN interface, DHCP, DNS, NAT and firewall policies, NTP and logging. Replace the example values (for example set hostname MyFortinet and 192.168.88.0/24) with your own before use."
+vendor: fortinet
+os: fortios
+config_format: fortios-full-config
+# collection_command: Pro app/Demo/Platforms/FortiOs/FortiOsGenerator.php:53 (primaryCommand)
+collection_command: "show full-configuration"
+kind: template
+min_rconfig_version: 8.0.0
+status: synthetic-tested
+framework_claim: null
+notes: "Every rule uses example values, so the rules fail against the samples until they are edited."

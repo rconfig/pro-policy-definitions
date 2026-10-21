@@ -1,0 +1,43 @@
+// The HTTP server is not enabled (line ip http server is absent)
+#[must_not_match_single_string]
+ip http server
+
+// The HTTPS server is not enabled (line ip http secure-server is absent)
+#[must_not_match_single_string]
+ip http secure-server
+
+// The finger service is not enabled (fails on a service finger or ip finger line)
+#[must_not_match_regex]
+/^\s*(service|ip) finger\b/m
+
+// The BOOTP server is disabled (no ip bootp server)
+#[must_match_single_string]
+no ip bootp server
+
+// TCP small servers are not enabled (line service tcp-small-servers is absent)
+#[must_not_match_single_string]
+service tcp-small-servers
+
+// UDP small servers are not enabled (line service udp-small-servers is absent)
+#[must_not_match_single_string]
+service udp-small-servers
+
+// The PAD service is disabled (no service pad)
+#[must_match_single_string]
+no service pad
+
+// IP source routing is disabled (no ip source-route)
+#[must_match_single_string]
+no ip source-route
+
+// The identd service is not enabled (line ip identd is absent)
+#[must_not_match_single_string]
+ip identd
+
+// CDP is disabled globally (no cdp run)
+#[must_match_single_string]
+no cdp run
+
+// Directed broadcast is not enabled on any interface (fails on any ip directed-broadcast line)
+#[must_not_match_regex]
+/^\s*ip directed-broadcast\b/m

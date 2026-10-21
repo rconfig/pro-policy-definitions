@@ -1,0 +1,15 @@
+// Remote syslog is enabled with a server on UDP port 514 (config log syslogd setting)
+#[evaluate_block]
+scope: ^config log syslogd setting$
+all:
+  - equals: set status enable
+  - regex: '/^\s*set server "?[^"\s]/m'
+  - equals: set port 514
+  - equals: set mode udp
+
+// The syslog filter severity is information or notice (config log syslogd filter)
+#[evaluate_block]
+scope: ^config log syslogd filter$
+any:
+  - equals: set severity information
+  - equals: set severity notice

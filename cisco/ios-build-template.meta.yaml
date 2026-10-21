@@ -1,0 +1,12 @@
+title: "Cisco IOS build template"
+description: "Starting template for a new IOS build, not a compliance check: hostname, timezone, SSH and line access, LAN interface, DHCP, DNS, NAT, ACL, NTP and logging. Replace the example values (for example hostname MyCiscoRouter and 192.168.88.0/24) with your own before use."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: template
+min_rconfig_version: 8.0.0
+status: lab-tested
+framework_claim: null
+notes: "Every rule uses example values, so the rules fail against the samples until they are edited."

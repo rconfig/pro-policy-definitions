@@ -1,0 +1,7 @@
+// No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)
+#[must_match_regex]
+/^snmp-server group .+ v3 priv/m

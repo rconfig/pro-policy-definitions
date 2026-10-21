@@ -4,21 +4,21 @@ Thank you for contributing a policy definition. This page sets out what a contri
 
 ## What a contribution must include
 
-1. **The policy file**, `{vendor}/{name}.policy`, in the format below.
-2. **A metadata file**, `{vendor}/{name}.meta.yaml`, next to the policy file.
+1. **The policy file**, `{vendor}/{os}-{topic}.policy`, in the format below. Names are lower case with hyphens, for example `cisco/ios-snmp.policy`. Add a rule to the existing topic file when one fits.
+2. **A metadata file**, `{vendor}/{os}-{topic}.meta.yaml`, next to the policy file.
 3. **Sample configs**: at least one hardened and one non-hardened sample in `.tooling/samples/{vendor}/` with the same `config_format` as the policy, each listed in that folder's `samples.yaml`. Reuse existing samples where they fit.
-4. **Expected results**, `.tooling/expected/{name}.yaml`, generated with rConfig Pro and reviewed by you.
+4. **Expected results**, `.tooling/expected/{os}-{topic}.yaml`, generated with rConfig Pro and reviewed by you.
 5. **A passing lint** (`python3 .tooling/scripts/lint.py`).
 6. A row in the vendor folder's `README.md` and an entry under "Unreleased" in `CHANGELOG.md`.
 
-If you cannot run rConfig Pro, open the pull request without `.tooling/expected/{name}.yaml` and say so; a maintainer will generate it. The lint will report it as missing until then.
+If you cannot run rConfig Pro, open the pull request without the expected results file and say so; a maintainer will generate it. The lint will report it as missing until then.
 
 ## Policy file format
 
-Each rule is three or more lines: a `//` description, a `#[method]` directive on the very next line, then the rule body.
+Each rule is three or more lines: a `//` description, a `#[method]` directive on the very next line, then the rule body. The description says plainly what the rule checks, with no local control IDs; published references go in the metadata file.
 
 ```
-// CIS-1.1.1: Enable AAA
+// AAA is enabled (aaa new-model)
 #[must_match_single_string]
 aaa new-model
 ```
@@ -44,7 +44,7 @@ rConfig's Import Templates clones this repository and shows every top-level fold
 ## Metadata file
 
 ```yaml
-title: "Cisco IOS HIPAA policy"
+title: "Cisco IOS SNMP"
 description: "One or two sentences on what the policy checks."
 vendor: cisco
 os: ios
@@ -53,12 +53,15 @@ collection_command: "show running-config"
 kind: hardening
 min_rconfig_version: 8.0.2
 status: lab-tested
-framework_claim:
-  framework: "HIPAA"
-  label: "HIPAA Cisco IOS Policy"
-  id_scheme: "HIPAA-<AC|AU|IN|TS>-N"
-  ids_local: true
+framework_claim: null
 notes: "Optional; required when status is under-review."
+rules:
+  - description: "No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]
+  - description: "An SNMPv3 user with auth and priv is configured (snmp-server user ... v3 auth ... priv ...)"
+    references: {}
 ```
 
 | Field | Values |
@@ -69,6 +72,7 @@ notes: "Optional; required when status is under-review."
 | `min_rconfig_version` | At least the release that introduced every method the policy uses (see `min_version` in `.tooling/scripts/methods.json`); the lint checks this |
 | `status` | `lab-tested`: expected results recorded against at least one `lab` or `sanitised-real` sample. `synthetic-tested`: against `synthetic` samples only. `under-review`: known problems, explained in `notes` |
 | `framework_claim` | `null`, or the framework the file names, its label and ID scheme as written, and `ids_local: true` when the IDs are the author's own numbering rather than the published standard's |
+| `rules` | Hardening files: one entry per rule, in file order, with the rule's `description` and its published `references`: `nist_800_53` (NIST SP 800-53 control), `hipaa` (45 CFR section), `nist_csf` (NIST CSF 1.1 subcategory). Use `references: {}` when there is none. Do not record local or invented IDs |
 
 ## Sample configs
 

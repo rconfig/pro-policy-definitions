@@ -14,7 +14,7 @@ Compliance policy definitions for rConfig V8 Professional, organised by vendor. 
 ├── .github/workflows/lint.yml      # runs the lint on every push and pull request
 ├── .tooling/                       # support content, hidden from Import Templates
 │   ├── samples/{vendor}/           # sanitised sample configs and samples.yaml
-│   ├── expected/{name}.yaml        # expected pass or fail per rule, per sample
+│   ├── expected/{os}-{topic}.yaml  # expected pass or fail per rule, per sample
 │   └── scripts/
 │       ├── lint.py                 # format, layout and metadata checks, no rConfig Pro needed
 │       ├── test_lint.py            # proves each lint check fires
@@ -23,8 +23,9 @@ Compliance policy definitions for rConfig V8 Professional, organised by vendor. 
 │       └── verify_with_pro.php     # runs every policy against the samples with rConfig Pro
 ├── CHANGELOG.md
 ├── CONTRIBUTING.md
+├── LICENSE                         # Apache License 2.0
 ├── README.md
-├── cisco/                          # {name}.policy, {name}.meta.yaml and README.md per vendor
+├── cisco/                          # {os}-{topic}.policy, {os}-{topic}.meta.yaml and README.md per vendor
 ├── f5/
 ├── fortinet/
 ├── mikrotik/
@@ -34,6 +35,8 @@ Compliance policy definitions for rConfig V8 Professional, organised by vendor. 
 rConfig's Import Templates shows every top-level folder that does not start with a dot, so the only visible folders are vendor folders with importable `.policy` files. Everything else lives in a dot-folder.
 
 Each vendor folder's README lists its policy files, what each covers, the minimum rConfig version and the expected config format.
+
+Files are named `{vendor}/{os}-{topic}.policy`, in lower case with hyphens, for example `cisco/ios-snmp.policy`. Each hardening file covers one topic, such as management access, AAA, SNMP, logging or services. Each `{os}-build-template.policy` is a starting template for a new device build with example values to replace, not a compliance check. The `.meta.yaml` of each topic file lists the published references for each rule (NIST SP 800-53 control, HIPAA section, NIST CSF subcategory) where one exists.
 
 Policy files must use LF line endings. rConfig's parser expects `\n` after each `#[method]` line, so a file saved with CRLF endings loads with zero rules.
 
@@ -52,4 +55,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for what a contribution must include and 
 - **Issues**: Use GitHub Issues for template problems or suggestions
 
 ## Licence
-A licence for this repository has not been chosen yet.
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full text.

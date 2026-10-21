@@ -1,0 +1,27 @@
+// SSH version 2 is enabled (ip ssh version 2)
+#[must_match_single_string]
+ip ssh version 2
+
+// No transport input line permits Telnet (telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
+
+// No VTY line block sets an exec-timeout other than the 10 0 default
+#[evaluate_block]
+scope: ^line vty
+not:
+  regex: '/^\s*exec-timeout (?!10 0\s*$)/m'
+
+// The console line does not set an exec-timeout other than the 10 0 default
+#[evaluate_block]
+scope: ^line con
+not:
+  regex: '/^\s*exec-timeout (?!10 0\s*$)/m'
+
+// A MOTD banner is configured (banner motd)
+#[must_match_regex]
+/^banner motd .+/m
+
+// A login banner is configured (banner login)
+#[must_match_regex]
+/^banner login .+/m

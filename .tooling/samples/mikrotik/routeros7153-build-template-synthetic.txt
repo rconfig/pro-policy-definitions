@@ -1,0 +1,54 @@
+# 2026-10-21 12:00:00 by RouterOS 7.15.3
+#
+/interface bridge
+add name=bridge1
+/interface bridge port
+add bridge=bridge1 interface=ether1
+/ip pool
+add name=dhcp_pool ranges=192.168.88.10-192.168.88.254
+/ip dhcp-server
+add address-pool=dhcp_pool interface=bridge1 name=dhcp1
+/ip address
+add address=192.168.88.1/24 interface=bridge1 network=192.168.88.0
+/ip dhcp-server network
+add address=192.168.88.0/24 gateway=192.168.88.1
+/ip dns
+set allow-remote-requests=yes servers=8.8.8.8,8.8.4.4
+/ip firewall filter
+add action=accept chain=input connection-state=established,related
+add action=drop chain=input connection-state=invalid
+add action=accept chain=input protocol=icmp
+add action=accept chain=input src-address=192.168.88.0/24
+add action=drop chain=input
+add action=accept chain=forward connection-state=established,related
+add action=drop chain=forward connection-state=invalid
+add action=accept chain=forward comment="LAN to anywhere" connection-state=new \
+    in-interface=bridge1 src-address=192.168.88.0/24
+add action=drop chain=forward
+/ip firewall nat
+add chain=srcnat out-interface=ether1 action=masquerade
+/ip service
+set telnet disabled=yes
+set ftp disabled=yes
+set www disabled=yes
+set ssh port=22
+set www-ssl disabled=yes
+set api disabled=yes
+set api-ssl disabled=yes
+/ip ssh
+set strong-crypto=yes
+/system clock
+set time-zone-name=Europe/Dublin
+/system identity
+set name=MyRouter
+/system logging action
+set 3 remote=192.168.88.2
+/system logging
+add action=remote topics=info
+add action=remote topics=warning
+add action=remote topics=error
+/system ntp client
+set enabled=yes
+/system ntp client servers
+add address=216.239.35.0
+add address=216.239.36.0
