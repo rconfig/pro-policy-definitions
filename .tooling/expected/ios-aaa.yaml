@@ -11,43 +11,31 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 2
-    description: 'The console line uses login authentication default'
-    method: evaluate_block
-    results:
-      cisco/c1921-ios157-lab.txt: fail
-      cisco/c9500-iosxe179-synthetic.txt: fail
-      cisco/ios157-operational-standards-synthetic.txt: pass
-  -
-    rule: 3
-    description: 'Every VTY line block uses login authentication default'
-    method: evaluate_block
-    results:
-      cisco/c1921-ios157-lab.txt: fail
-      cisco/c9500-iosxe179-synthetic.txt: fail
-      cisco/ios157-operational-standards-synthetic.txt: pass
-  -
-    rule: 4
     description: 'The enable secret is set with a hash type (enable secret <type> ...)'
     method: must_match_regex
     results:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
-    rule: 5
+    rule: 3
     description: 'Password encryption is enabled (service password-encryption)'
     method: must_match_single_string
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
-    rule: 6
+    rule: 4
     description: 'No local user has a type 0 plaintext password (username ... password 0)'
     method: must_not_match_regex
     results:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass

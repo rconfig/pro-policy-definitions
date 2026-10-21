@@ -2,18 +2,6 @@
 #[must_match_single_string]
 aaa new-model
 
-// The console line uses login authentication default
-#[evaluate_block]
-scope: ^line con
-all:
-  - equals: login authentication default
-
-// Every VTY line block uses login authentication default
-#[evaluate_block]
-scope: ^line vty
-all:
-  - equals: login authentication default
-
 // The enable secret is set with a hash type (enable secret <type> ...)
 #[must_match_regex]
 /^enable secret [0-9]+ .+$/m

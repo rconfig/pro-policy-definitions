@@ -1,0 +1,69 @@
+# 2026-10-09 21:00:00 by RouterOS 7.15.3
+# software id = D13E-215D
+#
+# model = C52iG-5HaxD2HaxD
+# serial number = EXAMPLESN03
+/interface bridge
+add comment="Customer LAN" name=bridge-lan
+/interface ethernet
+set [ find default-name=ether1 ] comment="WAN to Example Networks"
+/interface wifi
+set [ find default-name=wifi1 ] channel.band=5ghz-ax channel.width=20/40/80mhz configuration.country=Ireland configuration.mode=ap configuration.ssid="Small business" disabled=no security.authentication-types=wpa2-psk,wpa3-psk
+set [ find default-name=wifi2 ] channel.band=2ghz-ax channel.width=20/40mhz configuration.country=Ireland configuration.mode=ap configuration.ssid="Small business" disabled=no security.authentication-types=wpa2-psk,wpa3-psk
+/interface list
+add name=WAN
+add name=LAN
+/ip pool
+add name=lan-pool ranges=198.51.100.200-198.51.100.250
+/ip dhcp-server
+add address-pool=lan-pool interface=bridge-lan lease-time=1d name=lan-dhcp
+/interface bridge port
+add bridge=bridge-lan interface=ether2
+add bridge=bridge-lan interface=ether3
+add bridge=bridge-lan interface=ether4
+add bridge=bridge-lan interface=ether5
+add bridge=bridge-lan interface=wifi1
+add bridge=bridge-lan interface=wifi2
+/interface list member
+add interface=ether1 list=WAN
+add interface=bridge-lan list=LAN
+/ip address
+add address=198.51.100.129/25 comment="Customer LAN" interface=bridge-lan network=198.51.100.128
+add address=203.0.113.42/30 comment="Example Networks business handoff" interface=ether1 network=203.0.113.40
+/ip dhcp-server network
+add address=198.51.100.128/25 dns-server=198.51.100.129 gateway=198.51.100.129
+/ip dns
+set allow-remote-requests=yes servers=192.0.2.53,192.0.2.54
+/ip firewall address-list
+add address=192.0.2.0/24 comment="Example Networks NOC" list=isp-mgmt
+add address=198.51.100.0/25 comment="Example Networks management" list=isp-mgmt
+/ip firewall filter
+add action=accept chain=input comment="Accept established" connection-state=established,related
+add action=drop chain=input comment="Drop invalid" connection-state=invalid
+add action=accept chain=input comment="Example Networks management" src-address-list=isp-mgmt
+add action=accept chain=input comment="Customer LAN" in-interface-list=LAN
+add action=accept chain=forward comment="Accept established" connection-state=established,related
+add action=drop chain=forward comment="Drop invalid" connection-state=invalid
+add action=drop chain=forward comment="Drop new from the WAN unless port forwarded" connection-nat-state=!dstnat connection-state=new in-interface=ether1
+/ip firewall nat
+add action=masquerade chain=srcnat comment="Customer LAN to internet" out-interface=ether1 src-address=198.51.100.128/25
+/ip route
+add comment="Example Networks default" disabled=no distance=1 dst-address=0.0.0.0/0 gateway=203.0.113.41
+/snmp
+set contact=noc@isp.example.net enabled=yes location="Small business"
+/system clock
+set time-zone-name=Europe/Dublin
+/system note
+set show-at-login=yes note="Small business business broadband, managed by Example Networks. Authorised access only."
+/system ntp client
+set enabled=yes
+/system ntp client servers
+add address=192.0.2.1
+add address=192.0.2.2
+/system routerboard settings
+set auto-upgrade=yes
+/user group
+add name=read-only policy=read,test,winbox,api,!local,!telnet,!ssh,!ftp,!reboot,!write,!policy,!password,!web,!sniff,!sensitive,!romon,!rest-api
+/user
+add comment="Example Networks NOC" group=full name=isp-netadmin
+add comment="Monitoring" group=read-only name=monitor

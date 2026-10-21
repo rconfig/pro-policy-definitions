@@ -1,0 +1,22 @@
+title: "Junos services"
+description: "No finger, FTP, rlogin, rsh or rexec service, and ICMP redirects disabled."
+vendor: juniper
+os: junos
+config_format: junos-display-set
+# collection_command: Pro app/Demo/Platforms/Junos/JunosGenerator.php:106 (primaryCommand)
+collection_command: "show configuration | display set"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic display set samples only. The rules have not yet been checked against output from a real Junos device."
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "No legacy service is enabled (fails on set system services finger, ftp, rlogin, rsh or rexec)"
+    references:
+      nist_800_53: ["CM-7"]
+      hipaa: ["164.312(c)(1)"]
+  - description: "ICMP redirects are disabled (set system no-redirects)"
+    references: {}

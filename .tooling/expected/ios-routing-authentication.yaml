@@ -11,6 +11,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: fail
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 2
     description: 'At least one BGP neighbor has a password (neighbor ... password)'
@@ -19,3 +20,4 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: fail
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass

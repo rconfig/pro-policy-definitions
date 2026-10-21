@@ -1,0 +1,19 @@
+// A remote syslog host receives any facility at info or notice (set system syslog host ... any info or any notice)
+#[must_match_regex]
+/^set system syslog host \S+ any (info|notice)$/m
+
+// A remote syslog host receives authorization messages at info or any (set system syslog host ... authorization info)
+#[must_match_regex]
+/^set system syslog host \S+ authorization (info|any)$/m
+
+// Syslog timestamps include milliseconds (set system syslog time-format millisecond)
+#[must_match_regex]
+/^set system syslog time-format (year )?millisecond$/m
+
+// Console logging is off (fails on set system syslog console)
+#[must_not_match_regex]
+/^set system syslog console /m
+
+// The system time zone is UTC (fails on a set system time-zone line other than UTC, the default)
+#[must_not_match_regex]
+/^set system time-zone (?!UTC$)/m

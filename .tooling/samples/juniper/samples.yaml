@@ -1,6 +1,5 @@
 # Juniper sample configs. Addresses, names and organisations are sanitised.
-# These are display set format. The Juniper policies are withdrawn as drafts, so no policy
-# uses these samples yet; they are kept for the display set rewrite.
+# These are display set format, as collected with show configuration | display set.
 samples:
   - file: srx345-junos232-synthetic.txt
     name: Juniper SRX345 branch firewall
@@ -18,3 +17,19 @@ samples:
     source: synthetic
     hardened: true
     origin: rConfig Pro demo generator JunosGenerator, show configuration | display set, seed seed-a, at Pro commit ac2d993a2d, sanitised
+  - file: ex2300-junos232-hardened-synthetic.txt
+    name: Juniper EX2300 branch access switch, built to pass the juniper/junos-* topic files
+    os: junos
+    os_version: "23.2R1.14"
+    config_format: junos-display-set
+    source: synthetic
+    hardened: true
+    origin: "rConfig Pro demo generator JunosGenerator, show configuration | display set, device br-gwy-sw01 (EX2300-24P), seed seed-b, at Pro commit ac2d993a2d, sanitised (organisation name in the domain and SNMP contact), then edited by hand in Junos set syntax so that every rule in the juniper/junos-* topic files passes: set system time-zone UTC, set system no-redirects, an idle-timeout of 10 on the noc-readonly login class, SSH ciphers and MACs lists, a description on every interface that is not disabled (including irb and lo0), and no SNMP community. The list values use the bracket form the generator prints. No device data."
+  - file: ex2300-junos151-unhardened-synthetic.txt
+    name: Juniper EX2300 branch access switch on an older release, unhardened
+    os: junos
+    os_version: "15.1X53-D59.4"
+    config_format: junos-display-set
+    source: synthetic
+    hardened: false
+    origin: "rConfig Pro demo generator JunosGenerator, show configuration | display set, device br-gwy-sw01 (EX2300-24P), seed seed-b, at Pro commit ac2d993a2d, sanitised as for the hardened sample, then edited by hand to undo the hardening and renamed br-gwy-sw02 on 192.0.2.22: version 15.1X53-D59.4, an MD5 ($1$) root password hash, no login message, no authentication-order or TACACS+ servers, SSH protocol-version [ v1 v2 ] without root-login deny or cipher lists, FTP and Telnet enabled, console logging instead of a remote syslog host, no millisecond time format, Europe/Dublin time zone, no disabled ports, SNMP community public, and an SNMPv3 user with MD5 and DES. The hash and keys are made up. No device data."

@@ -1,0 +1,24 @@
+title: "Junos SNMP"
+description: "No SNMPv1 or SNMPv2c communities, and SNMPv3 users with SHA authentication and AES-128 privacy."
+vendor: juniper
+os: junos
+config_format: junos-display-set
+# collection_command: Pro app/Demo/Platforms/Junos/JunosGenerator.php:106 (primaryCommand)
+collection_command: "show configuration | display set"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic display set samples only. The rules have not yet been checked against output from a real Junos device."
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "No SNMPv1 or SNMPv2c community is configured (fails on set snmp community)"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]
+  - description: "SNMPv3 USM users use SHA authentication and AES-128 privacy, and none uses MD5, DES, 3DES or none"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]

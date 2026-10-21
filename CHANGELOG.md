@@ -5,6 +5,36 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-21
+
+### Added
+- Juniper topic files for `display set` format (`show configuration | display set`), `kind: hardening`, `status: synthetic-tested`: `juniper/junos-management-access` (5 rules), `junos-aaa` (2), `junos-snmp` (2), `junos-logging` (5), `junos-services` (2) and `junos-interfaces` (1), each with a `.meta.yaml` and expected results, and a `juniper/README.md` that says the rules have not yet been checked against a real Junos device. They replace the brace-format drafts: each rule appears once, without the local control IDs.
+- Juniper samples `ex2300-junos232-hardened-synthetic.txt` and `ex2300-junos151-unhardened-synthetic.txt`, built from rConfig Pro's Junos demo generator. Every Juniper rule passes on the hardened sample and fails on the unhardened one, and one edit per rule to the hardened sample fails that rule and no other.
+- Cisco sample `c9500-iosxe179-hardened-synthetic.txt` and FortiOS sample `fg60f-fortios744-hardened-synthetic.txt`, built from Pro's demo generators to pass every rule in the Cisco and FortiOS hardening topic files.
+- MikroTik sample `c52ig-routeros7153-unhardened-synthetic.txt`, an unhardened `/export` from Pro's RouterOS CPE generator.
+- FortiOS management access: two rules on `config system global`, each on its own, `set strong-crypto enable` and `set pre-login-banner enable`. Both settings are in the FortiOS 7.4.4 CLI Reference. They replace the strong crypto and pre-login banner checks that were part of the removed admin HTTPS and MOTD rules. `fortinet/fortios-management-access` now has four rules.
+
+### Changed
+- Expected results for every Cisco, FortiOS, RouterOS and base template policy now include the new samples. Rules with the same result on every sample went from 70 to 55. Two of the 55 are new in this release and pass on every sample: the Cisco timestamp rule, because none of the four Cisco samples logs without `msec`, and the FortiOS strong crypto rule, because all three FortiOS samples set `set strong-crypto enable`.
+- Juniper rules compared with the drafts:
+  - The two authentication order rules are one rule that accepts RADIUS or TACACS+ first and needs `password` last, instead of exactly `[ radius tacplus password ]`.
+  - SSH enabled and SSH version 2 are one rule that fails on `protocol-version` with `v1`, because version 2 is the Junos default and is not printed.
+  - The SSH cipher and MAC rule fails on weak algorithms instead of requiring one exact list.
+  - The plain-text-password rule is replaced by a rule that fails on an MD5 (`$1$`) password hash, because Junos never stores `plain-text-password`.
+  - The syslog rules (`any info` or `any notice`, `authorization info`, `time-format millisecond`, in several combinations) are three rules, and the two console logging rules are one.
+  - The UTC rule fails only on a `set system time-zone` line other than `UTC`, the default.
+  - The redirects and source routing rule checks `set system no-redirects` only; the `family inet no-source-route-option` statement it also required could not be confirmed as a Junos statement.
+  - The "an interface is disabled" rule is now "every interface is disabled or has a description", as in `cisco/ios-l2-security`.
+  - NIST CSF references PR.AC-2 (SSH and Telnet), PR.PT-1 (insecure services) and ID.AM-1 (login banner) are not recorded, as for FortiOS.
+- The MikroTik and Fortinet `samples.yaml` files no longer list a missing unhardened or hardened sample as a gap.
+- Cisco logging: the timestamp rule passes `service timestamps log datetime msec` with other options, for example `localtime show-timezone` or `year`. It used `must_match_single_string`, which compares whole lines, so it failed on those forms. It is now `must_match_regex`. The Catalyst 9500 sample (`... msec localtime show-timezone`) now passes it.
+- Cisco exec-timeout (console and every VTY line): any timeout from 1 to 10 minutes passes (1 to 9 minutes with 0 to 59 seconds, or `10 0`), and so does no `exec-timeout` line (the 10 0 default). `0 0`, any other value under one minute and anything over 10 minutes fail. Before, any value other than `10 0` failed, including stricter ones such as `5 0`. The hardened Catalyst 9500 sample now uses `exec-timeout 5 0`.
+
+### Removed
+- `.drafts/juniper/`: the brace-format Juniper drafts, now replaced by the `juniper/` topic files.
+- Cisco AAA: the console and VTY `login authentication default` rules. IOS does not print `login authentication default`, because it is the default method list, so the rules failed on compliant configs. `cisco/ios-aaa` now has four rules and needs rConfig V8.0.2.
+- FortiOS management access: the admin HTTPS, HTTP and strong crypto rule (`set admin-https`, `set admin-http`), the login banner and MOTD rule (`set motd`) and the admin address group rule (`set admin-addrgrp`). None of these four settings is in the FortiOS 7.4.4 CLI Reference, so the rules could not pass on a real FortiGate. The hardened FortiGate 60F sample no longer has those lines or the address group added for `admin-addrgrp`.
+
 ## [1.1.0] - 2026-10-21
 
 ### Added

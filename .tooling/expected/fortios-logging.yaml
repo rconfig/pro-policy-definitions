@@ -10,6 +10,7 @@ rules:
     results:
       fortinet/fg100f-fortios744-synthetic.txt: fail
       fortinet/fortios744-operational-standards-synthetic.txt: pass
+      fortinet/fg60f-fortios744-hardened-synthetic.txt: pass
   -
     rule: 2
     description: 'The syslog filter severity is information or notice (config log syslogd filter)'
@@ -17,3 +18,4 @@ rules:
     results:
       fortinet/fg100f-fortios744-synthetic.txt: fail
       fortinet/fortios744-operational-standards-synthetic.txt: fail
+      fortinet/fg60f-fortios744-hardened-synthetic.txt: pass

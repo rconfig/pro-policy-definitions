@@ -1,0 +1,34 @@
+title: "Junos logging"
+description: "A remote syslog host for any facility at info or notice and for authorization messages, millisecond timestamps, no console logging, and the UTC time zone."
+vendor: juniper
+os: junos
+config_format: junos-display-set
+# collection_command: Pro app/Demo/Platforms/Junos/JunosGenerator.php:106 (primaryCommand)
+collection_command: "show configuration | display set"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic display set samples only. The rules have not yet been checked against output from a real Junos device."
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "A remote syslog host receives any facility at info or notice (set system syslog host ... any info or any notice)"
+    references:
+      nist_800_53: ["AU-2", "AU-12"]
+      hipaa: ["164.312(b)"]
+      nist_csf: ["DE.CM-1"]
+  - description: "A remote syslog host receives authorization messages at info or any (set system syslog host ... authorization info)"
+    references:
+      nist_800_53: ["AU-2", "AU-12"]
+      hipaa: ["164.312(b)"]
+  - description: "Syslog timestamps include milliseconds (set system syslog time-format millisecond)"
+    references:
+      nist_800_53: ["AU-2", "AU-12"]
+      hipaa: ["164.312(b)"]
+  - description: "Console logging is off (fails on set system syslog console)"
+    references:
+      hipaa: ["164.312(b)"]
+  - description: "The system time zone is UTC (fails on a set system time-zone line other than UTC, the default)"
+    references: {}

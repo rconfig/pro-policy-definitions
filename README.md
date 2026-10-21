@@ -9,7 +9,6 @@ Compliance policy definitions for rConfig V8 Professional, organised by vendor. 
 ## Repository Structure
 
 ```
-├── .drafts/juniper/                # withdrawn Juniper drafts (*.policy.draft), hidden from Import Templates
 ├── .gitattributes                  # forces LF line endings on policy and sample files
 ├── .github/workflows/lint.yml      # runs the lint on every push and pull request
 ├── .tooling/                       # support content, hidden from Import Templates
@@ -28,6 +27,7 @@ Compliance policy definitions for rConfig V8 Professional, organised by vendor. 
 ├── cisco/                          # {os}-{topic}.policy, {os}-{topic}.meta.yaml and README.md per vendor
 ├── f5/
 ├── fortinet/
+├── juniper/
 ├── mikrotik/
 └── pro-base-template/
 ```
@@ -42,7 +42,7 @@ Policy files must use LF line endings. rConfig's parser expects `\n` after each 
 
 ## Status
 
-- Juniper templates are withdrawn pending the `display set` rewrite. The drafts are kept in `.drafts/juniper/` as `*.policy.draft` files and do not appear in Import Templates.
+- Juniper templates are written for `display set` format and are `synthetic-tested`: they have not yet been checked against a real Junos device. See `juniper/README.md`.
 - Files whose `.meta.yaml` says `status: under-review` carry a `notes:` entry explaining why.
 
 ## Contributing

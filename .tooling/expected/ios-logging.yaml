@@ -11,14 +11,16 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 2
-    description: 'Log timestamps use datetime msec (service timestamps log datetime msec)'
-    method: must_match_single_string
+    description: 'Log timestamps use datetime msec, with or without other options (service timestamps log datetime msec ...)'
+    method: must_match_regex
     results:
       cisco/c1921-ios157-lab.txt: pass
-      cisco/c9500-iosxe179-synthetic.txt: fail
+      cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 3
     description: 'Console logging is off (no logging console line at any level)'
@@ -27,6 +29,7 @@ rules:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 4
     description: 'Buffered logging is configured (logging buffered)'
@@ -35,6 +38,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 5
     description: 'The logging trap severity level is set (logging trap <level>)'
@@ -43,3 +47,4 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass

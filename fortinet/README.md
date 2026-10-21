@@ -12,7 +12,7 @@ FortiOS CLI configuration as returned by `show full-configuration` (or `show`): 
 |---|---|---|---|
 | `fortios-build-template.policy` | Starting template for a new build, not a compliance check. Example values for hostname, timezone, admin access, LAN interface, DHCP, DNS, NAT and firewall policies, NTP and logging (for example `set hostname MyFortinet`, 192.168.88.0/24). Replace them with your own before use. | 10 | V8.0.0 |
 | `fortios-operational-standards.policy` | Drift from your own operational standard, not a hardening check. Example values for NTP servers (192.0.2.10 and 192.0.2.11), syslog servers (192.0.2.20 in `syslogd`, 192.0.2.21 in `syslogd2`), DNS servers (192.0.2.30 and 192.0.2.31) and a hostname pattern (`[a-z]{3}-fw[0-9]{2}`, for example `dub-fw01`), plus a pre-login banner, a description on every interface that is not set to status down, and an SNMP location. Replace the example values with your own before use. | 7 | V8.3.0 |
-| `fortios-management-access.policy` | Admin HTTPS with strong crypto and no admin HTTP, a 10-minute admin idle timeout, login banner and MOTD, no insecure protocols in interface `allowaccess`, and an admin address group. | 5 | V8.3.0 |
+| `fortios-management-access.policy` | A 10-minute admin idle timeout, no insecure protocols in interface `allowaccess`, strong crypto (`set strong-crypto enable`) and the pre-login banner (`set pre-login-banner enable`). | 4 | V8.3.0 |
 | `fortios-aaa.policy` | A RADIUS server with an address, and an enabled password policy with a minimum length of 12. | 2 | V8.3.0 |
 | `fortios-snmp.policy` | No SNMPv1 or SNMPv2c communities, and SHA authentication with AES privacy for every SNMPv3 user. | 2 | V8.3.0 |
 | `fortios-logging.policy` | Remote syslog enabled with a server on UDP port 514, and a syslog filter severity of information or notice. | 2 | V8.3.0 |
@@ -27,6 +27,7 @@ Not stated by the policy authors.
 
 ## Implementation Notes
 
+- Rules use only settings documented under `config system global` in the [FortiOS 7.4.4 CLI Reference](https://docs.fortinet.com/document/fortigate/7.4.4/cli-reference/1620/config-system-global). `set admin-http`, `set admin-https`, `set motd` and `set admin-addrgrp` are not documented there, so no rule checks them.
 - Rules on a `config ...` section use `evaluate_block` with a `scope:` such as `^config system global$`. The `set` lines can appear in any order inside the section, and other `set` lines between them do not matter.
 - `equals:` compares the whole trimmed line, so `set admintimeout 10` does not match `set admintimeout 100`.
 - A scoped rule fails when no config section matches its scope. A config with no `config user radius` section therefore fails the RADIUS rule.

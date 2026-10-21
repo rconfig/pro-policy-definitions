@@ -6,17 +6,17 @@ ip ssh version 2
 #[must_not_match_regex]
 /^\s*transport input .*\b(telnet|all)\b/m
 
-// No VTY line block sets an exec-timeout other than the 10 0 default
+// No VTY line block sets an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)
 #[evaluate_block]
 scope: ^line vty
 not:
-  regex: '/^\s*exec-timeout (?!10 0\s*$)/m'
+  regex: '/^\s*exec-timeout (?!(?:[1-9](?: [1-5]?[0-9])?|10(?: 0)?)\s*$)/m'
 
-// The console line does not set an exec-timeout other than the 10 0 default
+// The console line does not set an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)
 #[evaluate_block]
 scope: ^line con
 not:
-  regex: '/^\s*exec-timeout (?!10 0\s*$)/m'
+  regex: '/^\s*exec-timeout (?!(?:[1-9](?: [1-5]?[0-9])?|10(?: 0)?)\s*$)/m'
 
 // A MOTD banner is configured (banner motd)
 #[must_match_regex]

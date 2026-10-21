@@ -1,0 +1,146 @@
+## Last commit: 2026-09-16 11:57:00 IST by netops
+set version 15.1X53-D59.4
+set system host-name br-gwy-sw02
+set system domain-name br-gwy.corp.example.net
+set system time-zone Europe/Dublin
+set system root-authentication encrypted-password "$1$Ex4mpLe0$NotARealHashValue0000/"
+set system login class noc-readonly permissions view
+set system login class noc-readonly permissions view-configuration
+set system login user netops uid 2001
+set system login user netops class super-user
+set system login user netops authentication encrypted-password "$6$32b7ebb4$c0f3a49001d869004263d5866fc5bcc233821836c4e84fdf0e51e7fe50676a51eb6bbf8f84423fe7f216f6"
+set system login user remote-noc uid 2002
+set system login user remote-noc class noc-readonly
+set system services ssh protocol-version [ v1 v2 ]
+set system services ssh connection-limit 10
+set system services ssh rate-limit 5
+set system services netconf ssh
+set system services ftp
+set system services telnet
+set system name-server 192.0.2.53
+set system name-server 192.0.2.54
+set system syslog console any notice
+set system syslog file messages any notice
+set system syslog file messages authorization info
+set system syslog file interactive-commands interactive-commands any
+set system ntp server 192.0.2.1 prefer
+set system ntp server 192.0.2.2
+set system ntp source-address 192.0.2.22
+set interfaces ge-0/0/0 description "Till 1"
+set interfaces ge-0/0/0 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/0 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/1 description "Till 2"
+set interfaces ge-0/0/1 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/1 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/2 description "Back office PC"
+set interfaces ge-0/0/2 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/2 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/3 description "Wireless AP 4"
+set interfaces ge-0/0/3 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/3 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/4 description "Wireless AP 5"
+set interfaces ge-0/0/4 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/4 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/5 description "Stock room scanner"
+set interfaces ge-0/0/5 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/5 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/6 description "Manager desk"
+set interfaces ge-0/0/6 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/6 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/7 description "CCTV recorder"
+set interfaces ge-0/0/7 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/7 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/8 description "Door access controller"
+set interfaces ge-0/0/8 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/8 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/9 description "Digital signage"
+set interfaces ge-0/0/9 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/9 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/10 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/10 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/11 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/11 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/12 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/12 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/13 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/13 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/14 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/14 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/15 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/15 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/16 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/16 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/17 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/17 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/18 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/18 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/19 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/19 unit 0 family ethernet-switching vlan members DATA
+set interfaces ge-0/0/20 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/20 unit 0 family ethernet-switching vlan members PRINTERS
+set interfaces ge-0/0/21 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/21 unit 0 family ethernet-switching vlan members PRINTERS
+set interfaces ge-0/0/22 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/22 unit 0 family ethernet-switching vlan members PRINTERS
+set interfaces ge-0/0/23 unit 0 family ethernet-switching interface-mode access
+set interfaces ge-0/0/23 unit 0 family ethernet-switching vlan members PRINTERS
+set interfaces xe-0/1/0 description "Uplink to br-gwy-fw01 ge-0/0/1"
+set interfaces xe-0/1/0 unit 0 family ethernet-switching interface-mode trunk
+set interfaces xe-0/1/0 unit 0 family ethernet-switching vlan members DATA
+set interfaces xe-0/1/0 unit 0 family ethernet-switching vlan members VOICE
+set interfaces xe-0/1/0 unit 0 family ethernet-switching vlan members PRINTERS
+set interfaces xe-0/1/0 unit 0 family ethernet-switching vlan members MGMT
+set interfaces irb unit 99 description "Switch management"
+set interfaces irb unit 99 family inet address 192.0.2.22/24
+set interfaces lo0 unit 0 family inet filter input PROTECT-RE
+set snmp location "Galway office"
+set snmp contact "noc@corp.example.net"
+set snmp community public authorization read-only
+set snmp v3 usm local-engine user nms-poller authentication-md5 authentication-key "$9$GuEGf6rS6CU3XUmORTxLofxu2xZ5"
+set snmp v3 usm local-engine user nms-poller privacy-des privacy-key "$9$5RYYn3dcSrq2PGtOQGlMZEyQHRyl"
+set snmp v3 vacm security-to-group security-model usm security-name nms-poller group NMS-GROUP
+set snmp v3 vacm access group NMS-GROUP default-context-prefix security-model usm security-level privacy read-view ALL
+set snmp v3 target-address NMS address 192.0.2.60
+set snmp v3 target-address NMS tag-list nms-traps
+set snmp v3 target-address NMS target-parameters NMS-PARAMS
+set snmp view ALL oid .1 include
+set routing-options static route 0.0.0.0/0 next-hop 192.0.2.254
+set protocols lldp interface all
+set protocols lldp-med interface all
+set protocols rstp bridge-priority 32k
+set protocols rstp interface all edge
+set protocols rstp bpdu-block-on-edge
+set switch-options voip interface access-ports vlan VOICE
+set switch-options voip interface access-ports forwarding-class expedited-forwarding
+set policy-options prefix-list MGMT-HOSTS 192.0.2.0/24
+set policy-options prefix-list MGMT-HOSTS 198.51.100.0/24
+set policy-options prefix-list NTP-SERVERS 192.0.2.1/32
+set policy-options prefix-list NTP-SERVERS 192.0.2.2/32
+set firewall family inet filter PROTECT-RE term ALLOW-SSH from source-prefix-list MGMT-HOSTS
+set firewall family inet filter PROTECT-RE term ALLOW-SSH from protocol tcp
+set firewall family inet filter PROTECT-RE term ALLOW-SSH from destination-port ssh
+set firewall family inet filter PROTECT-RE term ALLOW-SSH then accept
+set firewall family inet filter PROTECT-RE term ALLOW-NTP from source-prefix-list NTP-SERVERS
+set firewall family inet filter PROTECT-RE term ALLOW-NTP from protocol udp
+set firewall family inet filter PROTECT-RE term ALLOW-NTP from port ntp
+set firewall family inet filter PROTECT-RE term ALLOW-NTP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP from source-address 192.0.2.60/32
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP from protocol udp
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP from destination-port snmp
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-ICMP from protocol icmp
+set firewall family inet filter PROTECT-RE term ALLOW-ICMP then policer ICMP-1M
+set firewall family inet filter PROTECT-RE term ALLOW-ICMP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-ESTABLISHED from protocol tcp
+set firewall family inet filter PROTECT-RE term ALLOW-ESTABLISHED from tcp-established
+set firewall family inet filter PROTECT-RE term ALLOW-ESTABLISHED then accept
+set firewall family inet filter PROTECT-RE term DENY-ALL then syslog
+set firewall family inet filter PROTECT-RE term DENY-ALL then discard
+set firewall policer ICMP-1M if-exceeding bandwidth-limit 1m
+set firewall policer ICMP-1M if-exceeding burst-size-limit 15k
+set firewall policer ICMP-1M then discard
+set vlans DATA vlan-id 10
+set vlans VOICE vlan-id 20
+set vlans PRINTERS vlan-id 30
+set vlans MGMT vlan-id 99
+set vlans MGMT l3-interface irb.99

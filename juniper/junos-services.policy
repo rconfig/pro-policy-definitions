@@ -1,0 +1,7 @@
+// No legacy service is enabled (fails on set system services finger, ftp, rlogin, rsh or rexec)
+#[must_not_match_regex]
+/^set system services (finger|ftp|rexec|rlogin|rsh)( |$)/m
+
+// ICMP redirects are disabled (set system no-redirects)
+#[must_match_single_string]
+set system no-redirects

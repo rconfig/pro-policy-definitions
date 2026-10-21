@@ -11,6 +11,7 @@ rules:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 2
     description: 'No transport input line permits Telnet (telnet or all)'
@@ -19,22 +20,25 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 3
-    description: 'No VTY line block sets an exec-timeout other than the 10 0 default'
+    description: 'No VTY line block sets an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)'
     method: evaluate_block
     results:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 4
-    description: 'The console line does not set an exec-timeout other than the 10 0 default'
+    description: 'The console line does not set an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)'
     method: evaluate_block
     results:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 5
     description: 'A MOTD banner is configured (banner motd)'
@@ -43,6 +47,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 6
     description: 'A login banner is configured (banner login)'
@@ -51,3 +56,4 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass

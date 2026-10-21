@@ -17,7 +17,7 @@ rules:
     references:
       nist_800_53: ["AU-2"]
       hipaa: ["164.312(b)"]
-  - description: "Log timestamps use datetime msec (service timestamps log datetime msec)"
+  - description: "Log timestamps use datetime msec, with or without other options (service timestamps log datetime msec ...)"
     references:
       nist_800_53: ["AU-3"]
       hipaa: ["164.312(b)"]

@@ -1,0 +1,7 @@
+// The authentication order starts with RADIUS or TACACS+ and ends with local password fallback (set system authentication-order)
+#[must_match_regex]
+/^set system authentication-order \[ (radius|tacplus) (.* )?password \]$/m
+
+// No root or local user password uses an MD5 hash (fails on encrypted-password "$1$...")
+#[must_not_match_regex]
+/^set system (root-authentication|login user \S+ authentication) encrypted-password "?\$1\$/m

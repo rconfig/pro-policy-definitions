@@ -1,0 +1,30 @@
+title: "Junos management access"
+description: "SSH enabled without protocol version 1, SSH cipher and MAC lists with no weak algorithms, no Telnet, a login banner, and a login class idle-timeout of 10 minutes or less."
+vendor: juniper
+os: junos
+config_format: junos-display-set
+# collection_command: Pro app/Demo/Platforms/Junos/JunosGenerator.php:106 (primaryCommand)
+collection_command: "show configuration | display set"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic display set samples only. The rules have not yet been checked against output from a real Junos device."
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "SSH is enabled and SSH protocol version 1 is not (set system services ssh, no protocol-version v1)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+  - description: "SSH ciphers and MACs are set, and none is CBC, 3DES, arcfour, blowfish, MD5, SHA-1 or RIPEMD-160 based"
+    references: {}
+  - description: "Telnet is not enabled (fails on set system services telnet)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+  - description: "A login banner is configured (set system login message)"
+    references: {}
+  - description: "A login class sets an idle-timeout of 1 to 10 minutes, and no class sets 0 or more than 10"
+    references: {}

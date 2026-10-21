@@ -11,6 +11,7 @@ rules:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 2
     description: 'The HTTPS server is not enabled (line ip http secure-server is absent)'
@@ -19,6 +20,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 3
     description: 'The finger service is not enabled (fails on a service finger or ip finger line)'
@@ -27,6 +29,7 @@ rules:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 4
     description: 'The BOOTP server is disabled (no ip bootp server)'
@@ -35,6 +38,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: fail
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 5
     description: 'TCP small servers are not enabled (line service tcp-small-servers is absent)'
@@ -43,6 +47,7 @@ rules:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 6
     description: 'UDP small servers are not enabled (line service udp-small-servers is absent)'
@@ -51,6 +56,7 @@ rules:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 7
     description: 'The PAD service is disabled (no service pad)'
@@ -59,6 +65,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: fail
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 8
     description: 'IP source routing is disabled (no ip source-route)'
@@ -67,6 +74,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: fail
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 9
     description: 'The identd service is not enabled (line ip identd is absent)'
@@ -75,6 +83,7 @@ rules:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 10
     description: 'CDP is disabled globally (no cdp run)'
@@ -83,6 +92,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: fail
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 11
     description: 'Directed broadcast is not enabled on any interface (fails on any ip directed-broadcast line)'
@@ -91,3 +101,4 @@ rules:
       cisco/c1921-ios157-lab.txt: pass
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass

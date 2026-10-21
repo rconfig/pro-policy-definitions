@@ -1,0 +1,328 @@
+#config-version=FG60F-7.4.4-FW-build2662-240514:opmode=0:vdom=0:user=gwy-admin
+#conf_file_ver=7341058
+#buildno=2662
+#global_vdom=1
+config system global
+    set admin-concurrent enable
+    set admin-console-timeout 300
+    set admin-https-redirect enable
+    set admin-https-ssl-versions tlsv1-2 tlsv1-3
+    set admin-lockout-duration 300
+    set admin-lockout-threshold 3
+    set admin-port 80
+    set admin-scp enable
+    set admin-sport 443
+    set admin-ssh-port 22
+    set admin-ssh-v1 disable
+    set admin-telnet disable
+    set admintimeout 10
+    set alias "branch-fw01"
+    set gui-theme neutrino
+    set hostname "branch-fw01"
+    set pre-login-banner enable
+    set strong-crypto enable
+    set switch-controller enable
+    set timezone "Europe/Dublin"
+end
+config system accprofile
+    edit "prof_admin"
+        set secfabgrp read-write
+        set ftviewgrp read-write
+        set authgrp read-write
+        set sysgrp read
+        set netgrp read-write
+        set loggrp read-write
+        set fwgrp read-write
+        set vpngrp read-write
+        set utmgrp read-write
+        set wifi read-write
+    next
+end
+config system interface
+    edit "wan1"
+        set vdom "root"
+        set ip 203.0.113.2 255.255.255.248
+        set allowaccess ping
+        set type physical
+        set role wan
+        set alias "Internet"
+    next
+    edit "wan2"
+        set vdom "root"
+        set status down
+        set type physical
+        set role wan
+    next
+    edit "mgmt"
+        set vdom "root"
+        set ip 192.0.2.6 255.255.255.0
+        set allowaccess ping https ssh snmp
+        set type physical
+        set dedicated-to management
+        set role lan
+    next
+    edit "internal1"
+        set vdom "root"
+        set ip 198.51.100.1 255.255.255.192
+        set allowaccess ping https ssh
+        set type physical
+        set alias "LAN"
+        set device-identification enable
+        set role lan
+    next
+    edit "internal5"
+        set vdom "root"
+        set ip 203.0.113.65 255.255.255.192
+        set allowaccess ping
+        set type physical
+        set alias "DMZ"
+        set role dmz
+    next
+    edit "ha1"
+        set vdom "root"
+        set type physical
+    next
+    edit "ha2"
+        set vdom "root"
+        set type physical
+    next
+    edit "ssl.root"
+        set vdom "root"
+        set type tunnel
+        set alias "SSL VPN interface"
+    next
+end
+config system password-policy
+    set status enable
+    set apply-to admin-password
+    set minimum-length 12
+    set min-lower-case-letter 1
+    set min-upper-case-letter 1
+    set min-non-alphanumeric 1
+    set min-number 1
+    set expire-status enable
+    set expire-day 90
+    set reuse-password disable
+end
+config system admin
+    edit "gwy-admin"
+        set accprofile "super_admin"
+        set vdom "root"
+        set trusthost1 192.0.2.0 255.255.255.0
+        set trusthost2 198.51.100.0 255.255.255.192
+        set two-factor fortitoken
+        set password ENC UzUcR4w68sd3vXAdXvWverlXQvkQQh9yPD5ZB6us5DsrVsHVm1P6u2/qu5V+NbWK
+    next
+    edit "partner-support"
+        set accprofile "prof_admin"
+        set vdom "root"
+        set trusthost1 198.51.100.64 255.255.255.224
+        set two-factor fortitoken
+        set password ENC hcfCLiw8S/uVLYaNcte49/AqRIck3MMoD/VW0kUoxjXLwmrMbaybO10G6hKgyklI
+    next
+end
+config system dns
+    set primary 192.0.2.53
+    set secondary 192.0.2.54
+    set protocol cleartext dot
+    set server-hostname "dns.example.net"
+end
+config system ntp
+    set ntpsync enable
+    set type custom
+    set syncinterval 60
+    config ntpserver
+        edit 1
+            set server "192.0.2.1"
+        next
+        edit 2
+            set server "192.0.2.2"
+        next
+    end
+    set source-ip 192.0.2.6
+end
+config system snmp sysinfo
+    set status enable
+    set description "Galway office perimeter firewall"
+    set contact-info "it@example.net"
+    set location "Galway office, GWY"
+end
+config system snmp user
+    edit "nms-poller"
+        set notify-hosts 192.0.2.60
+        set security-level auth-priv
+        set auth-proto sha256
+        set auth-pwd ENC Rm9ydGlPU0V4YW1wbGVBdXRoS2V5Tm90UmVhbDAwMDE=
+        set priv-proto aes256
+        set priv-pwd ENC Rm9ydGlPU0V4YW1wbGVQcml2S2V5Tm90UmVhbDAwMDE=
+    next
+end
+config firewall address
+    edit "all"
+        set uuid df9f34ca-a181-51ee-9449-436a6f0eedfa
+    next
+    edit "LAN_Subnet"
+        set subnet 198.51.100.0 255.255.255.192
+    next
+    edit "DMZ_Subnet"
+        set subnet 203.0.113.64 255.255.255.192
+    next
+    edit "SRV-FS01"
+        set subnet 198.51.100.20 255.255.255.255
+    next
+    edit "SRV-APP01"
+        set subnet 198.51.100.25 255.255.255.255
+    next
+    edit "DMZ-WEB01"
+        set subnet 203.0.113.74 255.255.255.255
+    next
+    edit "Mgmt_Subnet"
+        set subnet 192.0.2.0 255.255.255.0
+    next
+    edit "Tax-Portal"
+        set type fqdn
+        set fqdn "tax.example.com"
+    next
+    edit "Accounts-Cloud"
+        set type fqdn
+        set fqdn "accounts.example.com"
+    next
+    edit "SSLVPN_TUNNEL_ADDR1"
+        set type iprange
+        set start-ip 203.0.113.200
+        set end-ip 203.0.113.210
+    next
+end
+config firewall service custom
+    edit "Accounts-App"
+        set category "Network Services"
+        set tcp-portrange 8443
+    next
+end
+config firewall vip
+    edit "VIP-WEB01-HTTPS"
+        set extip 203.0.113.2
+        set mappedip "203.0.113.74"
+        set extintf "wan1"
+        set portforward enable
+        set extport 443
+        set mappedport 443
+    next
+end
+config user radius
+    edit "RADIUS-01"
+        set server "192.0.2.30"
+        set secret ENC Rm9ydGlPU0V4YW1wbGVSYWRpdXNTZWNyZXQwMDAx
+        set auth-type auto
+        set source-ip "192.0.2.6"
+    next
+end
+config user group
+    edit "VPN-Users"
+        set member "remote-staff"
+    next
+end
+config vpn ssl settings
+    set servercert "Fortinet_Factory"
+    set tunnel-ip-pools "SSLVPN_TUNNEL_ADDR1"
+    set dns-server1 198.51.100.10
+    set port 10443
+    set source-interface "wan1"
+    set source-address "all"
+    set default-portal "tunnel-access"
+    set login-attempt-limit 3
+    set login-block-time 300
+end
+config firewall policy
+    edit 1
+        set name "LAN-to-Internet"
+        set srcintf "internal1"
+        set dstintf "wan1"
+        set action accept
+        set srcaddr "LAN_Subnet"
+        set dstaddr "all"
+        set schedule "always"
+        set service "ALL"
+        set utm-status enable
+        set ssl-ssh-profile "certificate-inspection"
+        set av-profile "default"
+        set ips-sensor "default"
+        set logtraffic all
+        set nat enable
+    next
+    edit 2
+        set name "LAN-to-DMZ-Web"
+        set srcintf "internal1"
+        set dstintf "internal5"
+        set action accept
+        set srcaddr "LAN_Subnet"
+        set dstaddr "DMZ-WEB01"
+        set schedule "always"
+        set service "HTTPS"
+        set logtraffic all
+    next
+    edit 3
+        set name "Web-Inbound"
+        set srcintf "wan1"
+        set dstintf "internal5"
+        set action accept
+        set srcaddr "all"
+        set dstaddr "VIP-WEB01-HTTPS"
+        set schedule "always"
+        set service "HTTPS"
+        set utm-status enable
+        set ssl-ssh-profile "certificate-inspection"
+        set av-profile "default"
+        set ips-sensor "default"
+        set logtraffic all
+    next
+    edit 4
+        set name "VPN-to-LAN"
+        set srcintf "ssl.root"
+        set dstintf "internal1"
+        set action accept
+        set srcaddr "SSLVPN_TUNNEL_ADDR1"
+        set dstaddr "LAN_Subnet"
+        set schedule "always"
+        set service "ALL"
+        set groups "VPN-Users"
+        set logtraffic all
+    next
+    edit 5
+        set name "DMZ-to-Internet"
+        set srcintf "internal5"
+        set dstintf "wan1"
+        set action accept
+        set srcaddr "DMZ_Subnet"
+        set dstaddr "all"
+        set schedule "always"
+        set service "HTTP" "HTTPS" "DNS"
+        set utm-status enable
+        set ssl-ssh-profile "certificate-inspection"
+        set av-profile "default"
+        set ips-sensor "default"
+        set logtraffic all
+        set nat enable
+    next
+end
+config log syslogd setting
+    set status enable
+    set server "192.0.2.50"
+    set mode udp
+    set port 514
+    set source-ip 192.0.2.6
+end
+config log syslogd filter
+    set severity information
+end
+config log setting
+    set fwpolicy-implicit-log enable
+    set local-in-allow enable
+    set local-in-deny-unicast enable
+end
+config router static
+    edit 1
+        set gateway 203.0.113.1
+        set device "wan1"
+    next
+end

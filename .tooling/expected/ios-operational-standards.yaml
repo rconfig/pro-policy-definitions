@@ -11,6 +11,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: fail
   -
     rule: 2
     description: 'Syslog servers are set to your standard (replace 192.0.2.20 and 192.0.2.21)'
@@ -19,6 +20,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: fail
   -
     rule: 3
     description: 'DNS servers are set to your standard (replace 192.0.2.30 and 192.0.2.31)'
@@ -27,6 +29,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: fail
   -
     rule: 4
     description: 'A login banner is set (banner login, any text; nothing to replace)'
@@ -35,6 +38,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 5
     description: 'Every interface that is not shut down has a description (nothing to replace)'
@@ -43,6 +47,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 6
     description: 'The hostname follows your naming pattern (replace the example pattern [a-z]{3}-(rtr|sw)[0-9]{2}, for example dub-rtr01)'
@@ -51,6 +56,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: fail
   -
     rule: 7
     description: 'An SNMP location is set (snmp-server location, any text; nothing to replace)'
@@ -59,3 +65,4 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: pass
       cisco/ios157-operational-standards-synthetic.txt: pass
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass

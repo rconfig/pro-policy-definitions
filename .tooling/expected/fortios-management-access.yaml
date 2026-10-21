@@ -5,36 +5,33 @@ policy: fortinet/fortios-management-access.policy
 rules:
   -
     rule: 1
-    description: 'Admin HTTPS is enabled, admin HTTP is disabled and strong crypto is enabled (config system global)'
-    method: evaluate_block
-    results:
-      fortinet/fg100f-fortios744-synthetic.txt: fail
-      fortinet/fortios744-operational-standards-synthetic.txt: fail
-  -
-    rule: 2
     description: 'The admin idle timeout is 10 minutes (set admintimeout 10)'
     method: evaluate_block
     results:
       fortinet/fg100f-fortios744-synthetic.txt: fail
       fortinet/fortios744-operational-standards-synthetic.txt: pass
+      fortinet/fg60f-fortios744-hardened-synthetic.txt: pass
   -
-    rule: 3
-    description: 'The login banner and MOTD are enabled (set pre-login-banner enable, set motd enable)'
-    method: evaluate_block
-    results:
-      fortinet/fg100f-fortios744-synthetic.txt: fail
-      fortinet/fortios744-operational-standards-synthetic.txt: fail
-  -
-    rule: 4
+    rule: 2
     description: 'No interface allowaccess line permits telnet, http, rsh or rexec'
     method: must_not_match_regex
     results:
       fortinet/fg100f-fortios744-synthetic.txt: pass
       fortinet/fortios744-operational-standards-synthetic.txt: pass
+      fortinet/fg60f-fortios744-hardened-synthetic.txt: pass
   -
-    rule: 5
-    description: 'An admin address group is set (set admin-addrgrp)'
+    rule: 3
+    description: 'Strong crypto is enabled (set strong-crypto enable)'
+    method: evaluate_block
+    results:
+      fortinet/fg100f-fortios744-synthetic.txt: pass
+      fortinet/fortios744-operational-standards-synthetic.txt: pass
+      fortinet/fg60f-fortios744-hardened-synthetic.txt: pass
+  -
+    rule: 4
+    description: 'The pre-login banner is enabled (set pre-login-banner enable)'
     method: evaluate_block
     results:
       fortinet/fg100f-fortios744-synthetic.txt: fail
-      fortinet/fortios744-operational-standards-synthetic.txt: fail
+      fortinet/fortios744-operational-standards-synthetic.txt: pass
+      fortinet/fg60f-fortios744-hardened-synthetic.txt: pass

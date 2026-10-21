@@ -1,0 +1,24 @@
+title: "Junos AAA and local credentials"
+description: "An authentication order that starts with RADIUS or TACACS+ and falls back to local passwords, and no MD5 password hashes."
+vendor: juniper
+os: junos
+config_format: junos-display-set
+# collection_command: Pro app/Demo/Platforms/Junos/JunosGenerator.php:106 (primaryCommand)
+collection_command: "show configuration | display set"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic display set samples only. The rules have not yet been checked against output from a real Junos device."
+# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
+# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
+# rule was published with; they do not claim the rule fully meets the control.
+rules:
+  - description: "The authentication order starts with RADIUS or TACACS+ and ends with local password fallback (set system authentication-order)"
+    references:
+      nist_800_53: ["AC-2"]
+      hipaa: ["164.312(a)(1)"]
+      nist_csf: ["PR.AC-1"]
+  - description: "No root or local user password uses an MD5 hash (fails on encrypted-password \"$1$...\")"
+    references:
+      nist_800_53: ["IA-5"]

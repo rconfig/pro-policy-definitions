@@ -1,0 +1,3 @@
+// Every interface is disabled or has a description (set interfaces <name> disable or set interfaces <name> description)
+#[must_not_match_regex]
+/(?:\A|^(?!set interfaces (\S+) [^\n]*\nset interfaces \1 )[^\n]*\n)set interfaces (?!interface-range )(\S+) (?!disable$|description )[^\n]*(?:\nset interfaces \2 (?!disable$|description )[^\n]*)*$(?!\nset interfaces \2 )/m

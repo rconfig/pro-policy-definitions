@@ -1,0 +1,31 @@
+// SSH is enabled and SSH protocol version 1 is not (set system services ssh, no protocol-version v1)
+#[evaluate_block]
+all:
+  - regex: '/^set system services ssh( |$)/m'
+  - not:
+      regex: '/^set system services ssh protocol-version .*\bv1\b/m'
+
+// SSH ciphers and MACs are set, and none is CBC, 3DES, arcfour, blowfish, MD5, SHA-1 or RIPEMD-160 based
+#[evaluate_block]
+all:
+  - regex: '/^set system services ssh ciphers /m'
+  - regex: '/^set system services ssh macs /m'
+  - not:
+      regex: '/^set system services ssh ciphers .*(cbc|3des|arcfour|blowfish)/m'
+  - not:
+      regex: '/^set system services ssh macs .*\bhmac-(md5|sha1|ripemd160)\b/m'
+
+// Telnet is not enabled (fails on set system services telnet)
+#[must_not_match_regex]
+/^set system services telnet( |$)/m
+
+// A login banner is configured (set system login message)
+#[must_match_regex]
+/^set system login message .+/m
+
+// A login class sets an idle-timeout of 1 to 10 minutes, and no class sets 0 or more than 10
+#[evaluate_block]
+all:
+  - regex: '/^set system login class \S+ idle-timeout ([1-9]|10)$/m'
+  - not:
+      regex: '/^set system login class \S+ idle-timeout (0|1[1-9]|[2-9][0-9]|[0-9]{3,})$/m'

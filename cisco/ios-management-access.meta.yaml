@@ -1,5 +1,5 @@
 title: "Cisco IOS management access"
-description: "SSH version 2, no Telnet on any line, no exec-timeout other than the 10 0 default on the console or any VTY line, and MOTD and login banners."
+description: "SSH version 2, no Telnet on any line, an exec-timeout of 1 to 10 minutes on the console and every VTY line, and MOTD and login banners."
 vendor: cisco
 os: ios
 config_format: ios-running-config
@@ -21,10 +21,10 @@ rules:
     references:
       nist_800_53: ["AC-17"]
       hipaa: ["164.312(a)(1)"]
-  - description: "No VTY line block sets an exec-timeout other than the 10 0 default"
+  - description: "No VTY line block sets an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)"
     references:
       nist_800_53: ["AC-3"]
-  - description: "The console line does not set an exec-timeout other than the 10 0 default"
+  - description: "The console line does not set an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)"
     references:
       nist_800_53: ["AC-3"]
   - description: "A MOTD banner is configured (banner motd)"

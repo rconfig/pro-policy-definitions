@@ -1,0 +1,11 @@
+// No SNMPv1 or SNMPv2c community is configured (fails on set snmp community)
+#[must_not_match_regex]
+/^set snmp community /m
+
+// SNMPv3 USM users use SHA authentication and AES-128 privacy, and none uses MD5, DES, 3DES or none
+#[evaluate_block]
+all:
+  - regex: '/^set snmp v3 usm local-engine user \S+ authentication-sha/m'
+  - regex: '/^set snmp v3 usm local-engine user \S+ privacy-aes128 /m'
+  - not:
+      regex: '/^set snmp v3 usm \S+(?: \S+)? user \S+ (authentication-(md5|none)|privacy-(des|3des|none))\b/m'

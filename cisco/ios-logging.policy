@@ -2,9 +2,9 @@
 #[must_match_regex]
 /^logging host \S+/m
 
-// Log timestamps use datetime msec (service timestamps log datetime msec)
-#[must_match_single_string]
-service timestamps log datetime msec
+// Log timestamps use datetime msec, with or without other options (service timestamps log datetime msec ...)
+#[must_match_regex]
+/^service timestamps log datetime(?: \S+)*? msec(?: \S+)*$/m
 
 // Console logging is off (no logging console line at any level)
 #[must_not_match_regex]
