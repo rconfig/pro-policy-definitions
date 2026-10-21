@@ -19,5 +19,7 @@ jobs:
         run: pip install pyyaml==6.0.2
       - name: Run lint tests
         run: python .tooling/scripts/test_lint.py
+      - name: Check generated framework files
+        run: python .tooling/scripts/generate_frameworks.py --check
       - name: Lint policy definitions
         run: python .tooling/scripts/lint.py

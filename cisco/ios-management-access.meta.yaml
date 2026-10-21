@@ -9,25 +9,31 @@ kind: hardening
 min_rconfig_version: 8.3.0
 status: lab-tested
 framework_claim: null
-# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
-# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
-# rule was published with; they do not claim the rule fully meets the control.
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
 rules:
   - description: "SSH version 2 is enabled (ip ssh version 2)"
     references:
       nist_800_53: ["AC-17"]
       hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.24"]
   - description: "No transport input line permits Telnet (telnet or all)"
     references:
       nist_800_53: ["AC-17"]
       hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.5"]
   - description: "No VTY line block sets an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)"
     references:
       nist_800_53: ["AC-3"]
+      iso27001: ["A.8.5"]
   - description: "The console line does not set an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)"
     references:
       nist_800_53: ["AC-3"]
+      iso27001: ["A.8.5"]
   - description: "A MOTD banner is configured (banner motd)"
-    references: {}
+    references:
+      iso27001: ["A.8.5"]
   - description: "A login banner is configured (banner login)"
-    references: {}
+    references:
+      iso27001: ["A.8.5"]

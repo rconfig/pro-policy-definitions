@@ -4,7 +4,9 @@
 Usage: python3 .tooling/scripts/lint.py [--root DIR]
 
 Checks every *.policy file outside dot-folders, plus the metadata, samples and expected-results
-files that go with them, and that every visible top-level folder holds a template.
+files that go with them, and that every visible top-level folder holds a template. Framework files
+must match what generate_frameworks.py writes, and their expected results must match those of their
+source topic rules.
 Drafts in .drafts/ are not checked as policies; only their sidecar pairing is checked. Each check
 mirrors rConfig V8 Pro behaviour; the Pro file and line are cited next to each check.
 Pro line numbers refer to the commit recorded in .tooling/scripts/methods.json.
@@ -20,6 +22,8 @@ import sys
 
 import yaml
 
+import generate_frameworks
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
 
@@ -31,7 +35,7 @@ CONFIG_FORMATS = (
     'ios-running-config', 'junos-display-set', 'junos-brace',
     'fortios-full-config', 'routeros-export', 'bigip-scf',
 )
-KINDS = ('hardening', 'operational', 'template')
+KINDS = ('hardening', 'operational', 'template', 'framework')
 STATUSES = ('lab-tested', 'synthetic-tested', 'under-review')
 SOURCES = ('sanitised-real', 'lab', 'synthetic')
 META_REQUIRED = (
@@ -407,6 +411,14 @@ def lint_meta(meta_path, rel, used_methods, methods):
         issues.append(Issue(rel, None, 'metadata', f"status must be one of {', '.join(STATUSES)}"))
     if meta.get('status') == 'under-review' and not meta.get('notes'):
         issues.append(Issue(rel, None, 'metadata', 'status under-review needs a notes entry'))
+    if meta.get('kind') == 'framework':
+        # Framework files are generated from the topic files (generate_frameworks.py), never written by hand.
+        if meta.get('generated') is not True:
+            issues.append(Issue(rel, None, 'metadata', 'kind framework needs generated: true'))
+        if not isinstance(meta.get('sources'), list) or not meta.get('sources'):
+            issues.append(Issue(rel, None, 'metadata', 'kind framework needs a sources list'))
+    elif 'generated' in meta:
+        issues.append(Issue(rel, None, 'metadata', 'only kind framework files are generated'))
     claim = meta.get('framework_claim', None)
     if claim is not None and (not isinstance(claim, dict) or not isinstance(claim.get('ids_local'), bool)):
         issues.append(Issue(rel, None, 'metadata', 'framework_claim must be null or a mapping with a boolean ids_local'))
@@ -493,6 +505,49 @@ def lint_draft_pairing(root):
     return issues
 
 
+def lint_generated(root):
+    """Framework files must be exactly what generate_frameworks.py writes from the topic files."""
+    return [Issue(rel, None, 'generated', msg) for rel, msg in generate_frameworks.check(root)]
+
+
+def lint_generated_results(root):
+    """Each generated rule must have the same expected result as its source topic rule on every sample."""
+    issues = []
+    expected_dir = os.path.join(root, EXPECTED_DIR)
+    for meta_path in sorted(glob_meta(root)):
+        meta = read_yaml(meta_path) or {}
+        if not meta.get('generated'):
+            continue
+        rel = os.path.relpath(meta_path, root)
+        own = os.path.join(expected_dir, os.path.basename(meta_path)[:-len('.meta.yaml')] + '.yaml')
+        if not os.path.exists(own):
+            continue  # reported by the expected-pair check
+        own_rules = (read_yaml(own) or {}).get('rules') or []
+        for i, entry in enumerate(meta.get('rules') or []):
+            source = str(entry.get('source', ''))
+            src_path = os.path.join(expected_dir, os.path.basename(source)[:-len('.policy')] + '.yaml')
+            if not os.path.exists(src_path):
+                issues.append(Issue(rel, None, 'generated-results', f'no expected results for source {source}'))
+                continue
+            src = {r.get('description'): r.get('results') for r in (read_yaml(src_path) or {}).get('rules') or []}
+            want = src.get(entry.get('source_rule'))
+            got = own_rules[i].get('results') if i < len(own_rules) else None
+            if want is None or got != want:
+                issues.append(Issue(rel, None, 'generated-results',
+                                    f"rule {i + 1} ({entry.get('description')}) does not match {source} in .tooling/expected/"))
+    return issues
+
+
+def glob_meta(root):
+    for name in sorted(os.listdir(root)):
+        folder = os.path.join(root, name)
+        if name.startswith('.') or not os.path.isdir(folder):
+            continue
+        for f in sorted(os.listdir(folder)):
+            if f.endswith('.meta.yaml'):
+                yield os.path.join(folder, f)
+
+
 def lint_repo(root, methods):
     issues = []
     policies, metas = {}, {}
@@ -520,6 +575,8 @@ def lint_repo(root, methods):
         issues.append(Issue(os.path.relpath(metas[stem], root), None, 'metadata-pair', 'no matching .policy file'))
 
     issues += lint_draft_pairing(root)
+    issues += lint_generated(root)
+    issues += lint_generated_results(root)
     issues += lint_import_folders(root)
     sample_issues, _ = lint_samples(root)
     issues += sample_issues

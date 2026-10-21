@@ -1,0 +1,46 @@
+// HIPAA 164.312(a)(1): The authentication order starts with RADIUS or TACACS+ and ends with local password fallback (set system authentication-order)
+#[must_match_regex]
+/^set system authentication-order \[ (radius|tacplus) (.* )?password \]$/m
+
+// HIPAA 164.312(a)(1): SSH is enabled and SSH protocol version 1 is not (set system services ssh, no protocol-version v1)
+#[evaluate_block]
+all:
+  - regex: '/^set system services ssh( |$)/m'
+  - not:
+      regex: '/^set system services ssh protocol-version .*\bv1\b/m'
+
+// HIPAA 164.312(a)(1): Telnet is not enabled (fails on set system services telnet)
+#[must_not_match_regex]
+/^set system services telnet( |$)/m
+
+// HIPAA 164.312(b): A remote syslog host receives any facility at info or notice (set system syslog host ... any info or any notice)
+#[must_match_regex]
+/^set system syslog host \S+ any (info|notice)$/m
+
+// HIPAA 164.312(b): A remote syslog host receives authorization messages at info or any (set system syslog host ... authorization info)
+#[must_match_regex]
+/^set system syslog host \S+ authorization (info|any)$/m
+
+// HIPAA 164.312(b): Syslog timestamps include milliseconds (set system syslog time-format millisecond)
+#[must_match_regex]
+/^set system syslog time-format (year )?millisecond$/m
+
+// HIPAA 164.312(b): Console logging is off (fails on set system syslog console)
+#[must_not_match_regex]
+/^set system syslog console /m
+
+// HIPAA 164.312(c)(1): No legacy service is enabled (fails on set system services finger, ftp, rlogin, rsh or rexec)
+#[must_not_match_regex]
+/^set system services (finger|ftp|rexec|rlogin|rsh)( |$)/m
+
+// HIPAA 164.312(e)(1): No SNMPv1 or SNMPv2c community is configured (fails on set snmp community)
+#[must_not_match_regex]
+/^set snmp community /m
+
+// HIPAA 164.312(e)(1): SNMPv3 USM users use SHA authentication and AES-128 privacy, and none uses MD5, DES, 3DES or none
+#[evaluate_block]
+all:
+  - regex: '/^set snmp v3 usm local-engine user \S+ authentication-sha/m'
+  - regex: '/^set snmp v3 usm local-engine user \S+ privacy-aes128 /m'
+  - not:
+      regex: '/^set snmp v3 usm \S+(?: \S+)? user \S+ (authentication-(md5|none)|privacy-(des|3des|none))\b/m'

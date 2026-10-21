@@ -9,16 +9,18 @@ kind: hardening
 min_rconfig_version: 8.3.0
 status: synthetic-tested
 framework_claim: null
-# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
-# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
-# rule was published with; they do not claim the rule fully meets the control.
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
 rules:
   - description: "Remote syslog is enabled with a server on UDP port 514 (config log syslogd setting)"
     references:
       nist_800_53: ["AU-2", "AU-12"]
       hipaa: ["164.312(b)"]
       nist_csf: ["DE.CM-1"]
+      iso27001: ["A.8.15"]
   - description: "The syslog filter severity is information or notice (config log syslogd filter)"
     references:
       nist_800_53: ["AU-2", "AU-12"]
       hipaa: ["164.312(b)"]
+      iso27001: ["A.8.15"]

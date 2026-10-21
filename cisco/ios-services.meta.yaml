@@ -9,41 +9,52 @@ kind: hardening
 min_rconfig_version: 8.0.2
 status: lab-tested
 framework_claim: null
-# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
-# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
-# rule was published with; they do not claim the rule fully meets the control.
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
 rules:
   - description: "The HTTP server is not enabled (line ip http server is absent)"
     references:
       nist_800_53: ["CM-7"]
+      iso27001: ["A.8.9"]
   - description: "The HTTPS server is not enabled (line ip http secure-server is absent)"
     references:
       nist_800_53: ["CM-7"]
+      iso27001: ["A.8.9"]
   - description: "The finger service is not enabled (fails on a service finger or ip finger line)"
     references:
       nist_800_53: ["CM-7"]
       hipaa: ["164.312(c)(1)"]
+      iso27001: ["A.8.9"]
   - description: "The BOOTP server is disabled (no ip bootp server)"
     references:
       nist_800_53: ["CM-7"]
       hipaa: ["164.312(c)(1)"]
+      iso27001: ["A.8.9"]
   - description: "TCP small servers are not enabled (line service tcp-small-servers is absent)"
     references:
       nist_800_53: ["CM-7"]
       hipaa: ["164.312(c)(1)"]
+      iso27001: ["A.8.9"]
   - description: "UDP small servers are not enabled (line service udp-small-servers is absent)"
     references:
       nist_800_53: ["CM-7"]
+      iso27001: ["A.8.9"]
   - description: "The PAD service is disabled (no service pad)"
-    references: {}
+    references:
+      iso27001: ["A.8.9"]
   - description: "IP source routing is disabled (no ip source-route)"
     references:
       nist_800_53: ["SC-5"]
+      iso27001: ["A.8.20"]
   - description: "The identd service is not enabled (line ip identd is absent)"
-    references: {}
+    references:
+      iso27001: ["A.8.9"]
   - description: "CDP is disabled globally (no cdp run)"
     references:
       nist_800_53: ["CM-7"]
+      iso27001: ["A.8.9"]
   - description: "Directed broadcast is not enabled on any interface (fails on any ip directed-broadcast line)"
     references:
       nist_800_53: ["SC-7"]
+      iso27001: ["A.8.20"]

@@ -5,6 +5,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-21
+
+### Added
+- Framework files, generated from the hardening topic files by the new `.tooling/scripts/generate_frameworks.py`, so you can assign checks by topic or by framework. Each collects every topic rule that lists a reference for one framework, copied unchanged, with the control reference at the start of its description (for example `NIST AC-17: ...`). Each has a `.meta.yaml` with `kind: framework`, `generated: true`, its source topic files and the highest minimum version among its rules. A framework with no tagged rules for a vendor gets no file. Eleven files:
+  - `cisco/ios-nist-800-53` (26 rules), `ios-hipaa` (11), `ios-iso27001` (31). No Cisco rule lists a NIST CSF subcategory, so there is no `ios-nist-csf`.
+  - `fortinet/fortios-nist-800-53` (8), `fortios-nist-csf` (2), `fortios-hipaa` (7), `fortios-iso27001` (10).
+  - `juniper/junos-nist-800-53` (10), `junos-nist-csf` (2), `junos-hipaa` (10), `junos-iso27001` (15).
+- ISO/IEC 27001:2022 Annex A references (`iso27001`) on the Cisco, FortiOS and Junos hardening topic rules where the control clearly covers the check: A.5.17 Authentication information, A.8.5 Secure authentication, A.8.9 Configuration management, A.8.15 Logging, A.8.20 Networks security and A.8.24 Use of cryptography. 56 of 59 rules are mapped; console logging (Cisco and Junos) and the Junos UTC time zone rule are not. Build templates and operational standards files are not mapped.
+- Lint checks for framework files: `kind: framework` needs `generated: true` and `sources`; every framework file must match the generator output (`generate_frameworks.py --check`, also a CI step), so hand edits fail; and every framework rule's expected results must equal those of its source topic rule. `test_lint.py` covers each check.
+- Expected results for the framework files. Every framework rule gives the same result as its source topic rule on every sample.
+
+### Changed
+- `kind` in `.meta.yaml` can be `framework`, for generated files only. The references header in the topic `.meta.yaml` files lists `iso27001` and says the references are relevant controls, not a claim that the rule fully meets them.
+- README, vendor READMEs and `CONTRIBUTING.md` explain topic files and framework files, that framework files are generated and must not be edited by hand, and that they list relevant checks and are not a certification or a full assessment.
+
 ## [1.2.0] - 2026-10-21
 
 ### Added

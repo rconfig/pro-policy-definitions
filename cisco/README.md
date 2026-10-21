@@ -22,7 +22,19 @@ Running configuration as returned by `show running-config`. Top-level commands s
 
 The minimum version comes from the methods each file uses: `must_not_match_regex` needs V8.0.2 or later and `evaluate_block` needs V8.3.0 or later. Earlier releases skip the rules they do not support.
 
-Each topic file's `.meta.yaml` lists the published references for each rule, where one exists: the NIST SP 800-53 control, the HIPAA 45 CFR section and the NIST CSF 1.1 subcategory.
+Each topic file's `.meta.yaml` lists the references for each rule, where one exists: the NIST SP 800-53 control, the HIPAA 45 CFR section, the NIST CSF 1.1 subcategory and the ISO/IEC 27001:2022 Annex A control.
+
+## Framework files
+
+Generated from the hardening topic files by `.tooling/scripts/generate_frameworks.py`. Do not edit them: change the topic file or its references and run the generator. Each rule is copied unchanged from its topic file, with its control reference at the start of the description. No topic rule lists a NIST CSF subcategory, so there is no `ios-nist-csf.policy`.
+
+| File | Contents | Rules | Minimum rConfig |
+|---|---|---|---|
+| `ios-nist-800-53.policy` | Every topic rule that lists one or more NIST SP 800-53 controls. | 26 | V8.3.0 |
+| `ios-hipaa.policy` | Every topic rule that lists one or more HIPAA 45 CFR 164.312 sections. | 11 | V8.0.2 |
+| `ios-iso27001.policy` | Every topic rule that lists one or more ISO/IEC 27001:2022 Annex A controls. | 31 | V8.3.0 |
+
+A framework file lists checks relevant to that framework. It is not a certification or a full assessment.
 
 ## Supported Models
 

@@ -19,7 +19,20 @@ FortiOS CLI configuration as returned by `show full-configuration` (or `show`): 
 
 The minimum version comes from the methods each file uses: `evaluate_block` needs V8.3.0 or later. Earlier releases skip the rules they do not support.
 
-Each topic file's `.meta.yaml` lists the published references for each rule, where one exists: the NIST SP 800-53 control, the HIPAA 45 CFR section and the NIST CSF 1.1 subcategory.
+Each topic file's `.meta.yaml` lists the references for each rule, where one exists: the NIST SP 800-53 control, the HIPAA 45 CFR section, the NIST CSF 1.1 subcategory and the ISO/IEC 27001:2022 Annex A control.
+
+## Framework files
+
+Generated from the hardening topic files by `.tooling/scripts/generate_frameworks.py`. Do not edit them: change the topic file or its references and run the generator. Each rule is copied unchanged from its topic file, with its control reference at the start of the description.
+
+| File | Contents | Rules | Minimum rConfig |
+|---|---|---|---|
+| `fortios-nist-800-53.policy` | Every topic rule that lists one or more NIST SP 800-53 controls. | 8 | V8.3.0 |
+| `fortios-nist-csf.policy` | Every topic rule that lists one or more NIST CSF 1.1 subcategories. | 2 | V8.3.0 |
+| `fortios-hipaa.policy` | Every topic rule that lists one or more HIPAA 45 CFR 164.312 sections. | 7 | V8.3.0 |
+| `fortios-iso27001.policy` | Every topic rule that lists one or more ISO/IEC 27001:2022 Annex A controls. | 10 | V8.3.0 |
+
+A framework file lists checks relevant to that framework. It is not a certification or a full assessment.
 
 ## Supported Models
 

@@ -1,0 +1,43 @@
+// HIPAA 164.312(a)(1): AAA is enabled (aaa new-model)
+#[must_match_single_string]
+aaa new-model
+
+// HIPAA 164.312(a)(1): SSH version 2 is enabled (ip ssh version 2)
+#[must_match_single_string]
+ip ssh version 2
+
+// HIPAA 164.312(a)(1): No transport input line permits Telnet (telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
+
+// HIPAA 164.312(b): A remote syslog host is configured (logging host)
+#[must_match_regex]
+/^logging host \S+/m
+
+// HIPAA 164.312(b): Log timestamps use datetime msec, with or without other options (service timestamps log datetime msec ...)
+#[must_match_regex]
+/^service timestamps log datetime(?: \S+)*? msec(?: \S+)*$/m
+
+// HIPAA 164.312(b): Console logging is off (no logging console line at any level)
+#[must_not_match_regex]
+/^logging console\b/m
+
+// HIPAA 164.312(c)(1): The finger service is not enabled (fails on a service finger or ip finger line)
+#[must_not_match_regex]
+/^\s*(service|ip) finger\b/m
+
+// HIPAA 164.312(c)(1): The BOOTP server is disabled (no ip bootp server)
+#[must_match_single_string]
+no ip bootp server
+
+// HIPAA 164.312(c)(1): TCP small servers are not enabled (line service tcp-small-servers is absent)
+#[must_not_match_single_string]
+service tcp-small-servers
+
+// HIPAA 164.312(e)(1): No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// HIPAA 164.312(e)(1): An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)
+#[must_match_regex]
+/^snmp-server group .+ v3 priv/m

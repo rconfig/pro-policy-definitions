@@ -9,22 +9,26 @@ kind: hardening
 min_rconfig_version: 8.3.0
 status: synthetic-tested
 framework_claim: null
-# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
-# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
-# rule was published with; they do not claim the rule fully meets the control.
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
 rules:
   - description: "The admin idle timeout is 10 minutes (set admintimeout 10)"
     references:
       nist_800_53: ["AC-2"]
       hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.5"]
   - description: "No interface allowaccess line permits telnet, http, rsh or rexec"
     references:
       nist_800_53: ["CM-7"]
       hipaa: ["164.312(c)(1)"]
+      iso27001: ["A.8.5"]
   - description: "Strong crypto is enabled (set strong-crypto enable)"
     references:
       nist_800_53: ["AC-17"]
       hipaa: ["164.312(a)(1)"]
       nist_csf: ["PR.AC-1"]
+      iso27001: ["A.8.24"]
   - description: "The pre-login banner is enabled (set pre-login-banner enable)"
-    references: {}
+    references:
+      iso27001: ["A.8.5"]

@@ -1,0 +1,114 @@
+// NIST AC-2: AAA is enabled (aaa new-model)
+#[must_match_single_string]
+aaa new-model
+
+// NIST AC-3: No VTY line block sets an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)
+#[evaluate_block]
+scope: ^line vty
+not:
+  regex: '/^\s*exec-timeout (?!(?:[1-9](?: [1-5]?[0-9])?|10(?: 0)?)\s*$)/m'
+
+// NIST AC-3: The console line does not set an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)
+#[evaluate_block]
+scope: ^line con
+not:
+  regex: '/^\s*exec-timeout (?!(?:[1-9](?: [1-5]?[0-9])?|10(?: 0)?)\s*$)/m'
+
+// NIST AC-17: SSH version 2 is enabled (ip ssh version 2)
+#[must_match_single_string]
+ip ssh version 2
+
+// NIST AC-17: No transport input line permits Telnet (telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
+
+// NIST AU-2: A remote syslog host is configured (logging host)
+#[must_match_regex]
+/^logging host \S+/m
+
+// NIST AU-2: Buffered logging is configured (logging buffered)
+#[must_match_regex]
+/^logging buffered \S+/m
+
+// NIST AU-3: Log timestamps use datetime msec, with or without other options (service timestamps log datetime msec ...)
+#[must_match_regex]
+/^service timestamps log datetime(?: \S+)*? msec(?: \S+)*$/m
+
+// NIST AU-3: The logging trap severity level is set (logging trap <level>)
+#[must_match_regex]
+/^logging trap (warnings|errors|informational|notifications|alerts|critical|emergencies)$/m
+
+// NIST AU-6: Console logging is off (no logging console line at any level)
+#[must_not_match_regex]
+/^logging console\b/m
+
+// NIST CM-6: Password encryption is enabled (service password-encryption)
+#[must_match_single_string]
+service password-encryption
+
+// NIST CM-7: The HTTP server is not enabled (line ip http server is absent)
+#[must_not_match_single_string]
+ip http server
+
+// NIST CM-7: The HTTPS server is not enabled (line ip http secure-server is absent)
+#[must_not_match_single_string]
+ip http secure-server
+
+// NIST CM-7: The finger service is not enabled (fails on a service finger or ip finger line)
+#[must_not_match_regex]
+/^\s*(service|ip) finger\b/m
+
+// NIST CM-7: The BOOTP server is disabled (no ip bootp server)
+#[must_match_single_string]
+no ip bootp server
+
+// NIST CM-7: TCP small servers are not enabled (line service tcp-small-servers is absent)
+#[must_not_match_single_string]
+service tcp-small-servers
+
+// NIST CM-7: UDP small servers are not enabled (line service udp-small-servers is absent)
+#[must_not_match_single_string]
+service udp-small-servers
+
+// NIST CM-7: CDP is disabled globally (no cdp run)
+#[must_match_single_string]
+no cdp run
+
+// NIST IA-5: The enable secret is set with a hash type (enable secret <type> ...)
+#[must_match_regex]
+/^enable secret [0-9]+ .+$/m
+
+// NIST IA-5: No local user has a type 0 plaintext password (username ... password 0)
+#[must_not_match_regex]
+/^username .* password 0 .+/m
+
+// NIST SC-5: IP source routing is disabled (no ip source-route)
+#[must_match_single_string]
+no ip source-route
+
+// NIST SC-7: Every interface with an IP address has proxy ARP disabled (no ip proxy-arp)
+#[evaluate_block]
+scope: ^interface
+any:
+  - not:
+      regex: '/^\s*ip address /m'
+  - equals: no ip proxy-arp
+
+// NIST SC-7: Directed broadcast is not enabled on any interface (fails on any ip directed-broadcast line)
+#[must_not_match_regex]
+/^\s*ip directed-broadcast\b/m
+
+// NIST SC-12: No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// NIST SC-12: An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)
+#[must_match_regex]
+/^snmp-server group .+ v3 priv/m
+
+// NIST SI-4: Every interface is shut down or has a description
+#[evaluate_block]
+scope: ^interface
+any:
+  - equals: shutdown
+  - regex: '/^\s*description \S/m'

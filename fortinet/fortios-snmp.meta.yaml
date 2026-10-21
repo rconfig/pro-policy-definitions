@@ -9,15 +9,17 @@ kind: hardening
 min_rconfig_version: 8.3.0
 status: synthetic-tested
 framework_claim: null
-# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
-# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
-# rule was published with; they do not claim the rule fully meets the control.
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
 rules:
   - description: "No SNMPv1 or SNMPv2c community is configured (config system snmp community is absent)"
     references:
       nist_800_53: ["SC-12"]
       hipaa: ["164.312(e)(1)"]
+      iso27001: ["A.8.5"]
   - description: "Every SNMPv3 user uses SHA authentication and AES privacy"
     references:
       nist_800_53: ["SC-12"]
       hipaa: ["164.312(e)(1)"]
+      iso27001: ["A.8.5", "A.8.24"]

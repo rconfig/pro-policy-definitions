@@ -1,0 +1,136 @@
+// ISO 27001 A.5.17: The enable secret is set with a hash type (enable secret <type> ...)
+#[must_match_regex]
+/^enable secret [0-9]+ .+$/m
+
+// ISO 27001 A.5.17: Password encryption is enabled (service password-encryption)
+#[must_match_single_string]
+service password-encryption
+
+// ISO 27001 A.5.17: No local user has a type 0 plaintext password (username ... password 0)
+#[must_not_match_regex]
+/^username .* password 0 .+/m
+
+// ISO 27001 A.8.5: AAA is enabled (aaa new-model)
+#[must_match_single_string]
+aaa new-model
+
+// ISO 27001 A.8.5: No transport input line permits Telnet (telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
+
+// ISO 27001 A.8.5: No VTY line block sets an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)
+#[evaluate_block]
+scope: ^line vty
+not:
+  regex: '/^\s*exec-timeout (?!(?:[1-9](?: [1-5]?[0-9])?|10(?: 0)?)\s*$)/m'
+
+// ISO 27001 A.8.5: The console line does not set an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)
+#[evaluate_block]
+scope: ^line con
+not:
+  regex: '/^\s*exec-timeout (?!(?:[1-9](?: [1-5]?[0-9])?|10(?: 0)?)\s*$)/m'
+
+// ISO 27001 A.8.5: A MOTD banner is configured (banner motd)
+#[must_match_regex]
+/^banner motd .+/m
+
+// ISO 27001 A.8.5: A login banner is configured (banner login)
+#[must_match_regex]
+/^banner login .+/m
+
+// ISO 27001 A.8.5: No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// ISO 27001 A.8.5, A.8.24: An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)
+#[must_match_regex]
+/^snmp-server group .+ v3 priv/m
+
+// ISO 27001 A.8.9: The HTTP server is not enabled (line ip http server is absent)
+#[must_not_match_single_string]
+ip http server
+
+// ISO 27001 A.8.9: The HTTPS server is not enabled (line ip http secure-server is absent)
+#[must_not_match_single_string]
+ip http secure-server
+
+// ISO 27001 A.8.9: The finger service is not enabled (fails on a service finger or ip finger line)
+#[must_not_match_regex]
+/^\s*(service|ip) finger\b/m
+
+// ISO 27001 A.8.9: The BOOTP server is disabled (no ip bootp server)
+#[must_match_single_string]
+no ip bootp server
+
+// ISO 27001 A.8.9: TCP small servers are not enabled (line service tcp-small-servers is absent)
+#[must_not_match_single_string]
+service tcp-small-servers
+
+// ISO 27001 A.8.9: UDP small servers are not enabled (line service udp-small-servers is absent)
+#[must_not_match_single_string]
+service udp-small-servers
+
+// ISO 27001 A.8.9: The PAD service is disabled (no service pad)
+#[must_match_single_string]
+no service pad
+
+// ISO 27001 A.8.9: The identd service is not enabled (line ip identd is absent)
+#[must_not_match_single_string]
+ip identd
+
+// ISO 27001 A.8.9: CDP is disabled globally (no cdp run)
+#[must_match_single_string]
+no cdp run
+
+// ISO 27001 A.8.15: A remote syslog host is configured (logging host)
+#[must_match_regex]
+/^logging host \S+/m
+
+// ISO 27001 A.8.15: Log timestamps use datetime msec, with or without other options (service timestamps log datetime msec ...)
+#[must_match_regex]
+/^service timestamps log datetime(?: \S+)*? msec(?: \S+)*$/m
+
+// ISO 27001 A.8.15: Buffered logging is configured (logging buffered)
+#[must_match_regex]
+/^logging buffered \S+/m
+
+// ISO 27001 A.8.15: The logging trap severity level is set (logging trap <level>)
+#[must_match_regex]
+/^logging trap (warnings|errors|informational|notifications|alerts|critical|emergencies)$/m
+
+// ISO 27001 A.8.20: Every interface with an IP address has proxy ARP disabled (no ip proxy-arp)
+#[evaluate_block]
+scope: ^interface
+any:
+  - not:
+      regex: '/^\s*ip address /m'
+  - equals: no ip proxy-arp
+
+// ISO 27001 A.8.20: Every interface is shut down or has a description
+#[evaluate_block]
+scope: ^interface
+any:
+  - equals: shutdown
+  - regex: '/^\s*description \S/m'
+
+// ISO 27001 A.8.20: Every OSPF process enables message-digest authentication for an area (area ... authentication message-digest)
+#[evaluate_block]
+scope: ^router ospf
+all:
+  - regex: '/^\s*area \S+ authentication message-digest/m'
+
+// ISO 27001 A.8.20: At least one BGP neighbor has a password (neighbor ... password)
+#[must_match_regex]
+/^\s*neighbor .+ password .+$/m
+
+// ISO 27001 A.8.20: IP source routing is disabled (no ip source-route)
+#[must_match_single_string]
+no ip source-route
+
+// ISO 27001 A.8.20: Directed broadcast is not enabled on any interface (fails on any ip directed-broadcast line)
+#[must_not_match_regex]
+/^\s*ip directed-broadcast\b/m
+
+// ISO 27001 A.8.24: SSH version 2 is enabled (ip ssh version 2)
+#[must_match_single_string]
+ip ssh version 2

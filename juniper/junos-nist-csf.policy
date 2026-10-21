@@ -1,0 +1,7 @@
+// NIST CSF DE.CM-1: A remote syslog host receives any facility at info or notice (set system syslog host ... any info or any notice)
+#[must_match_regex]
+/^set system syslog host \S+ any (info|notice)$/m
+
+// NIST CSF PR.AC-1: The authentication order starts with RADIUS or TACACS+ and ends with local password fallback (set system authentication-order)
+#[must_match_regex]
+/^set system authentication-order \[ (radius|tacplus) (.* )?password \]$/m

@@ -1,0 +1,75 @@
+// ISO 27001 A.5.17: No root or local user password uses an MD5 hash (fails on encrypted-password "$1$...")
+#[must_not_match_regex]
+/^set system (root-authentication|login user \S+ authentication) encrypted-password "?\$1\$/m
+
+// ISO 27001 A.8.5: The authentication order starts with RADIUS or TACACS+ and ends with local password fallback (set system authentication-order)
+#[must_match_regex]
+/^set system authentication-order \[ (radius|tacplus) (.* )?password \]$/m
+
+// ISO 27001 A.8.5: Telnet is not enabled (fails on set system services telnet)
+#[must_not_match_regex]
+/^set system services telnet( |$)/m
+
+// ISO 27001 A.8.5: A login banner is configured (set system login message)
+#[must_match_regex]
+/^set system login message .+/m
+
+// ISO 27001 A.8.5: A login class sets an idle-timeout of 1 to 10 minutes, and no class sets 0 or more than 10
+#[evaluate_block]
+all:
+  - regex: '/^set system login class \S+ idle-timeout ([1-9]|10)$/m'
+  - not:
+      regex: '/^set system login class \S+ idle-timeout (0|1[1-9]|[2-9][0-9]|[0-9]{3,})$/m'
+
+// ISO 27001 A.8.5: No SNMPv1 or SNMPv2c community is configured (fails on set snmp community)
+#[must_not_match_regex]
+/^set snmp community /m
+
+// ISO 27001 A.8.5, A.8.24: SNMPv3 USM users use SHA authentication and AES-128 privacy, and none uses MD5, DES, 3DES or none
+#[evaluate_block]
+all:
+  - regex: '/^set snmp v3 usm local-engine user \S+ authentication-sha/m'
+  - regex: '/^set snmp v3 usm local-engine user \S+ privacy-aes128 /m'
+  - not:
+      regex: '/^set snmp v3 usm \S+(?: \S+)? user \S+ (authentication-(md5|none)|privacy-(des|3des|none))\b/m'
+
+// ISO 27001 A.8.9: No legacy service is enabled (fails on set system services finger, ftp, rlogin, rsh or rexec)
+#[must_not_match_regex]
+/^set system services (finger|ftp|rexec|rlogin|rsh)( |$)/m
+
+// ISO 27001 A.8.15: A remote syslog host receives any facility at info or notice (set system syslog host ... any info or any notice)
+#[must_match_regex]
+/^set system syslog host \S+ any (info|notice)$/m
+
+// ISO 27001 A.8.15: A remote syslog host receives authorization messages at info or any (set system syslog host ... authorization info)
+#[must_match_regex]
+/^set system syslog host \S+ authorization (info|any)$/m
+
+// ISO 27001 A.8.15: Syslog timestamps include milliseconds (set system syslog time-format millisecond)
+#[must_match_regex]
+/^set system syslog time-format (year )?millisecond$/m
+
+// ISO 27001 A.8.20: Every interface is disabled or has a description (set interfaces <name> disable or set interfaces <name> description)
+#[must_not_match_regex]
+/(?:\A|^(?!set interfaces (\S+) [^\n]*\nset interfaces \1 )[^\n]*\n)set interfaces (?!interface-range )(\S+) (?!disable$|description )[^\n]*(?:\nset interfaces \2 (?!disable$|description )[^\n]*)*$(?!\nset interfaces \2 )/m
+
+// ISO 27001 A.8.20: ICMP redirects are disabled (set system no-redirects)
+#[must_match_single_string]
+set system no-redirects
+
+// ISO 27001 A.8.24: SSH is enabled and SSH protocol version 1 is not (set system services ssh, no protocol-version v1)
+#[evaluate_block]
+all:
+  - regex: '/^set system services ssh( |$)/m'
+  - not:
+      regex: '/^set system services ssh protocol-version .*\bv1\b/m'
+
+// ISO 27001 A.8.24: SSH ciphers and MACs are set, and none is CBC, 3DES, arcfour, blowfish, MD5, SHA-1 or RIPEMD-160 based
+#[evaluate_block]
+all:
+  - regex: '/^set system services ssh ciphers /m'
+  - regex: '/^set system services ssh macs /m'
+  - not:
+      regex: '/^set system services ssh ciphers .*(cbc|3des|arcfour|blowfish)/m'
+  - not:
+      regex: '/^set system services ssh macs .*\bhmac-(md5|sha1|ripemd160)\b/m'

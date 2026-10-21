@@ -1,0 +1,55 @@
+// NIST AC-2: The admin idle timeout is 10 minutes (set admintimeout 10)
+#[evaluate_block]
+scope: ^config system global$
+all:
+  - equals: set admintimeout 10
+
+// NIST AC-17: Strong crypto is enabled (set strong-crypto enable)
+#[evaluate_block]
+scope: ^config system global$
+all:
+  - equals: set strong-crypto enable
+
+// NIST AU-2, AU-12: Remote syslog is enabled with a server on UDP port 514 (config log syslogd setting)
+#[evaluate_block]
+scope: ^config log syslogd setting$
+all:
+  - equals: set status enable
+  - regex: '/^\s*set server "?[^"\s]/m'
+  - equals: set port 514
+  - equals: set mode udp
+
+// NIST AU-2, AU-12: The syslog filter severity is information or notice (config log syslogd filter)
+#[evaluate_block]
+scope: ^config log syslogd filter$
+any:
+  - equals: set severity information
+  - equals: set severity notice
+
+// NIST CM-7: No interface allowaccess line permits telnet, http, rsh or rexec
+#[must_not_match_regex]
+/^\s*set\s+allowaccess\s+.*\b(telnet|http|rsh|rexec)\b.*$/m
+
+// NIST IA-5: The password policy is enabled with a minimum length of 12 (set min-length 12 or set minimum-length 12)
+#[evaluate_block]
+scope: ^config system password-policy$
+all:
+  - equals: set status enable
+  - any:
+      - equals: set min-length 12
+      - equals: set minimum-length 12
+
+// NIST SC-12: No SNMPv1 or SNMPv2c community is configured (config system snmp community is absent)
+#[must_not_match_regex]
+/^\s*config\s+system\s+snmp\s+community\b/m
+
+// NIST SC-12: Every SNMPv3 user uses SHA authentication and AES privacy
+#[evaluate_block]
+scope: ^config system snmp user$
+all:
+  - regex: '/^\s*set auth-proto sha/m'
+  - regex: '/^\s*set priv-proto aes/m'
+  - not:
+      regex: '/^\s*set auth-proto (?!sha)/m'
+  - not:
+      regex: '/^\s*set priv-proto (?!aes)/m'

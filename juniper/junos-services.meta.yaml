@@ -10,13 +10,15 @@ min_rconfig_version: 8.0.2
 status: synthetic-tested
 framework_claim: null
 notes: "Tested against synthetic display set samples only. The rules have not yet been checked against output from a real Junos device."
-# Published references for each rule, in file order. nist_800_53: NIST SP 800-53 control;
-# hipaa: 45 CFR section; nist_csf: NIST CSF 1.1 subcategory. These record the mapping the
-# rule was published with; they do not claim the rule fully meets the control.
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
 rules:
   - description: "No legacy service is enabled (fails on set system services finger, ftp, rlogin, rsh or rexec)"
     references:
       nist_800_53: ["CM-7"]
       hipaa: ["164.312(c)(1)"]
+      iso27001: ["A.8.9"]
   - description: "ICMP redirects are disabled (set system no-redirects)"
-    references: {}
+    references:
+      iso27001: ["A.8.20"]

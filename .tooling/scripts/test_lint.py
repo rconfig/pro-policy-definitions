@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Tests for .tooling/scripts/lint.py: one bad fixture per check, plus a clean control.
+"""Tests for .tooling/scripts/lint.py: one bad fixture per check, plus a clean control,
+including the generated framework file checks.
 
 Usage: python3 .tooling/scripts/test_lint.py
 """
@@ -10,6 +11,7 @@ import textwrap
 import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import generate_frameworks  # noqa: E402
 import lint  # noqa: E402
 
 METHODS = lint.load_methods()
@@ -202,6 +204,78 @@ class RepositoryChecks(unittest.TestCase):
         files['.tooling/samples/cisco/samples.yaml'] = 'samples: []\n'
         files['.tooling/samples/cisco/stray.txt'] = 'hostname lab-r1\n'
         self.assertIn('samples', repo_checks(files))
+
+
+TOPIC_META = GOOD_META.replace('framework_claim: null\n', textwrap.dedent('''\
+    framework_claim: null
+    rules:
+      - description: "Example: AAA enabled"
+        references:
+          nist_800_53: ["AC-2"]
+'''))
+
+RESULTS = textwrap.dedent('''\
+    policy: {policy}
+    rules:
+      -
+        rule: 1
+        description: '{description}'
+        method: must_match_single_string
+        results:
+          cisco/router.txt: {result}
+''')
+
+
+class GeneratedFrameworkChecks(unittest.TestCase):
+    """A topic file tagged with one NIST control, plus the framework file the generator writes from it."""
+
+    def base(self):
+        files = {
+            'cisco/ios-example.policy': GOOD,
+            'cisco/ios-example.meta.yaml': TOPIC_META,
+            '.tooling/expected/ios-example.yaml': RESULTS.format(policy='cisco/ios-example.policy', description='Example: AAA enabled', result='pass'),
+            '.tooling/expected/ios-nist-800-53.yaml': RESULTS.format(policy='cisco/ios-nist-800-53.policy', description='NIST AC-2: Example: AAA enabled', result='pass'),
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            for rel, text in files.items():
+                os.makedirs(os.path.dirname(os.path.join(tmp, rel)), exist_ok=True)
+                with open(os.path.join(tmp, rel), 'w', encoding='utf-8', newline='\n') as fh:
+                    fh.write(text)
+            files.update(generate_frameworks.generate(tmp))
+        return files
+
+    def test_generated_files_in_sync_are_clean(self):
+        files = self.base()
+        self.assertIn('cisco/ios-nist-800-53.policy', files)
+        self.assertNotIn('cisco/ios-hipaa.policy', files)  # no rule tagged, so no file
+        self.assertEqual(repo_checks(files), set())
+
+    def test_hand_edited_generated_file(self):
+        files = self.base()
+        files['cisco/ios-nist-800-53.policy'] = files['cisco/ios-nist-800-53.policy'].replace('aaa new-model', 'aaa new-model ')
+        self.assertIn('generated', repo_checks(files))
+
+    def test_missing_generated_file(self):
+        files = self.base()
+        del files['cisco/ios-nist-800-53.policy']
+        del files['cisco/ios-nist-800-53.meta.yaml']
+        del files['.tooling/expected/ios-nist-800-53.yaml']
+        self.assertIn('generated', repo_checks(files))
+
+    def test_stale_generated_file(self):
+        files = self.base()
+        files['cisco/ios-example.meta.yaml'] = files['cisco/ios-example.meta.yaml'].replace('nist_800_53: ["AC-2"]', 'hipaa: ["164.312(a)(1)"]')
+        self.assertIn('generated', repo_checks(files))  # nist-800-53 file no longer produced, hipaa file missing
+
+    def test_framework_kind_must_be_generated(self):
+        files = self.base()
+        files['cisco/ios-nist-800-53.meta.yaml'] = files['cisco/ios-nist-800-53.meta.yaml'].replace('generated: true\n', '')
+        self.assertIn('metadata', repo_checks(files))
+
+    def test_generated_result_differs_from_source(self):
+        files = self.base()
+        files['.tooling/expected/ios-nist-800-53.yaml'] = files['.tooling/expected/ios-nist-800-53.yaml'].replace('pass', 'fail')
+        self.assertIn('generated-results', repo_checks(files))
 
 
 if __name__ == '__main__':
