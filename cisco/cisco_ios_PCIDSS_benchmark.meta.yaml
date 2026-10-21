@@ -1,0 +1,15 @@
+title: "Cisco IOS PCI DSS policy"
+description: "PCI DSS Cisco IOS Policy, version 1.0: secure configurations, access control, logging and monitoring."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: lab-tested
+framework_claim:
+  framework: "PCI DSS"
+  label: "PCI DSS Cisco IOS Policy"
+  id_scheme: "PCI-N.N"
+  ids_local: true

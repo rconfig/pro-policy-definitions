@@ -1,0 +1,85 @@
+{
+  "source": {
+    "project": "rConfig V8 Pro",
+    "commit": "ac2d993a2d265647da3841c17f052c363c93dad6",
+    "files": [
+      "app/Enums/PolicyMethod.php",
+      "app/Services/Utilities/RegexPatternUtility.php"
+    ],
+    "generated_by": ".tooling/scripts/generate_methods.py"
+  },
+  "methods": [
+    "must_match_single_string",
+    "must_not_match_single_string",
+    "must_match_regex",
+    "must_not_match_regex",
+    "can_match_any_from_array",
+    "must_match_all_from_array",
+    "must_not_match_all_from_array",
+    "wildcard_match_all_from_array",
+    "wildcard_match_any_from_array",
+    "wildcard_match_single_string",
+    "wildcard_must_not_match_single_string",
+    "match_code_block_from_array",
+    "match_code_block_strict",
+    "match_code_block_flexible",
+    "evaluate_block"
+  ],
+  "array_methods": [
+    "can_match_any_from_array",
+    "must_match_all_from_array",
+    "must_not_match_all_from_array",
+    "wildcard_match_all_from_array",
+    "wildcard_match_any_from_array",
+    "match_code_block_from_array"
+  ],
+  "regex_methods": [
+    "must_match_regex",
+    "must_not_match_regex"
+  ],
+  "regex_delimiters": [
+    "/",
+    "#",
+    "~",
+    "!",
+    "@",
+    "%",
+    "`",
+    "|"
+  ],
+  "min_version": {
+    "must_match_single_string": "8.0.0",
+    "must_not_match_single_string": "8.0.0",
+    "must_match_regex": "8.0.0",
+    "must_not_match_regex": "8.0.2",
+    "can_match_any_from_array": "8.0.0",
+    "must_match_all_from_array": "8.0.0",
+    "must_not_match_all_from_array": "8.0.0",
+    "wildcard_match_all_from_array": "8.0.0",
+    "wildcard_match_any_from_array": "8.0.0",
+    "wildcard_match_single_string": "8.0.0",
+    "wildcard_must_not_match_single_string": "8.0.2",
+    "match_code_block_from_array": "8.0.0",
+    "match_code_block_strict": "8.2.2",
+    "match_code_block_flexible": "8.0.0",
+    "evaluate_block": "8.3.0"
+  },
+  "min_version_sources": {
+    "must_not_match_regex": {
+      "commit": "fac16f7ccc",
+      "change": "RCO-263 negative matching methods"
+    },
+    "wildcard_must_not_match_single_string": {
+      "commit": "fac16f7ccc",
+      "change": "RCO-263 negative matching methods"
+    },
+    "match_code_block_strict": {
+      "commit": "f7bdef7302",
+      "change": "match_code_block_strict"
+    },
+    "evaluate_block": {
+      "commit": "33807feb8d",
+      "change": "RCO-956 nested AND/OR/NOT with block scoping"
+    }
+  }
+}

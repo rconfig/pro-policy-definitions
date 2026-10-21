@@ -1,4 +1,4 @@
-// ISO-A9-1: Access control — secure management channels
+// ISO-A9-1: Access control (secure management channels)
 #[match_code_block_from_array]
 config system global
  set admin-http disable
@@ -14,7 +14,7 @@ config user radius
  next
 end
 
-// ISO-A12-1: Operations logging — remote syslog
+// ISO-A12-1: Operations logging (remote syslog)
 #[match_code_block_from_array]
 config log syslogd setting
  set status enable

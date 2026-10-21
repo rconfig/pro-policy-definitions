@@ -26,9 +26,9 @@ line vty 0 4
 #[must_match_single_string]
 ip ssh version 2
 
-// NIST-AC-17.2: Telnet must be disabled
-#[must_not_match_single_string]
-transport input telnet
+// NIST-AC-17.2: Telnet must be disabled (no transport input line permits telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
 
 // NIST-IA-5.1: Local users must not use weak/plaintext passwords
 #[must_not_match_regex]
@@ -54,9 +54,9 @@ transport input telnet
 #[must_match_single_string]
 service timestamps log datetime msec
 
-// NIST-AU-6.1: Disable console logging (prevent log flooding)
-#[must_not_match_single_string]
-logging console
+// NIST-AU-6.1: Disable console logging to prevent log flooding (no logging console line at any level)
+#[must_not_match_regex]
+/^logging console\b/m
 
 // NIST-CM-6.1: Service password-encryption enabled
 #[must_match_single_string]

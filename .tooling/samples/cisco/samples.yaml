@@ -1,0 +1,18 @@
+# Cisco sample configs. Addresses, names, secrets and serials are sanitised.
+samples:
+  - file: c1921-ios157-lab.txt
+    name: Cisco 1921 lab router, unhardened
+    os: ios
+    os_version: "15.7"
+    config_format: ios-running-config
+    source: lab
+    hardened: false
+    origin: rConfig Pro tests/storage/policydata/verbose_show_run.txt at Pro commit ac2d993a2d, sanitised
+  - file: c9500-iosxe179-synthetic.txt
+    name: Cisco Catalyst 9500 core switch, hardened
+    os: ios-xe
+    os_version: "17.9"
+    config_format: ios-running-config
+    source: synthetic
+    hardened: true
+    origin: rConfig Pro demo generator IosXeGenerator, show running-config, seed seed-a, at Pro commit ac2d993a2d, sanitised

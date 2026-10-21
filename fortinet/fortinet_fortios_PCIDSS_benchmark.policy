@@ -1,4 +1,4 @@
-// PCI-2.2: Secure configurations — HTTPS/SSH only
+// PCI-2.2: Secure configurations (HTTPS/SSH only)
 #[match_code_block_from_array]
 config system global
  set admin-http disable

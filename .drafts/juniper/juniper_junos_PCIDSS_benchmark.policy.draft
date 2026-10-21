@@ -1,4 +1,4 @@
-// PCI-2.1/2.2: Secure configurations — disable insecure services
+// PCI-2.1/2.2: Secure configurations (disable insecure services)
 #[must_not_match_regex]
 /^\s*system\s*{\s*services\s*{\s*(ftp|telnet|finger|rlogin|rsh|rexec);\s*}\s*}/m
 

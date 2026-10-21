@@ -1,4 +1,4 @@
-// SAFE-IA-1: Secure admin plane — HTTPS/SSH only, strong crypto, short idle timeout
+// SAFE-IA-1: Secure admin plane (HTTPS/SSH only, strong crypto, short idle timeout)
 #[match_code_block_from_array]
 config system global
  set admin-https enable
@@ -7,7 +7,7 @@ config system global
  set admintimeout 10
 end
 
-// SAFE-IA-2: Interface management — no Telnet in allowaccess anywhere
+// SAFE-IA-2: Interface management (no Telnet in allowaccess anywhere)
 #[must_not_match_regex]
 /^\s*set\s+allowaccess\s+.*\btelnet\b.*$/m
 

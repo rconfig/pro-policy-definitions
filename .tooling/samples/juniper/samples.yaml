@@ -1,0 +1,20 @@
+# Juniper sample configs. Addresses, names and organisations are sanitised.
+# These are display set format. The Juniper policies are withdrawn as drafts, so no policy
+# uses these samples yet; they are kept for the display set rewrite.
+samples:
+  - file: srx345-junos232-synthetic.txt
+    name: Juniper SRX345 branch firewall
+    os: junos
+    os_version: "23.2R1.14"
+    config_format: junos-display-set
+    source: synthetic
+    hardened: false
+    origin: rConfig Pro demo generator JunosGenerator, show configuration | display set, seed seed-a, at Pro commit ac2d993a2d, sanitised
+  - file: mx204-junos234-synthetic.txt
+    name: Juniper MX204 provider edge router
+    os: junos
+    os_version: "23.4R2-S2.1"
+    config_format: junos-display-set
+    source: synthetic
+    hardened: true
+    origin: rConfig Pro demo generator JunosGenerator, show configuration | display set, seed seed-a, at Pro commit ac2d993a2d, sanitised

@@ -24,7 +24,7 @@ system {
  }
 }
 
-// CIS-1.1.4: Enable secret equivalent — encrypted passwords only
+// CIS-1.1.4: Enable secret equivalent (encrypted passwords only)
 #[must_not_match_regex]
 /^\s*system\s*{\s*login\s*{\s*user\s+.+\s*{\s*authentication\s*{\s*plain-text-password\s*;\s*}\s*}\s*}\s*}/m
 

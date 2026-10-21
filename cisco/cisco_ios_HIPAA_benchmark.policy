@@ -16,9 +16,9 @@ line vty 0 4
 #[must_match_single_string]
 ip ssh version 2
 
-// HIPAA-AC-3: Telnet disabled (no transport input telnet line)
-#[must_not_match_single_string]
-transport input telnet
+// HIPAA-AC-3: Telnet disabled (no transport input line permits telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
 
 // HIPAA-AU-1: Remote syslog configured
 #[must_match_regex]
@@ -28,9 +28,9 @@ transport input telnet
 #[must_match_single_string]
 service timestamps log datetime msec
 
-// HIPAA-AU-3: Console logging disabled
-#[must_not_match_single_string]
-logging console
+// HIPAA-AU-3: Console logging disabled (no logging console line at any level)
+#[must_not_match_regex]
+/^logging console\b/m
 
 // HIPAA-IN-1: Disable finger service
 #[must_not_match_single_string]

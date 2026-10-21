@@ -1,0 +1,224 @@
+## Last commit: 2026-09-02 10:45:00 IST by isp-netops
+set version 23.4R2-S2.1
+set system host-name dub1-pe-mx01
+set system domain-name isp.example.net
+set system time-zone Europe/Dublin
+set system root-authentication encrypted-password "$6$53ec4b68$7049d9e60c1e4bbade9236a2d2e85df8758e887b8ef79a0aacbaaef58d34af929c0a45b8db416cb0feb2a8"
+set system login message "Example Networks. Authorised access only. All activity on this device is logged and monitored."
+set system login class noc-readonly idle-timeout 10
+set system login class noc-readonly permissions view
+set system login class noc-readonly permissions view-configuration
+set system login user isp-netops uid 2001
+set system login user isp-netops class super-user
+set system login user isp-netops authentication encrypted-password "$6$c2beb141$c0929e4e17b744670f4ef49a61d4bbdd90517fdb7252bb366eacb1342b035e56581f3e64c5291d1dce1c87"
+set system login user remote-noc uid 2002
+set system login user remote-noc class noc-readonly
+set system authentication-order [ tacplus password ]
+set system tacplus-server 192.0.2.30 secret "$9$ed9j2nAu8QOKkftiAMqvkgmSMnSo"
+set system tacplus-server 192.0.2.30 source-address 192.0.2.110
+set system tacplus-server 192.0.2.31 secret "$9$yVjTf1ugODroIzxlPr8SLtfONPHD"
+set system tacplus-server 192.0.2.31 source-address 192.0.2.110
+set system accounting events login
+set system accounting events change-log
+set system accounting events interactive-commands
+set system accounting destination tacplus
+set system services ssh root-login deny
+set system services ssh protocol-version v2
+set system services ssh connection-limit 10
+set system services ssh rate-limit 5
+set system services netconf ssh
+set system name-server 192.0.2.53
+set system name-server 192.0.2.54
+set system syslog host 192.0.2.50 any notice
+set system syslog host 192.0.2.50 authorization info
+set system syslog host 192.0.2.50 source-address 192.0.2.110
+set system syslog file messages any notice
+set system syslog file messages authorization info
+set system syslog file interactive-commands interactive-commands any
+set system syslog time-format millisecond
+set system ntp server 192.0.2.1 prefer
+set system ntp server 192.0.2.2
+set system ntp source-address 192.0.2.110
+set chassis redundancy graceful-switchover
+set chassis aggregated-devices ethernet device-count 8
+set chassis network-services enhanced-ip
+set interfaces et-0/0/0 description "Core: P router 198.51.100.1"
+set interfaces et-0/0/0 mtu 9192
+set interfaces et-0/0/0 unit 0 family inet address 203.0.113.1/31
+set interfaces et-0/0/0 unit 0 family iso
+set interfaces et-0/0/0 unit 0 family mpls
+set interfaces et-0/0/1 description "Core: P router 198.51.100.2"
+set interfaces et-0/0/1 mtu 9192
+set interfaces et-0/0/1 unit 0 family inet address 192.0.2.3/31
+set interfaces et-0/0/1 unit 0 family iso
+set interfaces et-0/0/1 unit 0 family mpls
+set interfaces xe-0/1/0 description "Transit: IP-TRANSIT AS64499"
+set interfaces xe-0/1/0 unit 0 family inet address 203.0.113.248/31
+set interfaces xe-0/1/1 description "Business customer handoff, L3VPN"
+set interfaces xe-0/1/1 flexible-vlan-tagging
+set interfaces xe-0/1/1 encapsulation flexible-ethernet-services
+set interfaces xe-0/1/1 unit 1001 description "Customer A L3VPN"
+set interfaces xe-0/1/1 unit 1001 vlan-id 1001
+set interfaces xe-0/1/1 unit 1001 family inet address 192.0.2.13/30
+set interfaces xe-0/1/1 unit 1002 description "Customer B L3VPN"
+set interfaces xe-0/1/1 unit 1002 vlan-id 1002
+set interfaces xe-0/1/1 unit 1002 family inet address 192.0.2.181/30
+set interfaces fxp0 unit 0 family inet address 192.0.2.110/24
+set interfaces lo0 unit 0 family inet filter input PROTECT-RE
+set interfaces lo0 unit 0 family inet address 192.0.2.4/32
+set interfaces lo0 unit 0 family iso address 49.0001.0102.5500.1001.00
+set snmp location "Dublin office"
+set snmp contact "noc@isp.example.net"
+set snmp v3 usm local-engine user isp-nms authentication-sha256 authentication-key "$9$taAAIYPRzGpYJq6mOgdonDBQUwFG"
+set snmp v3 usm local-engine user isp-nms privacy-aes128 privacy-key "$9$mM35efAE5VaEKbJTCckqUgyyZ9CE"
+set snmp v3 vacm security-to-group security-model usm security-name isp-nms group NMS-GROUP
+set snmp v3 vacm access group NMS-GROUP default-context-prefix security-model usm security-level privacy read-view ALL
+set snmp v3 target-address NMS address 192.0.2.60
+set snmp v3 target-address NMS tag-list nms-traps
+set snmp v3 target-address NMS target-parameters NMS-PARAMS
+set snmp v3 target-parameters NMS-PARAMS parameters message-processing-model v3
+set snmp v3 target-parameters NMS-PARAMS parameters security-model usm
+set snmp v3 target-parameters NMS-PARAMS parameters security-level privacy
+set snmp v3 target-parameters NMS-PARAMS parameters security-name isp-nms
+set snmp v3 notify NMS-TRAPS type trap
+set snmp v3 notify NMS-TRAPS tag nms-traps
+set snmp view ALL oid .1 include
+set routing-options static route 192.0.2.0/24 next-hop 192.0.2.254
+set routing-options static route 192.0.2.0/24 no-readvertise
+set routing-options static route 198.51.100.0/24 next-hop 192.0.2.254
+set routing-options static route 198.51.100.0/24 no-readvertise
+set routing-options router-id 192.0.2.4
+set routing-options autonomous-system 64512
+set routing-options forwarding-table export ECMP-LOAD-BALANCE
+set protocols isis level 1 disable
+set protocols isis level 2 wide-metrics-only
+set protocols isis level 2 authentication-key "$9$ESUWyPwlTd4u9LT2PcOP1J330Hib"
+set protocols isis level 2 authentication-type md5
+set protocols isis interface et-0/0/0.0 point-to-point
+set protocols isis interface et-0/0/0.0 level 2 metric 10
+set protocols isis interface et-0/0/1.0 point-to-point
+set protocols isis interface et-0/0/1.0 level 2 metric 10
+set protocols isis interface lo0.0 passive
+set protocols ldp interface et-0/0/0.0
+set protocols ldp interface et-0/0/1.0
+set protocols ldp interface lo0.0
+set protocols ldp track-igp-metric
+set protocols mpls interface et-0/0/0.0
+set protocols mpls interface et-0/0/1.0
+set protocols bgp log-updown
+set protocols bgp group IBGP-RR type internal
+set protocols bgp group IBGP-RR description "iBGP to the route reflectors"
+set protocols bgp group IBGP-RR local-address 192.0.2.4
+set protocols bgp group IBGP-RR family inet unicast
+set protocols bgp group IBGP-RR family inet-vpn unicast
+set protocols bgp group IBGP-RR authentication-key "$9$3mgQorIalsyjZrB1xGkuKRlTHvgY"
+set protocols bgp group IBGP-RR export NEXT-HOP-SELF
+set protocols bgp group IBGP-RR neighbor 198.51.100.1
+set protocols bgp group IBGP-RR neighbor 198.51.100.2
+set protocols bgp group TRANSIT type external
+set protocols bgp group TRANSIT description "IP-TRANSIT AS64499"
+set protocols bgp group TRANSIT import TRANSIT-IN
+set protocols bgp group TRANSIT family inet unicast prefix-limit maximum 1200000
+set protocols bgp group TRANSIT family inet unicast prefix-limit teardown 90
+set protocols bgp group TRANSIT authentication-key "$9$4QPLBszgaT1htO5n4mG5NxzMWUkR"
+set protocols bgp group TRANSIT export TRANSIT-OUT
+set protocols bgp group TRANSIT peer-as 64499
+set protocols bgp group TRANSIT neighbor 203.0.113.249
+set protocols lldp interface all
+set protocols lldp interface fxp0 disable
+set policy-options prefix-list MGMT-HOSTS 192.0.2.0/24
+set policy-options prefix-list MGMT-HOSTS 198.51.100.0/24
+set policy-options prefix-list NTP-SERVERS 192.0.2.1/32
+set policy-options prefix-list NTP-SERVERS 192.0.2.2/32
+set policy-options prefix-list TACACS-SERVERS 192.0.2.30/32
+set policy-options prefix-list TACACS-SERVERS 192.0.2.31/32
+set policy-options prefix-list BGP-PEERS apply-path "protocols bgp group <*> neighbor <*>"
+set policy-options prefix-list CORE-INFRA 192.0.2.5/16
+set policy-options prefix-list CORE-INFRA 192.0.2.6/10
+set policy-options prefix-list ISP-AGGREGATES 203.0.113.0/24
+set policy-options prefix-list CUSTOMER-PI 203.0.113.128/27
+set policy-options prefix-list CUSTOMER-PI 203.0.113.160/28
+set policy-options prefix-list BOGONS 0.0.0.0/8
+set policy-options prefix-list BOGONS 192.0.2.7/8
+set policy-options prefix-list BOGONS 192.0.2.6/10
+set policy-options prefix-list BOGONS 192.0.2.8/8
+set policy-options prefix-list BOGONS 192.0.2.9/16
+set policy-options prefix-list BOGONS 192.0.2.10/12
+set policy-options prefix-list BOGONS 192.0.2.11/16
+set policy-options prefix-list BOGONS 224.0.0.0/4
+set policy-options prefix-list BOGONS 240.0.0.0/4
+set policy-options policy-statement ECMP-LOAD-BALANCE term ALL then load-balance per-packet
+set policy-options policy-statement TRANSIT-IN term REJECT-BOGONS from family inet
+set policy-options policy-statement TRANSIT-IN term REJECT-BOGONS from prefix-list-filter BOGONS orlonger
+set policy-options policy-statement TRANSIT-IN term REJECT-BOGONS then reject
+set policy-options policy-statement TRANSIT-IN term REJECT-OWN-SPACE from prefix-list-filter ISP-AGGREGATES orlonger
+set policy-options policy-statement TRANSIT-IN term REJECT-OWN-SPACE then reject
+set policy-options policy-statement TRANSIT-IN term REJECT-DEFAULT from route-filter 0.0.0.0/0 exact
+set policy-options policy-statement TRANSIT-IN term REJECT-DEFAULT then reject
+set policy-options policy-statement TRANSIT-IN term REJECT-TOO-SPECIFIC from family inet
+set policy-options policy-statement TRANSIT-IN term REJECT-TOO-SPECIFIC from route-filter 0.0.0.0/0 prefix-length-range /25-/32
+set policy-options policy-statement TRANSIT-IN term REJECT-TOO-SPECIFIC then reject
+set policy-options policy-statement TRANSIT-IN term ACCEPT-TRANSIT then community add TRANSIT-ROUTES
+set policy-options policy-statement TRANSIT-IN term ACCEPT-TRANSIT then local-preference 80
+set policy-options policy-statement TRANSIT-IN term ACCEPT-TRANSIT then accept
+set policy-options policy-statement TRANSIT-OUT term ANNOUNCE-AGGREGATES from prefix-list ISP-AGGREGATES
+set policy-options policy-statement TRANSIT-OUT term ANNOUNCE-AGGREGATES then accept
+set policy-options policy-statement TRANSIT-OUT term ANNOUNCE-CUSTOMER-PI from prefix-list CUSTOMER-PI
+set policy-options policy-statement TRANSIT-OUT term ANNOUNCE-CUSTOMER-PI then accept
+set policy-options policy-statement TRANSIT-OUT term REJECT-ALL then reject
+set policy-options policy-statement NEXT-HOP-SELF term ALL then next-hop self
+set policy-options community TRANSIT-ROUTES members 64512:3000
+set firewall family inet filter PROTECT-RE term ALLOW-BGP from source-prefix-list BGP-PEERS
+set firewall family inet filter PROTECT-RE term ALLOW-BGP from protocol tcp
+set firewall family inet filter PROTECT-RE term ALLOW-BGP from port bgp
+set firewall family inet filter PROTECT-RE term ALLOW-BGP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-LDP from source-prefix-list CORE-INFRA
+set firewall family inet filter PROTECT-RE term ALLOW-LDP from protocol [ tcp udp ]
+set firewall family inet filter PROTECT-RE term ALLOW-LDP from port ldp
+set firewall family inet filter PROTECT-RE term ALLOW-LDP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-SSH from source-prefix-list MGMT-HOSTS
+set firewall family inet filter PROTECT-RE term ALLOW-SSH from protocol tcp
+set firewall family inet filter PROTECT-RE term ALLOW-SSH from destination-port ssh
+set firewall family inet filter PROTECT-RE term ALLOW-SSH then accept
+set firewall family inet filter PROTECT-RE term ALLOW-NTP from source-prefix-list NTP-SERVERS
+set firewall family inet filter PROTECT-RE term ALLOW-NTP from protocol udp
+set firewall family inet filter PROTECT-RE term ALLOW-NTP from port ntp
+set firewall family inet filter PROTECT-RE term ALLOW-NTP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP from source-address 192.0.2.60/32
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP from protocol udp
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP from destination-port snmp
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-TACACS from source-prefix-list TACACS-SERVERS
+set firewall family inet filter PROTECT-RE term ALLOW-TACACS from protocol tcp
+set firewall family inet filter PROTECT-RE term ALLOW-TACACS from source-port tacacs
+set firewall family inet filter PROTECT-RE term ALLOW-TACACS then accept
+set firewall family inet filter PROTECT-RE term ALLOW-ICMP from protocol icmp
+set firewall family inet filter PROTECT-RE term ALLOW-ICMP then policer ICMP-1M
+set firewall family inet filter PROTECT-RE term ALLOW-ICMP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-TRACEROUTE from protocol udp
+set firewall family inet filter PROTECT-RE term ALLOW-TRACEROUTE from destination-port 33434-33534
+set firewall family inet filter PROTECT-RE term ALLOW-TRACEROUTE then policer ICMP-1M
+set firewall family inet filter PROTECT-RE term ALLOW-TRACEROUTE then accept
+set firewall family inet filter PROTECT-RE term ALLOW-ESTABLISHED from protocol tcp
+set firewall family inet filter PROTECT-RE term ALLOW-ESTABLISHED from tcp-established
+set firewall family inet filter PROTECT-RE term ALLOW-ESTABLISHED then accept
+set firewall family inet filter PROTECT-RE term DENY-ALL then count PROTECT-RE-DENIED
+set firewall family inet filter PROTECT-RE term DENY-ALL then syslog
+set firewall family inet filter PROTECT-RE term DENY-ALL then discard
+set firewall policer ICMP-1M if-exceeding bandwidth-limit 1m
+set firewall policer ICMP-1M if-exceeding burst-size-limit 15k
+set firewall policer ICMP-1M then discard
+set routing-instances CUST-A description "Customer A L3VPN"
+set routing-instances CUST-A instance-type vrf
+set routing-instances CUST-A interface xe-0/1/1.1001
+set routing-instances CUST-A route-distinguisher 192.0.2.4:1001
+set routing-instances CUST-A vrf-target target:64512:1001
+set routing-instances CUST-A vrf-table-label
+set routing-instances CUST-A routing-options static route 192.0.2.12/24 next-hop 192.0.2.14
+set routing-instances CUST-B description "Customer B L3VPN"
+set routing-instances CUST-B instance-type vrf
+set routing-instances CUST-B interface xe-0/1/1.1002
+set routing-instances CUST-B route-distinguisher 192.0.2.4:1002
+set routing-instances CUST-B vrf-target target:64512:1002
+set routing-instances CUST-B vrf-table-label
+set routing-instances CUST-B routing-options static route 192.0.2.15/24 next-hop 192.0.2.182

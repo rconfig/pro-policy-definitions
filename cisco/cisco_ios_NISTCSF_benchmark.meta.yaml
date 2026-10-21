@@ -1,0 +1,16 @@
+title: "Cisco IOS NIST CSF policy"
+description: "NIST CSF Cisco IOS Policy, version 1.0: ID.AM, PR.AC, PR.PT and DE.CM categories."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: lab-tested
+framework_claim:
+  framework: "NIST CSF"
+  label: "NIST CSF Cisco IOS Policy"
+  id_scheme: "CSF-<IDAM|PRAC|PRPT|DECM>-N"
+  ids_local: true
+  note: "CSF 1.1 categories; numbering is local."

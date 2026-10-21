@@ -1,0 +1,16 @@
+title: "FortiOS PCI DSS policy"
+description: "PCI DSS mapped to FortiOS, version 1.0."
+vendor: fortinet
+os: fortios
+config_format: fortios-full-config
+# collection_command: Pro app/Demo/Platforms/FortiOs/FortiOsGenerator.php:53 (primaryCommand)
+collection_command: "show full-configuration"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim:
+  framework: "PCI DSS"
+  label: "PCI DSS mapped to FortiOS"
+  id_scheme: "PCI-<N.N|N.x>"
+  ids_local: true
+  note: "Several IDs use .x placeholders."

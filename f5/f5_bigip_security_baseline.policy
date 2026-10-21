@@ -1,45 +1,45 @@
-// F5 - Core services are configured (NTP, syslog, SNMP objects present)
+// F5: Core services are configured (NTP, syslog, SNMP objects present)
 #[must_match_all_from_array]
 sys ntp
 sys syslog
 sys snmp
 
-// F5 - An NTP object exists for accurate log timestamps
+// F5: An NTP object exists for accurate log timestamps
 #[wildcard_match_single_string]
 sys ntp *
 
-// F5 - No default or public/private SNMP community strings anywhere
+// F5: No default or public/private SNMP community strings anywhere
 #[evaluate_block]
 not:
   any:
     - community-name public
     - community-name private
 
-// F5 - The SSH daemon enforces a non-zero idle timeout
+// F5: The SSH daemon enforces a non-zero idle timeout
 #[evaluate_block]
 scope: ^sys sshd
 all:
   - "re:inactivity-timeout [1-9]"
 
-// F5 - Remote syslog is configured (logs leave the box)
+// F5: Remote syslog is configured (logs leave the box)
 #[evaluate_block]
 scope: ^sys syslog
 all:
   - remote-servers
 
-// F5 - WAF Logging: WAF-enabled virtual servers carry the required security-log-profiles (disabled servers skipped)
+// F5 WAF logging: WAF-enabled virtual servers carry the required security-log-profiles (disabled servers skipped)
 #[evaluate_block]
 scope: ^ltm virtual
 any:
   - equals: disabled
   - not: ASM_WAF_
   - all:
-      - withsecure_logos_collector
+      - siem_log_collector
       - netlog_tcp
       - Log illegal requests
       - telemetry_asm_security_log_profile
 
-// F5 - WAF on external servers: externally reachable virtual servers have a WAF policy (disabled servers skipped)
+// F5 WAF on external servers: externally reachable virtual servers have a WAF policy (disabled servers skipped)
 #[evaluate_block]
 scope: ^ltm virtual
 any:

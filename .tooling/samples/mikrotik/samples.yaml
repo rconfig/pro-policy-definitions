@@ -1,0 +1,11 @@
+# MikroTik sample configs. Serial number is sanitised.
+# Gap: only one sample, and it is hardened. An unhardened RouterOS sample is needed.
+samples:
+  - file: ccr2004-routeros7153-synthetic.txt
+    name: MikroTik CCR2004 edge router
+    os: routeros
+    os_version: "7.15.3"
+    config_format: routeros-export
+    source: synthetic
+    hardened: true
+    origin: rConfig Pro demo generator RouterOsGenerator, /export, seed seed-a, at Pro commit ac2d993a2d, sanitised

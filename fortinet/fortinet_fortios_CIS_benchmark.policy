@@ -1,4 +1,4 @@
-// CIS-1.1.1: Secure management — HTTPS/SSH only, disable HTTP
+// CIS-1.1.1: Secure management (HTTPS/SSH only, disable HTTP)
 #[match_code_block_from_array]
 config system global
  set admin-https enable

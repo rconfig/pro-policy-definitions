@@ -1,1 +1,5 @@
 *.policy text eol=lf
+*.policy.draft text eol=lf
+*.meta.yaml text eol=lf
+.tooling/samples/** text eol=lf
+.tooling/expected/*.yaml text eol=lf

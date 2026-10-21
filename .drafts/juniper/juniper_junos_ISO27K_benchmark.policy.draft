@@ -1,4 +1,4 @@
-// ISO-A9-1: Access control — AAA
+// ISO-A9-1: Access control (AAA)
 #[match_code_block_flexible]
 system {
  authentication-order [ radius tacplus password ];
@@ -18,7 +18,7 @@ system {
 #[must_not_match_regex]
 /^\s*system\s*{\s*services\s*{\s*telnet;\s*}\s*}/m
 
-// ISO-A12-1: Logging — remote syslog + time format
+// ISO-A12-1: Logging (remote syslog + time format)
 #[match_code_block_flexible]
 system {
  syslog {

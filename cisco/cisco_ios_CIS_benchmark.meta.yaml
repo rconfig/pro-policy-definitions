@@ -1,0 +1,16 @@
+title: "Cisco IOS CIS-style benchmark"
+description: "CIS Cisco IOS Benchmark Policy, version 1.0: setup, banners, authentication, SNMP, logging, services, interfaces, routing."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: lab-tested
+framework_claim:
+  framework: "CIS"
+  label: "CIS Cisco IOS Benchmark Policy"
+  id_scheme: "CIS-N.N.N"
+  ids_local: true
+  note: "Uniform N.1.N numbering; not taken from a published CIS benchmark."

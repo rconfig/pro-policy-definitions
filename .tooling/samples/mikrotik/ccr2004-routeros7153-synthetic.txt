@@ -1,0 +1,80 @@
+# 2026-10-09 21:00:00 by RouterOS 7.15.3
+# software id = 4481-58AE
+#
+# model = CCR2004-1G-12S+2XS
+# serial number = EXAMPLESN02
+/interface bridge
+add comment="Management" name=bridge-mgmt
+/interface ethernet
+set [ find default-name=ether1 ] comment="Out of band management"
+set [ find default-name=sfp-sfpplus1 ] comment="Internet uplink"
+set [ find default-name=sfp-sfpplus2 ] comment="Transit to firewall A"
+set [ find default-name=sfp-sfpplus3 ] comment="Transit to firewall B"
+/interface bridge port
+add bridge=bridge-mgmt interface=ether1
+/interface list
+add name=WAN
+add name=LAN
+/interface list member
+add interface=sfp-sfpplus1 list=WAN
+add interface=bridge-mgmt list=LAN
+/ip address
+add address=192.0.2.4/24 comment="Management" interface=bridge-mgmt network=192.0.2.0
+add address=198.51.100.2/30 comment="ISP handoff" interface=sfp-sfpplus1 network=198.51.100.0
+add address=203.0.113.1/29 comment="Public range for the firewall pair" interface=sfp-sfpplus2 network=203.0.113.0
+/ip dns
+set servers=192.0.2.53,192.0.2.54
+/ip firewall filter
+add action=accept chain=input comment="Accept established" connection-state=established,related
+add action=drop chain=input comment="Drop invalid" connection-state=invalid
+add action=accept chain=input comment="Accept ICMP" protocol=icmp
+add action=accept chain=input comment="Management" src-address=192.0.2.0/24
+add action=drop chain=input comment="Drop everything else from the internet" in-interface=sfp-sfpplus1
+add action=accept chain=forward comment="Accept established" connection-state=established,related
+add action=drop chain=forward comment="Drop invalid" connection-state=invalid
+add action=accept chain=forward comment="Public range behind the firewalls" dst-address=203.0.113.0/29
+add action=drop chain=forward comment="Drop everything else from the internet" in-interface=sfp-sfpplus1
+/ip firewall nat
+add action=masquerade chain=srcnat comment="Management to internet" out-interface=sfp-sfpplus1 src-address=192.0.2.0/24
+/ip route
+add comment="ISP default" disabled=no distance=1 dst-address=0.0.0.0/0 gateway=198.51.100.1
+/ip service
+set telnet disabled=yes
+set ftp disabled=yes
+set www disabled=yes
+set ssh address=192.0.2.0/24
+set www-ssl disabled=yes
+set api disabled=yes
+set winbox address=192.0.2.0/24
+set api-ssl disabled=yes
+/ip ssh
+set strong-crypto=yes
+/snmp community
+set [ find default=yes ] disabled=yes
+add addresses=192.0.2.60/32 name=dub-monitor
+/snmp
+set contact=it@example.net enabled=yes location="Dublin office" trap-community=dub-monitor
+/system clock
+set time-zone-name=Europe/Dublin
+/system identity
+set name=office-edge01
+/system logging action
+add name=syslog remote=192.0.2.50 target=remote
+/system logging
+add action=syslog topics=info
+add action=syslog topics=warning
+add action=syslog topics=critical
+/system note
+set show-at-login=yes note="Dublin office internet edge. Authorised access only."
+/system ntp client
+set enabled=yes
+/system ntp client servers
+add address=192.0.2.1
+add address=192.0.2.2
+/system routerboard settings
+set auto-upgrade=yes
+/user group
+add name=read-only policy=read,test,winbox,api,!local,!telnet,!ssh,!ftp,!reboot,!write,!policy,!password,!web,!sniff,!sensitive,!romon,!rest-api
+/user
+add comment="IT lead" group=full name=dub-netadmin
+add comment="Monitoring" group=read-only name=monitor

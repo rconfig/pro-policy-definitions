@@ -1,0 +1,11 @@
+title: "F5 BIG-IP security baseline"
+description: "NTP, syslog and SNMP present, no public or private SNMP communities, SSH idle timeout, remote syslog, WAF logging profiles and WAF policies on virtual servers."
+vendor: f5
+os: bigip-tmos
+config_format: bigip-scf
+# collection_command: Pro has no F5 platform or collection command; set it when one exists
+collection_command: null
+kind: hardening
+min_rconfig_version: 8.3.0
+status: lab-tested
+framework_claim: null

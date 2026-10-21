@@ -1,0 +1,28 @@
+ltm virtual /Common/vs_secure_a {
+    destination /Common/192.0.2.10:443
+    profiles {
+        /Common/ASM_WAF_policy_prod { }
+        /Common/siem_log_collector { }
+        /Common/netlog_tcp { }
+        /Common/telemetry_asm_security_log_profile { }
+    }
+    security-log-profiles {
+        /Common/Log illegal requests
+    }
+    source 0.0.0.0/0
+}
+ltm virtual /Common/vs_internal_b {
+    destination /Common/192.0.2.9:8080
+    profiles {
+        /Common/tcp { }
+    }
+    source 192.0.2.0/8
+}
+ltm virtual /Common/vs_disabled_c {
+    destination /Common/192.0.2.99:443
+    disabled
+    profiles {
+        /Common/tcp { }
+    }
+    source 0.0.0.0/0
+}

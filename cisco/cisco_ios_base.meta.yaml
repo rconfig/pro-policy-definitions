@@ -1,0 +1,12 @@
+title: "Cisco IOS base build template"
+description: "Example baseline build: hostname, timezone, secure access, LAN interface, DHCP, DNS, NAT, ACL, SNMP, NTP and logging, with fixed example values."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: template
+min_rconfig_version: 8.0.0
+status: under-review
+framework_claim: null
+notes: "Build template with fixed example values; the reset rule (write erase, reload) can never pass against a running config."

@@ -1,0 +1,466 @@
+Building configuration...
+
+  
+Current configuration : 14615 bytes
+!
+! Last configuration change at 15:35:27 UTC Tue Jul 9 2024 by cisco
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+no service dhcp
+!
+hostname router1
+!
+boot-start-marker
+boot system flash:c1900-universalk9-mz.SPA.157-3.M9.bin
+boot-end-marker
+!
+!
+enable secret 5 $1$EXAM$ExampleHashNotReal0000
+enable password example-enable
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+no ip subnet-zero
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip domain name example.com
+ip name-server 192.0.2.8
+ip name-server 192.0.2.1
+ip name-server 192.0.2.3
+ip name-server 192.0.2.4
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+multilink bundle-name authenticated
+!
+!
+crypto pki trustpoint TP-self-signed-1000000001
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-1000000001
+ revocation-check none
+ rsakeypair TP-self-signed-1000000001
+!
+!
+crypto pki certificate chain TP-self-signed-1000000001
+ certificate self-signed 01
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  00000000 00000000 00000000 00000000
+  	quit
+license udi pid CISCO1921/K9 sn EXAMPLESN01
+!
+!
+file prompt quiet
+username cisco privilege 15 password 0 ExamplePass1
+username labuser1 password 0 ExamplePass2
+username labuser2 password 0 ExamplePass3
+username labuser3 password 0 ExamplePass4
+username labuser4 password 0 ExamplePass5
+username labuser5 password 0 ExamplePass6
+!
+redundancy
+!
+!
+!
+!
+!
+!
+interface Loopback10
+ description This is Loopback 10
+ ip address 192.0.2.10 255.255.255.255
+!
+interface Loopback20
+ description ?Some French Description
+ ip address 192.0.2.20 255.255.255.255
+!
+interface Loopback30
+ description This is Interface Loopback30
+ ip address 192.0.2.30 255.255.255.255
+!
+interface Loopback40
+ description This is Interface Loopback40
+ ip address 192.0.2.40 255.255.255.255
+!
+interface Loopback50
+ description This is Interface Loopback50
+ ip address 192.0.2.50 255.255.255.255
+!
+interface Loopback60
+ description This is Interface Loopback60
+ ip address 192.0.2.60 255.255.255.255
+!
+interface Loopback70
+ ip address 192.0.2.70 255.255.255.255
+!
+interface Loopback80
+ ip address 192.0.2.80 255.255.255.255
+!
+interface Loopback90
+ ip address 192.0.2.90 255.255.255.255
+!
+interface Loopback100
+ ip address 192.0.2.100 255.255.255.255
+!
+interface Loopback110
+ ip address 192.0.2.110 255.255.255.255
+!
+interface Loopback111
+ ip address 192.0.2.111 255.255.255.0
+!
+interface Loopback120
+ ip address 192.0.2.120 255.255.255.255
+!
+interface Loopback130
+ ip address 192.0.2.130 255.255.255.255
+!
+interface Loopback140
+ ip address 192.0.2.140 255.255.255.255
+!
+interface Loopback150
+ ip address 192.0.2.150 255.255.255.255
+!
+interface Loopback160
+ ip address 192.0.2.160 255.255.255.255
+!
+interface Loopback170
+ ip address 192.0.2.170 255.255.255.255
+!
+interface Loopback180
+ ip address 192.0.2.180 255.255.255.255
+!
+interface Loopback190
+ ip address 192.0.2.190 255.255.255.255
+!
+interface Loopback200
+ ip address 192.0.2.200 255.255.255.255
+!
+interface Loopback210
+ ip address 192.0.2.210 255.255.255.255
+!
+interface Loopback220
+ ip address 192.0.2.220 255.255.255.255
+!
+interface Loopback230
+ ip address 192.0.2.230 255.255.255.255
+!
+interface Loopback240
+ ip address 192.0.2.240 255.255.255.255
+!
+interface Loopback250
+ ip address 192.0.2.250 255.255.255.255
+!
+interface Embedded-Service-Engine0/0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/0
+ description This is a real int description
+ ip address 198.51.100.170 255.255.255.0
+ duplex auto
+ speed auto
+ ipv6 address 2001:DB8:1000:700::170/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 nd ra suppress all
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet0/1
+ description new des
+ ip address 192.0.2.5 255.255.255.0
+ duplex auto
+ speed auto
+ no mop enabled
+ no mop sysid
+!
+router bgp 64000
+ bgp log-neighbor-changes
+ network 192.0.2.1
+ network 192.0.2.2
+ network 198.51.100.5
+ network 192.0.2.6
+!
+ip forward-protocol nd
+!
+no ip http server
+ip http authentication local
+ip http secure-server
+ip http secure-client-auth
+!
+ip ftp username ftppass1
+ip route 0.0.0.0 0.0.0.0 192.0.2.254
+ip ssh source-interface GigabitEthernet0/0
+ip ssh version 2
+!
+!
+!
+snmp-server community public RO
+snmp-server host 192.0.2.1 TESTCOMMUNITY 
+snmp-server host 198.51.100.2 TESTCOMMUNITY12xxxxx
+snmp-server host 192.0.2.1 TESTCOMMUNITY30 
+snmp-server host 192.0.2.1 TESTCOMMUNITY9999   
+access-list 1 permit 192.0.2.0 0.0.0.255
+access-list 1 permit 198.51.100.0 0.0.0.255
+access-list 1 permit 203.0.113.0 0.0.0.255
+access-list 1 permit 192.0.2.7 0.0.0.255
+access-list 1 permit 192.0.2.9 0.0.0.255
+access-list 1 permit 192.0.2.11 0.0.0.255
+access-list 1 permit 192.0.2.12 0.0.0.255
+access-list 1 permit 192.0.2.13 0.0.0.255
+access-list 1 permit 192.0.2.14 0.0.0.255
+access-list 1 permit 192.0.2.15 0.0.0.255
+access-list 1 permit 192.0.2.16 0.0.0.255
+access-list 1 permit 192.0.2.17 0.0.0.255
+access-list 1 permit 192.0.2.18 0.0.0.255
+access-list 1 permit 192.0.2.19 0.0.0.255
+access-list 1 permit 192.0.2.21 0.0.0.255
+access-list 1 permit 192.0.2.22 0.0.0.255
+access-list 1 permit 192.0.2.23 0.0.0.255
+access-list 1 permit 192.0.2.24 0.0.0.255
+access-list 1 permit 192.0.2.25 0.0.0.255
+access-list 1 permit 192.0.2.26 0.0.0.255
+access-list 1 permit 192.0.2.27 0.0.0.255
+access-list 1 permit 192.0.2.28 0.0.0.255
+access-list 1 permit 192.0.2.29 0.0.0.255
+access-list 1 permit 192.0.2.31 0.0.0.255
+access-list 1 permit 192.0.2.32 0.0.0.255
+access-list 1 permit 192.0.2.33 0.0.0.255
+access-list 1 permit 192.0.2.34 0.0.0.255
+access-list 1 permit 192.0.2.35 0.0.0.255
+access-list 1 permit 192.0.2.36 0.0.0.255
+access-list 1 permit 192.0.2.37 0.0.0.255
+access-list 1 permit 192.0.2.38 0.0.0.255
+access-list 1 permit 192.0.2.39 0.0.0.255
+access-list 1 permit 192.0.2.41 0.0.0.255
+access-list 1 permit 192.0.2.42 0.0.0.255
+access-list 1 permit 192.0.2.43 0.0.0.255
+access-list 1 permit 192.0.2.44 0.0.0.255
+access-list 1 permit 192.0.2.45 0.0.0.255
+access-list 1 permit 192.0.2.46 0.0.0.255
+access-list 1 permit 192.0.2.47 0.0.0.255
+access-list 1 permit 192.0.2.48 0.0.0.255
+access-list 1 permit 192.0.2.49 0.0.0.255
+access-list 1 permit 192.0.2.51 0.0.0.255
+access-list 1 permit 192.0.2.52 0.0.0.255
+access-list 1 permit 192.0.2.53 0.0.0.255
+access-list 1 permit 192.0.2.54 0.0.0.255
+access-list 1 permit 192.0.2.55 0.0.0.255
+access-list 1 permit 192.0.2.56 0.0.0.255
+access-list 1 permit 192.0.2.57 0.0.0.255
+access-list 1 permit 192.0.2.58 0.0.0.255
+access-list 1 permit 192.0.2.59 0.0.0.255
+access-list 1 permit 192.0.2.61 0.0.0.255
+access-list 1 permit 192.0.2.62 0.0.0.255
+access-list 1 permit 192.0.2.63 0.0.0.255
+access-list 1 permit 192.0.2.64 0.0.0.255
+access-list 1 permit 192.0.2.65 0.0.0.255
+access-list 1 permit 192.0.2.66 0.0.0.255
+access-list 1 permit 192.0.2.67 0.0.0.255
+access-list 1 permit 192.0.2.68 0.0.0.255
+access-list 1 permit 192.0.2.69 0.0.0.255
+access-list 1 permit 192.0.2.71 0.0.0.255
+access-list 1 permit 192.0.2.72 0.0.0.255
+access-list 1 permit 192.0.2.73 0.0.0.255
+access-list 1 permit 192.0.2.74 0.0.0.255
+access-list 1 permit 192.0.2.75 0.0.0.255
+access-list 1 permit 192.0.2.76 0.0.0.255
+access-list 1 permit 192.0.2.77 0.0.0.255
+access-list 1 permit 192.0.2.78 0.0.0.255
+access-list 1 permit 192.0.2.79 0.0.0.255
+access-list 1 permit 192.0.2.81 0.0.0.255
+access-list 1 permit 192.0.2.82 0.0.0.255
+access-list 1 permit 192.0.2.83 0.0.0.255
+access-list 1 permit 192.0.2.84 0.0.0.255
+access-list 1 permit 192.0.2.85 0.0.0.255
+access-list 1 permit 192.0.2.86 0.0.0.255
+access-list 1 permit 192.0.2.87 0.0.0.255
+access-list 1 permit 192.0.2.88 0.0.0.255
+access-list 1 permit 192.0.2.89 0.0.0.255
+access-list 1 permit 192.0.2.91 0.0.0.255
+access-list 1 permit 192.0.2.92 0.0.0.255
+access-list 1 permit 192.0.2.93 0.0.0.255
+access-list 1 permit 192.0.2.94 0.0.0.255
+access-list 1 permit 192.0.2.95 0.0.0.255
+access-list 1 permit 192.0.2.96 0.0.0.255
+access-list 1 permit 192.0.2.97 0.0.0.255
+access-list 1 permit 192.0.2.98 0.0.0.255
+access-list 1 permit 192.0.2.99 0.0.0.255
+access-list 1 permit 192.0.2.101 0.0.0.255
+access-list 1 permit 192.0.2.102 0.0.0.255
+access-list 1 permit 192.0.2.103 0.0.0.255
+access-list 1 permit 192.0.2.104 0.0.0.255
+access-list 1 permit 192.0.2.105 0.0.0.255
+access-list 1 permit 192.0.2.106 0.0.0.255
+access-list 1 permit 192.0.2.107 0.0.0.255
+access-list 1 permit 192.0.2.108 0.0.0.255
+access-list 1 permit 192.0.2.109 0.0.0.255
+access-list 1 permit 192.0.2.112 0.0.0.255
+access-list 1 permit 192.0.2.113 0.0.0.255
+access-list 1 permit 192.0.2.114 0.0.0.255
+access-list 1 permit 192.0.2.115 0.0.0.255
+access-list 1 permit 192.0.2.116 0.0.0.255
+access-list 1 permit 192.0.2.117 0.0.0.255
+access-list 1 permit 192.0.2.118 0.0.0.255
+access-list 1 permit 192.0.2.119 0.0.0.255
+access-list 1 permit 192.0.2.121 0.0.0.255
+access-list 1 permit 192.0.2.122 0.0.0.255
+access-list 1 permit 192.0.2.123 0.0.0.255
+access-list 1 permit 192.0.2.124 0.0.0.255
+access-list 1 permit 192.0.2.125 0.0.0.255
+access-list 1 permit 192.0.2.126 0.0.0.255
+access-list 1 permit 192.0.2.127 0.0.0.255
+access-list 1 permit 192.0.2.128 0.0.0.255
+access-list 1 permit 192.0.2.129 0.0.0.255
+access-list 1 permit 192.0.2.131 0.0.0.255
+access-list 1 permit 192.0.2.132 0.0.0.255
+access-list 1 permit 192.0.2.133 0.0.0.255
+access-list 1 permit 192.0.2.134 0.0.0.255
+access-list 1 permit 192.0.2.135 0.0.0.255
+access-list 1 permit 192.0.2.136 0.0.0.255
+access-list 1 permit 192.0.2.137 0.0.0.255
+access-list 1 permit 192.0.2.138 0.0.0.255
+access-list 1 permit 192.0.2.139 0.0.0.255
+access-list 1 permit 192.0.2.141 0.0.0.255
+access-list 1 permit 192.0.2.142 0.0.0.255
+access-list 1 permit 192.0.2.143 0.0.0.255
+access-list 1 permit 192.0.2.144 0.0.0.255
+access-list 1 permit 192.0.2.145 0.0.0.255
+access-list 1 permit 192.0.2.146 0.0.0.255
+access-list 1 permit 192.0.2.147 0.0.0.255
+access-list 1 permit 192.0.2.148 0.0.0.255
+access-list 1 permit 192.0.2.149 0.0.0.255
+access-list 1 permit 192.0.2.151 0.0.0.255
+access-list 1 permit 192.0.2.152 0.0.0.255
+access-list 1 permit 192.0.2.153 0.0.0.255
+access-list 1 permit 192.0.2.154 0.0.0.255
+access-list 1 permit 192.0.2.155 0.0.0.255
+access-list 1 permit 192.0.2.156 0.0.0.255
+access-list 1 permit 192.0.2.157 0.0.0.255
+access-list 1 permit 192.0.2.158 0.0.0.255
+access-list 1 permit 192.0.2.159 0.0.0.255
+access-list 1 permit 192.0.2.161 0.0.0.255
+access-list 1 permit 192.0.2.162 0.0.0.255
+access-list 1 permit 192.0.2.163 0.0.0.255
+access-list 1 permit 192.0.2.164 0.0.0.255
+access-list 1 permit 192.0.2.165 0.0.0.255
+access-list 1 permit 192.0.2.166 0.0.0.255
+access-list 1 permit 192.0.2.167 0.0.0.255
+access-list 1 permit 192.0.2.168 0.0.0.255
+access-list 1 permit 192.0.2.169 0.0.0.255
+access-list 1 permit 192.0.2.171 0.0.0.255
+access-list 1 permit 192.0.2.172 0.0.0.255
+access-list 1 permit 192.0.2.173 0.0.0.255
+access-list 1 permit 192.0.2.174 0.0.0.255
+access-list 1 permit 192.0.2.175 0.0.0.255
+access-list 1 permit 192.0.2.176 0.0.0.255
+access-list 1 permit 192.0.2.177 0.0.0.255
+access-list 1 permit 192.0.2.178 0.0.0.255
+access-list 1 permit 192.0.2.179 0.0.0.255
+access-list 1 permit 192.0.2.181 0.0.0.255
+access-list 1 permit 192.0.2.182 0.0.0.255
+access-list 1 permit 192.0.2.183 0.0.0.255
+access-list 1 permit 192.0.2.184 0.0.0.255
+access-list 1 permit 192.0.2.185 0.0.0.255
+access-list 1 permit 192.0.2.186 0.0.0.255
+access-list 1 permit 192.0.2.187 0.0.0.255
+access-list 1 permit 192.0.2.188 0.0.0.255
+access-list 1 permit 192.0.2.189 0.0.0.255
+access-list 1 permit 192.0.2.191 0.0.0.255
+access-list 1 permit 192.0.2.192 0.0.0.255
+access-list 1 permit 192.0.2.193 0.0.0.255
+access-list 1 permit 192.0.2.194 0.0.0.255
+access-list 1 permit 192.0.2.195 0.0.0.255
+access-list 1 permit 192.0.2.196 0.0.0.255
+access-list 1 permit 192.0.2.197 0.0.0.255
+access-list 1 permit 192.0.2.198 0.0.0.255
+access-list 1 permit 192.0.2.199 0.0.0.255
+access-list 1 permit 192.0.2.201 0.0.0.255
+access-list 1 permit 192.0.2.202 0.0.0.255
+access-list 1 permit 192.0.2.203 0.0.0.255
+access-list 1 permit 192.0.2.204 0.0.0.255
+access-list 1 permit 192.0.2.205 0.0.0.255
+access-list 1 permit 192.0.2.206 0.0.0.255
+access-list 1 permit 192.0.2.207 0.0.0.255
+access-list 1 permit 192.0.2.208 0.0.0.255
+access-list 1 permit 192.0.2.209 0.0.0.255
+access-list 1 permit 192.0.2.211 0.0.0.255
+access-list 1 permit 192.0.2.212 0.0.0.255
+access-list 1 permit 192.0.2.213 0.0.0.255
+access-list 1 permit 192.0.2.214 0.0.0.255
+access-list 1 permit 192.0.2.215 0.0.0.255
+access-list 2 permit 198.51.100.0 0.0.0.255
+access-list 3 permit 203.0.113.0 0.0.0.255
+access-list 4 permit 192.0.2.7 0.0.0.255
+access-list 5 permit 192.0.2.9 0.0.0.255
+access-list 14 permit 192.0.2.19 0.0.0.255
+access-list 15 permit 192.0.2.21 0.0.0.255
+access-list 16 permit 192.0.2.22 0.0.0.255
+access-list 17 permit 192.0.2.23 0.0.0.255
+access-list 18 permit 192.0.2.24 0.0.0.255
+access-list 19 permit 192.0.2.25 0.0.0.255
+access-list 27 permit 192.0.2.34 0.0.0.255
+access-list 28 permit 192.0.2.35 0.0.0.255
+access-list 29 permit 192.0.2.36 0.0.0.255
+access-list 30 permit 192.0.2.37 0.0.0.255
+access-list 31 permit 192.0.2.38 0.0.0.255
+access-list 32 permit 192.0.2.39 0.0.0.255
+access-list 33 permit 192.0.2.41 0.0.0.255
+access-list 34 permit 192.0.2.42 0.0.0.255
+access-list 41 permit 192.0.2.49 0.0.0.255
+access-list 42 permit 192.0.2.51 0.0.0.255
+access-list 43 permit 192.0.2.52 0.0.0.255
+access-list 44 permit 192.0.2.53 0.0.0.255
+access-list 45 permit 192.0.2.54 0.0.0.255
+access-list 46 permit 192.0.2.55 0.0.0.255
+access-list 100 permit eigrp host 0.0.0.0 any
+!
+control-plane
+!
+default-value exec-character-bits 8
+!
+line con 0
+line aux 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport output pad telnet rlogin lapb-ta mop udptn v120 ssh
+ stopbits 1
+line vty 0 4
+ password example-vty
+ login local
+ no activation-character
+ international
+ transport input telnet ssh
+!
+scheduler allocate 20000 1000
+!
+end

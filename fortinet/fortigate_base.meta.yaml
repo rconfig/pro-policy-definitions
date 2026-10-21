@@ -1,0 +1,12 @@
+title: "FortiGate base build template"
+description: "Example baseline build: hostname, timezone, admin access, LAN interface, DHCP, DNS, NAT and firewall policies, SNMP, NTP and logging, with fixed example values."
+vendor: fortinet
+os: fortios
+config_format: fortios-full-config
+# collection_command: Pro app/Demo/Platforms/FortiOs/FortiOsGenerator.php:53 (primaryCommand)
+collection_command: "show full-configuration"
+kind: template
+min_rconfig_version: 8.0.0
+status: under-review
+framework_claim: null
+notes: "Build template with fixed example values; the reset, hostname, timezone and NAT rules put multi-line bodies under must_match_single_string and cannot pass."

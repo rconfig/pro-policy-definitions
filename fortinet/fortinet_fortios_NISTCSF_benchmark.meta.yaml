@@ -1,0 +1,16 @@
+title: "FortiOS NIST CSF policy"
+description: "NIST Cybersecurity Framework mapped to FortiOS, version 1.0."
+vendor: fortinet
+os: fortios
+config_format: fortios-full-config
+# collection_command: Pro app/Demo/Platforms/FortiOs/FortiOsGenerator.php:53 (primaryCommand)
+collection_command: "show full-configuration"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim:
+  framework: "NIST CSF"
+  label: "NIST Cybersecurity Framework mapped to FortiOS"
+  id_scheme: "CSF-<subcategory>"
+  ids_local: false
+  note: "Uses CSF 1.1 subcategory IDs as published; the mapping itself is not checked."

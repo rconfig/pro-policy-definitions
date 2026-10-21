@@ -67,9 +67,9 @@ line con 0
 line vty 0 4
  exec-timeout 10 0
 
-// CIS-3.1.5: Ensure transport input excludes Telnet
-#[must_not_match_single_string]
-transport input telnet
+// CIS-3.1.5: Ensure transport input excludes Telnet (no transport input line permits telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
 
 // CIS-3.1.6: Ensure SSH version 2 is enabled
 #[must_match_single_string]
@@ -107,9 +107,9 @@ ip ssh version 2
 #[must_match_single_string]
 service timestamps log datetime msec
 
-// CIS-5.1.5: Ensure console logging disabled
-#[must_not_match_single_string]
-logging console
+// CIS-5.1.5: Ensure console logging disabled (no logging console line at any level)
+#[must_not_match_regex]
+/^logging console\b/m
 
 // CIS-6.1.1: Disable HTTP server
 #[must_not_match_single_string]

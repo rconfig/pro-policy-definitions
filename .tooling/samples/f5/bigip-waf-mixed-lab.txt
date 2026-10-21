@@ -1,0 +1,39 @@
+ltm virtual /Common/vs_app_secure {
+    destination /Common/192.0.2.10:443
+    ip-protocol tcp
+    mask 255.255.255.255
+    profiles {
+        /Common/ASM_waf_policy_prod {
+            context clientside
+        }
+        /Common/siem_log_collector { }
+        /Common/netlog_tcp { }
+        /Common/telemetry_asm_security_log_profile { }
+        /Common/tcp { }
+    }
+    security-log-profiles {
+        /Common/Log illegal requests
+    }
+    source 0.0.0.0/0
+}
+ltm virtual /Common/vs_app_missing_logging {
+    destination /Common/192.0.2.11:443
+    ip-protocol tcp
+    profiles {
+        /Common/ASM_waf_policy_prod {
+            context clientside
+        }
+        /Common/netlog_tcp { }
+        /Common/tcp { }
+    }
+    source 0.0.0.0/0
+}
+ltm virtual /Common/vs_plain_http {
+    destination /Common/192.0.2.12:80
+    ip-protocol tcp
+    profiles {
+        /Common/http { }
+        /Common/tcp { }
+    }
+    source 0.0.0.0/0
+}

@@ -2,7 +2,7 @@
 
 Policy definitions for Juniper Junos devices.
 
-These policies are withdrawn while they are updated for `display set` format, and do not appear in Import Templates.
+These policies are withdrawn while they are updated for `display set` format. They are kept in `.drafts/juniper/` as `*.policy.draft` files and do not appear in Import Templates.
 
 ## Expected config format
 

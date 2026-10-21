@@ -1,0 +1,20 @@
+# F5 sample configs. Addresses are sanitised.
+# Both samples are partial: they hold ltm virtual objects only, with no sys, ltm pool or
+# ltm profile client-ssl objects.
+samples:
+  - file: bigip-waf-mixed-lab.txt
+    name: BIG-IP virtual servers, one missing WAF logging profiles
+    os: bigip-tmos
+    os_version: unknown
+    config_format: bigip-scf
+    source: lab
+    hardened: false
+    origin: rConfig Pro tests/storage/policydata/f5_bigip_showrun.txt at Pro commit ac2d993a2d, sanitised
+  - file: bigip-waf-compliant-lab.txt
+    name: BIG-IP virtual servers with WAF logging profiles
+    os: bigip-tmos
+    os_version: unknown
+    config_format: bigip-scf
+    source: lab
+    hardened: true
+    origin: rConfig Pro tests/storage/policydata/f5_bigip_compliant.txt at Pro commit ac2d993a2d, sanitised

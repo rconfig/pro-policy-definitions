@@ -1,0 +1,11 @@
+# Fortinet sample configs. Addresses and names are sanitised.
+# Gap: only one sample, and it is not hardened. A hardened FortiOS sample is needed.
+samples:
+  - file: fg100f-fortios744-synthetic.txt
+    name: FortiGate 100F office firewall
+    os: fortios
+    os_version: "7.4.4"
+    config_format: fortios-full-config
+    source: synthetic
+    hardened: false
+    origin: rConfig Pro demo generator FortiOsGenerator, show full-configuration, seed seed-a, at Pro commit ac2d993a2d, sanitised

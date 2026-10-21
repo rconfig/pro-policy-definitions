@@ -18,9 +18,9 @@ aaa new-model
 #[must_match_single_string]
 ip ssh version 2
 
-// PCI-6.1: Telnet disabled (no transport input telnet line)
-#[must_not_match_single_string]
-transport input telnet
+// PCI-6.1: Telnet disabled (no transport input line permits telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
 
 // PCI-6.2: User accounts must not use plaintext passwords
 #[must_not_match_regex]
@@ -34,6 +34,6 @@ transport input telnet
 #[must_match_single_string]
 service timestamps log datetime msec
 
-// PCI-10.3: Console logging disabled
-#[must_not_match_single_string]
-logging console
+// PCI-10.3: Console logging disabled (no logging console line at any level)
+#[must_not_match_regex]
+/^logging console\b/m

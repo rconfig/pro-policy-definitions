@@ -1,0 +1,12 @@
+title: "MikroTik RouterOS base build template"
+description: "Example baseline build: identity, timezone, service lockdown, LAN bridge, DHCP, DNS, NAT, firewall filter, SNMP, NTP and remote logging, with fixed example values."
+vendor: mikrotik
+os: routeros
+config_format: routeros-export
+# collection_command: Pro app/Demo/Platforms/RouterOs/RouterOsGenerator.php:106 (primaryCommand)
+collection_command: "/export"
+kind: template
+min_rconfig_version: 8.0.0
+status: under-review
+framework_claim: null
+notes: "Build template with fixed example values; the reset and user add rules are commands that never appear in /export output."

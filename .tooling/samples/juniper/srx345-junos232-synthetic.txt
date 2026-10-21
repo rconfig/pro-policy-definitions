@@ -1,0 +1,194 @@
+## Last commit: 2026-09-02 10:45:00 IST by netops
+set version 23.2R1.14
+set system host-name br-cork-fw01
+set system domain-name br-cork.corp.example.net
+set system time-zone Europe/Dublin
+set system root-authentication encrypted-password "$6$de118785$7916969b6ef11139bedca1a98cb4678eea810c162bc8bad0eff468c0d006a2e1a62e6f79bc0a5ac35790a9"
+set system login message "Authorised access only. All activity on this device is logged and monitored."
+set system login class noc-readonly permissions view
+set system login class noc-readonly permissions view-configuration
+set system login user netops uid 2001
+set system login user netops class super-user
+set system login user netops authentication encrypted-password "$6$61cb8b70$df6380db76563ff583940795d02c51477b217e3f8197b46eaebb40cf39b1bf51dad8c2aabefffd6d39f2fe"
+set system login user remote-noc uid 2002
+set system login user remote-noc class noc-readonly
+set system authentication-order [ tacplus password ]
+set system tacplus-server 192.0.2.30 secret "$9$vq3Zzv3AE1DPBsdbYwhNsxs1naFe"
+set system tacplus-server 192.0.2.30 source-address 192.0.2.20
+set system tacplus-server 192.0.2.31 secret "$9$ALpLTih6idHBwUvfjHLeLLQW7aeP"
+set system tacplus-server 192.0.2.31 source-address 192.0.2.20
+set system accounting events login
+set system accounting events change-log
+set system accounting destination tacplus
+set system services ssh root-login deny
+set system services ssh protocol-version v2
+set system services ssh connection-limit 10
+set system services ssh rate-limit 5
+set system services netconf ssh
+set system services web-management https system-generated-certificate
+set system services web-management https interface fxp0.0
+set system name-server 192.0.2.53
+set system name-server 192.0.2.54
+set system syslog host 192.0.2.50 any notice
+set system syslog host 192.0.2.50 authorization info
+set system syslog file messages any notice
+set system syslog file messages authorization info
+set system syslog file interactive-commands interactive-commands any
+set system syslog time-format millisecond
+set system ntp server 192.0.2.1 prefer
+set system ntp server 192.0.2.2
+set system ntp source-address 192.0.2.20
+set chassis cluster disable
+set security log mode stream
+set security log source-address 192.0.2.20
+set security log stream EXAMPLE-SIEM host 192.0.2.50
+set security screen ids-option untrust-screen icmp ping-death
+set security screen ids-option untrust-screen ip source-route-option
+set security screen ids-option untrust-screen ip tear-drop
+set security screen ids-option untrust-screen tcp syn-flood alarm-threshold 1024
+set security screen ids-option untrust-screen tcp syn-flood attack-threshold 200
+set security screen ids-option untrust-screen tcp land
+set security ike proposal IKE-AES256-SHA256 authentication-method pre-shared-keys
+set security ike proposal IKE-AES256-SHA256 dh-group group19
+set security ike proposal IKE-AES256-SHA256 authentication-algorithm sha-256
+set security ike proposal IKE-AES256-SHA256 encryption-algorithm aes-256-cbc
+set security ike proposal IKE-AES256-SHA256 lifetime-seconds 28800
+set security ike policy HQ-IKE-POLICY mode main
+set security ike policy HQ-IKE-POLICY proposals IKE-AES256-SHA256
+set security ike policy HQ-IKE-POLICY pre-shared-key ascii-text "$9$a8EiBlcvFW8Ascs6mfQdJVwH9lhJ"
+set security ike gateway HQ-GW ike-policy HQ-IKE-POLICY
+set security ike gateway HQ-GW address 203.0.113.1
+set security ike gateway HQ-GW dead-peer-detection probe-idle-tunnel
+set security ike gateway HQ-GW local-identity hostname br-cork-fw01.corp.example.net
+set security ike gateway HQ-GW external-interface ge-0/0/0.0
+set security ike gateway HQ-GW version v2-only
+set security ipsec proposal IPSEC-AES256-GCM protocol esp
+set security ipsec proposal IPSEC-AES256-GCM encryption-algorithm aes-256-gcm
+set security ipsec proposal IPSEC-AES256-GCM lifetime-seconds 3600
+set security ipsec policy HQ-IPSEC-POLICY perfect-forward-secrecy keys group19
+set security ipsec policy HQ-IPSEC-POLICY proposals IPSEC-AES256-GCM
+set security ipsec vpn HQ-VPN bind-interface st0.0
+set security ipsec vpn HQ-VPN ike gateway HQ-GW
+set security ipsec vpn HQ-VPN ike ipsec-policy HQ-IPSEC-POLICY
+set security ipsec vpn HQ-VPN establish-tunnels immediately
+set security address-book global address HQ-NETWORKS 203.0.113.0/16
+set security address-book global address PAYMENT-GATEWAY 203.0.113.80/32
+set security address-book global address STORE-POS 192.0.2.3/24
+set security address-book global address STORE-PRINTERS 192.0.2.4/24
+set security address-book global address-set STORE-NETWORKS address STORE-POS
+set security address-book global address-set STORE-NETWORKS address STORE-PRINTERS
+set security nat source rule-set TRUST-TO-UNTRUST from zone trust
+set security nat source rule-set TRUST-TO-UNTRUST to zone untrust
+set security nat source rule-set TRUST-TO-UNTRUST rule SNAT-INTERFACE match source-address 0.0.0.0/0
+set security nat source rule-set TRUST-TO-UNTRUST rule SNAT-INTERFACE then source-nat interface
+set security policies from-zone trust to-zone untrust policy ALLOW-PAYMENTS match source-address STORE-POS
+set security policies from-zone trust to-zone untrust policy ALLOW-PAYMENTS match destination-address PAYMENT-GATEWAY
+set security policies from-zone trust to-zone untrust policy ALLOW-PAYMENTS match application junos-https
+set security policies from-zone trust to-zone untrust policy ALLOW-PAYMENTS then permit
+set security policies from-zone trust to-zone untrust policy ALLOW-PAYMENTS then log session-close
+set security policies from-zone trust to-zone untrust policy ALLOW-WEB match source-address any
+set security policies from-zone trust to-zone untrust policy ALLOW-WEB match destination-address any
+set security policies from-zone trust to-zone untrust policy ALLOW-WEB match application junos-http
+set security policies from-zone trust to-zone untrust policy ALLOW-WEB match application junos-https
+set security policies from-zone trust to-zone untrust policy ALLOW-WEB match application junos-dns-udp
+set security policies from-zone trust to-zone untrust policy ALLOW-WEB then permit
+set security policies from-zone trust to-zone untrust policy ALLOW-WEB then log session-close
+set security policies from-zone trust to-zone vpn policy ALLOW-TO-HQ match source-address any
+set security policies from-zone trust to-zone vpn policy ALLOW-TO-HQ match destination-address HQ-NETWORKS
+set security policies from-zone trust to-zone vpn policy ALLOW-TO-HQ match application any
+set security policies from-zone trust to-zone vpn policy ALLOW-TO-HQ then permit
+set security policies from-zone trust to-zone vpn policy ALLOW-TO-HQ then log session-close
+set security policies from-zone vpn to-zone trust policy ALLOW-FROM-HQ match source-address HQ-NETWORKS
+set security policies from-zone vpn to-zone trust policy ALLOW-FROM-HQ match destination-address any
+set security policies from-zone vpn to-zone trust policy ALLOW-FROM-HQ match application any
+set security policies from-zone vpn to-zone trust policy ALLOW-FROM-HQ then permit
+set security policies from-zone vpn to-zone trust policy ALLOW-FROM-HQ then log session-close
+set security policies from-zone trust to-zone dmz policy ALLOW-DMZ-WEB match source-address any
+set security policies from-zone trust to-zone dmz policy ALLOW-DMZ-WEB match destination-address any
+set security policies from-zone trust to-zone dmz policy ALLOW-DMZ-WEB match application junos-https
+set security policies from-zone trust to-zone dmz policy ALLOW-DMZ-WEB then permit
+set security policies from-zone trust to-zone dmz policy ALLOW-DMZ-WEB then log session-close
+set security policies default-policy deny-all
+set security zones security-zone trust host-inbound-traffic system-services ping
+set security zones security-zone trust host-inbound-traffic system-services ssh
+set security zones security-zone trust host-inbound-traffic protocols ospf
+set security zones security-zone trust interfaces ge-0/0/1.10
+set security zones security-zone trust interfaces ge-0/0/1.20
+set security zones security-zone trust interfaces ge-0/0/1.30
+set security zones security-zone untrust screen untrust-screen
+set security zones security-zone untrust host-inbound-traffic system-services ike
+set security zones security-zone untrust interfaces ge-0/0/0.0
+set security zones security-zone dmz host-inbound-traffic system-services ping
+set security zones security-zone dmz interfaces ge-0/0/2.0
+set security zones security-zone vpn host-inbound-traffic protocols ospf
+set security zones security-zone vpn interfaces st0.0
+set interfaces ge-0/0/0 description "Internet uplink"
+set interfaces ge-0/0/0 unit 0 family inet address 198.51.100.210/30
+set interfaces ge-0/0/1 description "Store LAN trunk to br-cork-sw01"
+set interfaces ge-0/0/1 vlan-tagging
+set interfaces ge-0/0/1 unit 10 description DATA
+set interfaces ge-0/0/1 unit 10 vlan-id 10
+set interfaces ge-0/0/1 unit 10 family inet address 198.51.100.1/24
+set interfaces ge-0/0/1 unit 20 description VOICE
+set interfaces ge-0/0/1 unit 20 vlan-id 20
+set interfaces ge-0/0/1 unit 20 family inet address 192.0.2.5/24
+set interfaces ge-0/0/1 unit 30 description PRINTERS
+set interfaces ge-0/0/1 unit 30 vlan-id 30
+set interfaces ge-0/0/1 unit 30 family inet address 192.0.2.6/24
+set interfaces ge-0/0/2 description "DMZ, click and collect kiosk"
+set interfaces ge-0/0/2 unit 0 family inet address 192.0.2.7/24
+set interfaces ge-0/0/3 disable
+set interfaces ge-0/0/4 disable
+set interfaces ge-0/0/5 disable
+set interfaces ge-0/0/6 disable
+set interfaces ge-0/0/7 disable
+set interfaces fxp0 unit 0 family inet address 192.0.2.20/24
+set interfaces lo0 unit 0 family inet filter input PROTECT-RE
+set interfaces lo0 unit 0 family inet address 192.0.2.8/32
+set interfaces st0 unit 0 description "IPsec tunnel to HQ"
+set interfaces st0 unit 0 family inet address 198.51.100.2/30
+set snmp location "Dublin office"
+set snmp contact "noc@corp.example.net"
+set snmp community ngr-3d519b-ro authorization read-only
+set snmp community ngr-3d519b-ro clients 192.0.2.60/32
+set snmp v3 usm local-engine user nms-poller authentication-sha256 authentication-key "$9$QXdSz2iNsOvK7xF71tStz7BZC4q3"
+set snmp v3 usm local-engine user nms-poller privacy-aes128 privacy-key "$9$uB4Sxr4cjRnbsZ12tkkwYqsZH11A"
+set snmp v3 vacm security-to-group security-model usm security-name nms-poller group NMS-GROUP
+set snmp v3 vacm access group NMS-GROUP default-context-prefix security-model usm security-level privacy read-view ALL
+set snmp v3 target-address NMS address 192.0.2.60
+set snmp v3 target-address NMS tag-list nms-traps
+set snmp v3 target-address NMS target-parameters NMS-PARAMS
+set snmp view ALL oid .1 include
+set routing-options static route 0.0.0.0/0 next-hop 198.51.100.209
+set protocols ospf area 0.0.0.0 interface st0.0 interface-type p2p
+set protocols ospf area 0.0.0.0 interface lo0.0 passive
+set protocols ospf area 0.0.0.0 interface ge-0/0/1.10 passive
+set protocols ospf area 0.0.0.0 interface ge-0/0/1.20 passive
+set protocols ospf area 0.0.0.0 interface ge-0/0/1.30 passive
+set policy-options prefix-list MGMT-HOSTS 192.0.2.0/24
+set policy-options prefix-list MGMT-HOSTS 198.51.100.0/24
+set policy-options prefix-list NTP-SERVERS 192.0.2.1/32
+set policy-options prefix-list NTP-SERVERS 192.0.2.2/32
+set firewall family inet filter PROTECT-RE term ALLOW-SSH from source-prefix-list MGMT-HOSTS
+set firewall family inet filter PROTECT-RE term ALLOW-SSH from protocol tcp
+set firewall family inet filter PROTECT-RE term ALLOW-SSH from destination-port ssh
+set firewall family inet filter PROTECT-RE term ALLOW-SSH then accept
+set firewall family inet filter PROTECT-RE term ALLOW-NTP from source-prefix-list NTP-SERVERS
+set firewall family inet filter PROTECT-RE term ALLOW-NTP from protocol udp
+set firewall family inet filter PROTECT-RE term ALLOW-NTP from port ntp
+set firewall family inet filter PROTECT-RE term ALLOW-NTP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP from source-address 192.0.2.60/32
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP from protocol udp
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP from destination-port snmp
+set firewall family inet filter PROTECT-RE term ALLOW-SNMP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-ICMP from protocol icmp
+set firewall family inet filter PROTECT-RE term ALLOW-ICMP then policer ICMP-1M
+set firewall family inet filter PROTECT-RE term ALLOW-ICMP then accept
+set firewall family inet filter PROTECT-RE term ALLOW-ESTABLISHED from protocol tcp
+set firewall family inet filter PROTECT-RE term ALLOW-ESTABLISHED from tcp-established
+set firewall family inet filter PROTECT-RE term ALLOW-ESTABLISHED then accept
+set firewall family inet filter PROTECT-RE term DENY-ALL then syslog
+set firewall family inet filter PROTECT-RE term DENY-ALL then discard
+set firewall policer ICMP-1M if-exceeding bandwidth-limit 1m
+set firewall policer ICMP-1M if-exceeding burst-size-limit 15k
+set firewall policer ICMP-1M then discard

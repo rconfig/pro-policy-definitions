@@ -6,9 +6,9 @@ aaa new-model
 #[must_match_single_string]
 ip ssh version 2
 
-// SAFE-IA-2: Telnet disabled (no transport input telnet line)
-#[must_not_match_single_string]
-transport input telnet
+// SAFE-IA-2: Telnet disabled (no transport input line permits telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
 
 // SAFE-IA-3: VTY 0 4 exec-timeout set to 10 minutes (exec-timeout 10 0)
 #[match_code_block_from_array]
@@ -23,9 +23,9 @@ line vty 0 4
 #[must_match_single_string]
 service timestamps log datetime msec
 
-// SAFE-VL-3: Disable console logging
-#[must_not_match_single_string]
-logging console
+// SAFE-VL-3: Disable console logging (no logging console line at any level)
+#[must_not_match_regex]
+/^logging console\b/m
 
 // SAFE-TD-1: Disable HTTP server
 #[must_not_match_single_string]

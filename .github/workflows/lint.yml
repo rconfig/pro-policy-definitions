@@ -1,0 +1,23 @@
+name: Lint
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PyYAML
+        run: pip install pyyaml==6.0.2
+      - name: Run lint tests
+        run: python .tooling/scripts/test_lint.py
+      - name: Lint policy definitions
+        run: python .tooling/scripts/lint.py

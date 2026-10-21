@@ -10,9 +10,9 @@ aaa new-model
 #[must_match_single_string]
 ip ssh version 2
 
-// CSF-PRAC-2: Telnet disabled (no transport input telnet line)
-#[must_not_match_single_string]
-transport input telnet
+// CSF-PRAC-2: Telnet disabled (no transport input line permits telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
 
 // CSF-PRAC-3: User accounts must not use plaintext passwords
 #[must_not_match_regex]

@@ -1,0 +1,11 @@
+title: "F5 BIG-IP SSL/TLS and virtual server hardening"
+description: "Client-SSL profiles disable SSLv3, TLS 1.0 and TLS 1.1 and avoid DEFAULT/ALL ciphers; pools have monitors; HTTPS virtual servers use client-SSL and keep source address translation."
+vendor: f5
+os: bigip-tmos
+config_format: bigip-scf
+# collection_command: Pro has no F5 platform or collection command; set it when one exists
+collection_command: null
+kind: hardening
+min_rconfig_version: 8.3.0
+status: lab-tested
+framework_claim: null

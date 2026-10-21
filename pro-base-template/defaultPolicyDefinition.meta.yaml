@@ -1,0 +1,12 @@
+title: "rConfig default policy definition template"
+description: "The base template for the rConfig Compliance Policy Definitions feature: SNMP, CDP, HTTP, SSH, AAA, logging, NTP and line settings for Cisco IOS."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: template
+min_rconfig_version: 8.0.0
+status: under-review
+framework_claim: null
+notes: "Default template with fixed example addresses (1.1.1.1, 2.2.2.2, 3.3.3.3); its role in the repository is pending a decision."
