@@ -1,0 +1,55 @@
+title: "Cisco IOS baseline standard"
+description: "A baseline standard for Cisco IOS and IOS XE: edit the values to match your own. One block per section (services, DNS, NTP, AAA and IPv6 routing, local admin user, no plaintext passwords, HTTP, default route, SSH, SNMPv3 and VTY lines), with RFC 5737 addresses, example.com and example names to replace."
+vendor: cisco
+os: ios
+config_format: ios-running-config
+# collection_command: Pro app/Demo/Platforms/IosXe/IosXeGenerator.php:50 (primaryCommand)
+collection_command: "show running-config"
+kind: operational
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "The array blocks check that each line is present somewhere in the config, as a substring, so ntp server 192.0.2.10 also matches ntp server 192.0.2.100, and extra options after a line (for example prefer or localtime) still pass. Each name server must be on its own ip name-server line: a single line that lists both, such as ip name-server 192.0.2.53 198.51.100.53, fails the block. The example values fail against real configs until they are edited. Framework references are recorded below for reading only: generate_frameworks.py collects hardening topic files, not operational files, so these rules are not in the framework files."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "Cisco Services Standard"
+    references: {}
+  - description: "Cisco DNS Standard"
+    references: {}
+  - description: "Cisco NTP Standard"
+    references:
+      nist_800_53: ["AU-8"]
+      iso27001: ["A.8.17"]
+  - description: "Cisco Other Standard"
+    references: {}
+  - description: "Cisco Creds Standard"
+    references:
+      nist_800_53: ["IA-5"]
+      iso27001: ["A.5.17"]
+  - description: "Cisco Creds Standard: no plaintext passwords"
+    references:
+      nist_800_53: ["IA-5"]
+      iso27001: ["A.5.17"]
+  - description: "Cisco HTTP Standard"
+    references:
+      nist_800_53: ["CM-7"]
+      iso27001: ["A.8.9"]
+  - description: "Cisco Routing Standard"
+    references: {}
+  - description: "Cisco SSH Standard"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.24"]
+  - description: "Cisco SNMP Standard"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]
+      iso27001: ["A.8.5", "A.8.24"]
+  - description: "Cisco VTY Standard"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.5"]

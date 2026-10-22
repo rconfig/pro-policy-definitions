@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-22
+
+### Added
+- `cisco/ios-baseline`, a baseline standard for Cisco IOS and IOS XE (`kind: operational`, `status: synthetic-tested`, rConfig V8.3.0): edit the values to match your own. It has eleven blocks, each named `Cisco <Section> Standard`: services, DNS, NTP, other (AAA and IPv6 routing), creds (a local `admin` user with a type 9 secret), no plaintext passwords (fails on any `password 0` line), HTTP, routing (a default route), SSH, SNMP and VTY (every `line vty` block has `transport input ssh` and no `password` line). The values are RFC 5737 addresses, `example.com` and example names. The `.meta.yaml` records NIST SP 800-53, HIPAA and ISO/IEC 27001:2022 references where the control clearly covers a block. They are for reading only: `generate_frameworks.py` collects hardening topic files only, so the framework files are unchanged.
+- Expected results for `cisco/ios-baseline`. Every block passes on the hardened Catalyst 9500 sample. On the unhardened Cisco 1921 lab sample, seven blocks fail, and four pass because the lab router has those lines (services, other, routing and SSH).
+
+### Changed
+- Cisco sample `c9500-iosxe179-hardened-synthetic.txt` has the baseline example values: `no service dhcp`, `ip domain name example.com`, name servers 192.0.2.53 and 198.51.100.53, `ipv6 unicast-routing`, a local `admin` user, NTP servers 192.0.2.10 and 192.0.2.11 in place of 192.0.2.1 and 192.0.2.2, and an SNMPv3 group and host. Every hardening rule still passes on it. Because of the new NTP servers, the `cisco/ios-operational-standards` NTP rule now passes on it too; no other expected result changed.
+
 ## [1.3.0] - 2026-10-21
 
 ### Added

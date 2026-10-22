@@ -1,0 +1,57 @@
+// Cisco Services Standard
+#[must_match_all_from_array]
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service dhcp
+
+// Cisco DNS Standard
+#[must_match_all_from_array]
+no ip domain lookup
+ip domain name example.com
+ip name-server 192.0.2.53
+ip name-server 198.51.100.53
+
+// Cisco NTP Standard
+#[must_match_all_from_array]
+ntp server 192.0.2.10
+ntp server 192.0.2.11
+
+// Cisco Other Standard
+#[must_match_all_from_array]
+aaa new-model
+ipv6 unicast-routing
+
+// Cisco Creds Standard
+#[wildcard_match_single_string]
+username admin privilege 15 secret 9 *
+
+// Cisco Creds Standard: no plaintext passwords
+#[must_not_match_regex]
+/^.*\bpassword 0 \S/m
+
+// Cisco HTTP Standard
+#[must_match_all_from_array]
+no ip http server
+ip http authentication local
+no ip http secure-server
+
+// Cisco Routing Standard
+#[wildcard_match_single_string]
+ip route 0.0.0.0 0.0.0.0 *
+
+// Cisco SSH Standard
+#[must_match_single_string]
+ip ssh version 2
+
+// Cisco SNMP Standard
+#[must_match_all_from_array]
+snmp-server group SNMPV3GROUP v3 priv
+snmp-server host 192.0.2.50 version 3 priv SNMPV3USER
+
+// Cisco VTY Standard
+#[evaluate_block]
+scope: ^line vty
+all:
+  - equals: transport input ssh
+  - not:
+      regex: '/^\s*password\b/m'

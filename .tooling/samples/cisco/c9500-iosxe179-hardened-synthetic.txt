@@ -11,6 +11,7 @@ service timestamps debug datetime msec localtime show-timezone
 service timestamps log datetime msec
 service password-encryption
 service call-home
+no service dhcp
 no platform punt-keepalive disable-kernel-core
 !
 hostname core-sw02
@@ -51,7 +52,11 @@ ip routing
 !
 no ip source-route
 no ip domain lookup
-ip domain name gwy.example.net
+ip domain name example.com
+ip name-server 192.0.2.53
+ip name-server 198.51.100.53
+!
+ipv6 unicast-routing
 !
 login on-failure log
 login on-success log
@@ -71,6 +76,7 @@ spanning-tree extend system-id
 spanning-tree vlan 1-4094 priority 4096
 memory free low-watermark processor 134344
 !
+username admin privilege 15 secret 9 $9$EXAMPLEONLY001$EXAMPLEONLYFAKEHASHEXAMPLEONLYFAKEHASH12345
 username netops privilege 15 secret 9 $9$5J0T7SYCEJJ3F7$K508GSW4V4P8230Z3VK1FA20CJUKCT8R6UUQCCP6UY8
 !
 redundancy
@@ -366,12 +372,14 @@ logging source-interface Vlan99
 logging host 192.0.2.50
 !
 snmp-server group NMS-GROUP v3 priv
+snmp-server group SNMPV3GROUP v3 priv
 snmp-server user nms-poller NMS-GROUP v3 auth sha256 priv aes 128
 snmp-server location Galway office
 snmp-server contact noc@example.net
 snmp-server trap-source Vlan99
 snmp-server enable traps config
 snmp-server enable traps envmon fan shutdown supply temperature status
+snmp-server host 192.0.2.50 version 3 priv SNMPV3USER
 snmp-server host 192.0.2.60 version 3 priv nms-poller
 !
 tacacs server ISE-01
@@ -412,7 +420,7 @@ line vty 5 15
  transport input ssh
 !
 ntp source Vlan99
-ntp server 192.0.2.1 prefer
-ntp server 192.0.2.2
+ntp server 192.0.2.10 prefer
+ntp server 192.0.2.11
 !
 end

@@ -11,7 +11,7 @@ rules:
       cisco/c1921-ios157-lab.txt: fail
       cisco/c9500-iosxe179-synthetic.txt: fail
       cisco/ios157-operational-standards-synthetic.txt: pass
-      cisco/c9500-iosxe179-hardened-synthetic.txt: fail
+      cisco/c9500-iosxe179-hardened-synthetic.txt: pass
   -
     rule: 2
     description: 'Syslog servers are set to your standard (replace 192.0.2.20 and 192.0.2.21)'
