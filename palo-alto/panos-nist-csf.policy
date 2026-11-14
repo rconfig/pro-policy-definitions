@@ -1,0 +1,11 @@
+// NIST CSF DE.CM-1: A syslog server profile has a server address (shared log-settings syslog ... server)
+#[evaluate_block]
+scope: ^syslog \{
+all:
+  - regex: '/(^|[{;])\s*server [^{\s;]+;/m'
+
+// NIST CSF PR.AC-1: Administrators authenticate through an authentication profile (deviceconfig system authentication-profile)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/(^|[{;])\s*authentication-profile [^{\s;]+;/m'

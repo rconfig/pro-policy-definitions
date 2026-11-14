@@ -1,0 +1,41 @@
+// HIPAA 164.312(a)(1): Administrators authenticate through an authentication profile (deviceconfig system authentication-profile)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/(^|[{;])\s*authentication-profile [^{\s;]+;/m'
+
+// HIPAA 164.312(a)(1): Telnet is not enabled on the management interface (fails on disable-telnet no)
+#[must_not_match_regex]
+/(^|[{;])\s*disable-telnet no;/m
+
+// HIPAA 164.312(b): A syslog server profile has a server address (shared log-settings syslog ... server)
+#[evaluate_block]
+scope: ^syslog \{
+all:
+  - regex: '/(^|[{;])\s*server [^{\s;]+;/m'
+
+// HIPAA 164.312(b): System logs are forwarded to syslog (log-settings system match-list send-syslog)
+#[evaluate_block]
+scope: ^log-settings \{$
+any:
+  - regex: '/^(\s*)system \{\n(?:\1\s.*\n)*?\1\s.*\bsend-syslog /m'
+  - regex: '/^\s*system \{[^\n]*\bsend-syslog /m'
+
+// HIPAA 164.312(b): Configuration logs are forwarded to syslog (log-settings config match-list send-syslog)
+#[evaluate_block]
+scope: ^log-settings \{$
+any:
+  - regex: '/^(\s*)config \{\n(?:\1\s.*\n)*?\1\s.*\bsend-syslog /m'
+  - regex: '/^\s*config \{[^\n]*\bsend-syslog /m'
+
+// HIPAA 164.312(c)(1): HTTP is not enabled on the management interface (fails on disable-http no)
+#[must_not_match_regex]
+/(^|[{;])\s*disable-http no;/m
+
+// HIPAA 164.312(c)(1): No interface management profile enables Telnet or HTTP (fails on telnet yes or http yes)
+#[must_not_match_regex]
+/(^|[{;])\s*(telnet|http) yes;/m
+
+// HIPAA 164.312(e)(1): No SNMPv2c community is configured (fails on snmp-community-string)
+#[must_not_match_regex]
+/(^|[{;])\s*snmp-community-string /m

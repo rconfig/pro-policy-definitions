@@ -1,0 +1,33 @@
+// Telnet is not enabled on the management interface (fails on disable-telnet no)
+#[must_not_match_regex]
+/(^|[{;])\s*disable-telnet no;/m
+
+// HTTP is not enabled on the management interface (fails on disable-http no)
+#[must_not_match_regex]
+/(^|[{;])\s*disable-http no;/m
+
+// No interface management profile enables Telnet or HTTP (fails on telnet yes or http yes)
+#[must_not_match_regex]
+/(^|[{;])\s*(telnet|http) yes;/m
+
+// Management access is limited to permitted IP addresses (deviceconfig system permitted-ip)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/(^|[{;])\s*permitted-ip \{\s*[^\s}]/m'
+
+// The administrator idle timeout is 1 to 10 minutes (deviceconfig setting management idle-timeout)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/(^|[{;])\s*idle-timeout ([1-9]|10);/m'
+
+// A login banner is configured (deviceconfig system login-banner)
+#[must_match_regex]
+/(^|[{;])\s*login-banner \S/m
+
+// Administrator accounts lock after 1 to 5 failed attempts (admin-lockout failed-attempts)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/\bfailed-attempts [1-5];/m'

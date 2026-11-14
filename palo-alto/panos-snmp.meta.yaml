@@ -1,0 +1,21 @@
+title: "PAN-OS SNMP"
+description: "No SNMPv2c community."
+vendor: palo-alto
+os: panos
+config_format: panos-brace
+# collection_command: Pro app/Demo/Platforms/PanOs/PanOsGenerator.php:66 (primaryCommand)
+collection_command: "show config running"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim: null
+notes: "Brace format from show config running only; set format is not covered. Tested against synthetic samples only. The rules have not been checked against output from a real PAN-OS firewall, and settings pushed from Panorama may not appear in show config running."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "No SNMPv2c community is configured (fails on snmp-community-string)"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]
+      iso27001: ["A.8.5"]

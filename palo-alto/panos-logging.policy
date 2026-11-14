@@ -1,0 +1,19 @@
+// A syslog server profile has a server address (shared log-settings syslog ... server)
+#[evaluate_block]
+scope: ^syslog \{
+all:
+  - regex: '/(^|[{;])\s*server [^{\s;]+;/m'
+
+// System logs are forwarded to syslog (log-settings system match-list send-syslog)
+#[evaluate_block]
+scope: ^log-settings \{$
+any:
+  - regex: '/^(\s*)system \{\n(?:\1\s.*\n)*?\1\s.*\bsend-syslog /m'
+  - regex: '/^\s*system \{[^\n]*\bsend-syslog /m'
+
+// Configuration logs are forwarded to syslog (log-settings config match-list send-syslog)
+#[evaluate_block]
+scope: ^log-settings \{$
+any:
+  - regex: '/^(\s*)config \{\n(?:\1\s.*\n)*?\1\s.*\bsend-syslog /m'
+  - regex: '/^\s*config \{[^\n]*\bsend-syslog /m'

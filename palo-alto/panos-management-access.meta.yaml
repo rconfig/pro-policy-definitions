@@ -1,0 +1,46 @@
+title: "PAN-OS management access"
+description: "No Telnet or HTTP on the management interface or in any interface management profile, management access limited to permitted IP addresses, an administrator idle timeout of 1 to 10 minutes, a login banner, and administrator lockout after 1 to 5 failed attempts."
+vendor: palo-alto
+os: panos
+config_format: panos-brace
+# collection_command: Pro app/Demo/Platforms/PanOs/PanOsGenerator.php:66 (primaryCommand)
+collection_command: "show config running"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "Brace format from show config running only; set format is not covered. Tested against synthetic samples only. The rules have not been checked against output from a real PAN-OS firewall, and settings pushed from Panorama may not appear in show config running."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "Telnet is not enabled on the management interface (fails on disable-telnet no)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.5"]
+  - description: "HTTP is not enabled on the management interface (fails on disable-http no)"
+    references:
+      nist_800_53: ["CM-7"]
+      hipaa: ["164.312(c)(1)"]
+      iso27001: ["A.8.5"]
+  - description: "No interface management profile enables Telnet or HTTP (fails on telnet yes or http yes)"
+    references:
+      nist_800_53: ["CM-7"]
+      hipaa: ["164.312(c)(1)"]
+      iso27001: ["A.8.5"]
+  - description: "Management access is limited to permitted IP addresses (deviceconfig system permitted-ip)"
+    references:
+      nist_800_53: ["AC-17"]
+      iso27001: ["A.8.20"]
+  - description: "The administrator idle timeout is 1 to 10 minutes (deviceconfig setting management idle-timeout)"
+    references:
+      nist_800_53: ["AC-3"]
+      iso27001: ["A.8.5"]
+  - description: "A login banner is configured (deviceconfig system login-banner)"
+    references:
+      iso27001: ["A.8.5"]
+  - description: "Administrator accounts lock after 1 to 5 failed attempts (admin-lockout failed-attempts)"
+    references:
+      nist_800_53: ["AC-7"]
+      iso27001: ["A.8.5"]

@@ -1,0 +1,516 @@
+config {
+  mgt-config {
+    users {
+      admin-ops {
+        permissions {
+          role-based {
+            superuser yes;
+          }
+        }
+        phash $5$d9315b3d$KV0vrCOWEnnV6OmsGOsIIohyKxHIeZqhsNevV2t7svk;
+      }
+      audit {
+        permissions {
+          role-based {
+            superreader yes;
+          }
+        }
+        phash $5$d6ba974c$1kUgDCqxQTtJqnZCcXyVsfN89o7T.J2jJ3Dp8GLI6G8;
+      }
+    }
+    password-complexity {
+      enabled yes;
+      minimum-length 14;
+      minimum-uppercase-letters 1;
+      minimum-lowercase-letters 1;
+      minimum-numeric-letters 1;
+      minimum-special-characters 1;
+      password-history-count 12;
+    }
+  }
+  shared {
+    server-profile {
+      tacplus {
+        CORP-TACACS {
+          server {
+            TACACS01 {
+              address 192.0.2.32;
+              secret -AQ==YBgl9GTI/8RK5bYnCT5cUlg2Tpk=yng79zQQMIU3nw1RxwA21w==;
+            }
+            TACACS02 {
+              address 192.0.2.33;
+              secret -AQ==gtlNjl2EkK3TjJIvCiTEhDqjHOc=6DZK9pycOHqEO4Jw/QejUA==;
+            }
+          }
+          protocol CHAP;
+        }
+      }
+    }
+    authentication-profile {
+      AUTH-TACACS {
+        method {
+          tacplus {
+            server-profile CORP-TACACS;
+          }
+        }
+        allow-list [ all ];
+      }
+    }
+    log-settings {
+      syslog {
+        CORP-SYSLOG {
+          server {
+            SYSLOG01 {
+              server 192.0.2.20;
+              transport UDP;
+              port 514;
+              format BSD;
+              facility LOG_USER;
+            }
+            SYSLOG02 {
+              server 192.0.2.21;
+              transport UDP;
+              port 514;
+              format BSD;
+              facility LOG_USER;
+            }
+          }
+        }
+      }
+      profiles {
+        CORP-LOG-FWD {
+          match-list {
+            traffic-all {
+              log-type traffic;
+              filter "All Logs";
+              send-syslog CORP-SYSLOG;
+            }
+            threat-all {
+              log-type threat;
+              filter "All Logs";
+              send-syslog CORP-SYSLOG;
+            }
+          }
+        }
+      }
+      system {
+        match-list {
+          system-all {
+            filter "All Logs";
+            send-syslog CORP-SYSLOG;
+          }
+        }
+      }
+      config {
+        match-list {
+          config-all {
+            filter "All Logs";
+            send-syslog CORP-SYSLOG;
+          }
+        }
+      }
+    }
+  }
+  devices {
+    localhost.localdomain {
+      network {
+        interface {
+          ethernet {
+            ethernet1/1 {
+              layer3 {
+                ip {
+                  203.0.113.10/29;
+                }
+                interface-management-profile ALLOW-PING;
+              }
+              comment "Internet uplink";
+            }
+            ethernet1/2 {
+              layer3 {
+                ip {
+                  198.51.100.1/26;
+                }
+                interface-management-profile MGMT-HTTPS-SSH;
+              }
+              comment "Corporate LAN";
+            }
+            ethernet1/3 {
+              layer3 {
+                ip {
+                  198.51.100.65/27;
+                }
+                interface-management-profile ALLOW-PING;
+              }
+              comment "DMZ";
+            }
+            ethernet1/4 {
+              layer3 {
+                ip {
+                  198.51.100.97/27;
+                }
+              }
+              comment "PCI cardholder data environment";
+            }
+          }
+        }
+        profiles {
+          interface-management-profile {
+            MGMT-HTTPS-SSH {
+              https yes;
+              ssh yes;
+              ping yes;
+              permitted-ip {
+                192.0.2.0/24;
+                198.51.100.0/24;
+              }
+            }
+            ALLOW-PING {
+              ping yes;
+            }
+          }
+        }
+        virtual-router {
+          default {
+            interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4 ];
+            routing-table {
+              ip {
+                static-route {
+                  DEFAULT {
+                    destination 0.0.0.0/0;
+                    nexthop {
+                      ip-address 203.0.113.9;
+                    }
+                    interface ethernet1/1;
+                    metric 10;
+                  }
+                  POS-STORES {
+                    destination 198.51.100.128/26;
+                    nexthop {
+                      ip-address 198.51.100.62;
+                    }
+                    interface ethernet1/2;
+                    metric 10;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      deviceconfig {
+        system {
+          hostname dub-fw01;
+          ip-address 192.0.2.5;
+          netmask 255.255.255.0;
+          default-gateway 192.0.2.1;
+          type {
+            static;
+          }
+          timezone Europe/Dublin;
+          domain example.com;
+          dns-setting {
+            servers {
+              primary 192.0.2.30;
+              secondary 192.0.2.31;
+            }
+          }
+          ntp-servers {
+            primary-ntp-server {
+              ntp-server-address 192.0.2.10;
+              authentication-type {
+                none;
+              }
+            }
+            secondary-ntp-server {
+              ntp-server-address 192.0.2.11;
+              authentication-type {
+                none;
+              }
+            }
+          }
+          login-banner "Authorised use only. All activity is monitored and recorded.";
+          service {
+            disable-telnet yes;
+            disable-http yes;
+          }
+          permitted-ip {
+            192.0.2.0/24;
+            198.51.100.0/24;
+          }
+          authentication-profile AUTH-TACACS;
+          snmp-setting {
+            snmp-system {
+              location "Dublin HQ, comms room 1";
+              contact noc@example.com;
+            }
+          }
+        }
+        setting {
+          management {
+            idle-timeout 10;
+            admin-lockout {
+              failed-attempts 5;
+              lockout-time 15;
+            }
+          }
+          config {
+            rematch yes;
+          }
+        }
+        high-availability {
+          enabled yes;
+          group {
+            group-id 30;
+            description "HQ perimeter pair";
+            peer-ip 203.0.113.250;
+            mode {
+              active-passive {
+                passive-link-state auto;
+              }
+            }
+            election-option {
+              device-priority 155;
+              preemptive yes;
+            }
+            state-synchronization {
+              enabled yes;
+              transport ethernet;
+            }
+          }
+          interface {
+            ha1 {
+              port ha1-a;
+              ip-address 203.0.113.249;
+              netmask 255.255.255.252;
+            }
+            ha2 {
+              port hsci;
+              ip-address 203.0.113.253;
+              netmask 255.255.255.252;
+            }
+          }
+        }
+      }
+      vsys {
+        vsys1 {
+          zone {
+            untrust {
+              network {
+                layer3 ethernet1/1;
+              }
+              enable-user-identification no;
+            }
+            trust {
+              network {
+                layer3 ethernet1/2;
+              }
+              enable-user-identification yes;
+            }
+            dmz {
+              network {
+                layer3 ethernet1/3;
+              }
+            }
+            pci {
+              network {
+                layer3 ethernet1/4;
+              }
+            }
+          }
+          address {
+            CORP-USERS {
+              ip-netmask 198.51.100.0/26;
+            }
+            SRV-DNS01 {
+              ip-netmask 198.51.100.53/32;
+            }
+            SRV-DNS02 {
+              ip-netmask 198.51.100.54/32;
+            }
+            DMZ-WEB01 {
+              ip-netmask 198.51.100.74/32;
+            }
+            POS-STORES {
+              ip-netmask 198.51.100.128/26;
+            }
+            PCI-SERVERS {
+              ip-netmask 198.51.100.96/27;
+            }
+            SRV-PAY-APP01 {
+              ip-netmask 198.51.100.106/32;
+            }
+            SRV-PAY-DB01 {
+              ip-netmask 198.51.100.116/32;
+            }
+            MGMT-JUMP {
+              ip-netmask 192.0.2.25/32;
+            }
+            CORP-SYSLOG {
+              ip-netmask 192.0.2.50/32;
+            }
+            ACQUIRER-GW {
+              ip-netmask 203.0.113.200/32;
+            }
+            PUB-WEB01 {
+              ip-netmask 203.0.113.11/32;
+            }
+          }
+          service {
+            SVC-TCP-8443 {
+              protocol {
+                tcp {
+                  port 8443;
+                }
+              }
+            }
+            SVC-TCP-1433 {
+              protocol {
+                tcp {
+                  port 1433;
+                }
+              }
+            }
+          }
+          tag {
+            PCI {
+              color color1;
+              comments "Cardholder data environment";
+            }
+          }
+          rulebase {
+            security {
+              rules {
+                BLOCK-THREAT-FEEDS {
+                  from untrust;
+                  to any;
+                  source [ panw-highrisk-ip-list panw-known-ip-list ];
+                  destination any;
+                  application any;
+                  service any;
+                  action drop;
+                  log-end yes;
+                  log-setting CORP-LOG-FWD;
+                }
+                ALLOW-USERS-WEB {
+                  from trust;
+                  to untrust;
+                  source CORP-USERS;
+                  destination any;
+                  application [ ssl web-browsing ];
+                  service application-default;
+                  action allow;
+                  log-end yes;
+                  log-setting CORP-LOG-FWD;
+                }
+                ALLOW-DNS-OUT {
+                  from trust;
+                  to untrust;
+                  source [ SRV-DNS01 SRV-DNS02 ];
+                  destination any;
+                  application dns;
+                  service application-default;
+                  action allow;
+                  log-end yes;
+                  log-setting CORP-LOG-FWD;
+                }
+                ALLOW-WEB-INBOUND {
+                  from untrust;
+                  to dmz;
+                  source any;
+                  destination PUB-WEB01;
+                  application [ ssl web-browsing ];
+                  service application-default;
+                  action allow;
+                  log-end yes;
+                  log-setting CORP-LOG-FWD;
+                }
+                ALLOW-POS-TO-PAYAPP {
+                  from trust;
+                  to pci;
+                  source POS-STORES;
+                  destination SRV-PAY-APP01;
+                  application ssl;
+                  service SVC-TCP-8443;
+                  tag PCI;
+                  action allow;
+                  log-end yes;
+                  log-setting CORP-LOG-FWD;
+                }
+                ALLOW-WEB-TO-PAYAPP {
+                  from dmz;
+                  to pci;
+                  source DMZ-WEB01;
+                  destination SRV-PAY-APP01;
+                  application ssl;
+                  service service-https;
+                  tag PCI;
+                  action allow;
+                  log-end yes;
+                  log-setting CORP-LOG-FWD;
+                }
+                ALLOW-PAYAPP-ACQUIRER {
+                  from pci;
+                  to untrust;
+                  source SRV-PAY-APP01;
+                  destination ACQUIRER-GW;
+                  application ssl;
+                  service service-https;
+                  tag PCI;
+                  action allow;
+                  log-end yes;
+                  log-setting CORP-LOG-FWD;
+                }
+                ALLOW-JUMP-PCI-SSH {
+                  from trust;
+                  to pci;
+                  source MGMT-JUMP;
+                  destination PCI-SERVERS;
+                  application ssh;
+                  service application-default;
+                  tag PCI;
+                  action allow;
+                  log-end yes;
+                  log-setting CORP-LOG-FWD;
+                }
+              }
+            }
+            nat {
+              rules {
+                SNAT-USERS-INTERNET {
+                  from trust;
+                  to untrust;
+                  source CORP-USERS;
+                  destination any;
+                  service any;
+                  source-translation {
+                    dynamic-ip-and-port {
+                      interface-address {
+                        interface ethernet1/1;
+                      }
+                    }
+                  }
+                }
+                DNAT-WEB01-HTTPS {
+                  from untrust;
+                  to untrust;
+                  source any;
+                  destination PUB-WEB01;
+                  service service-https;
+                  destination-translation {
+                    translated-address DMZ-WEB01;
+                    translated-port 443;
+                  }
+                }
+              }
+            }
+          }
+          import {
+            network {
+              interface [ ethernet1/1 ethernet1/2 ethernet1/3 ethernet1/4 ];
+            }
+          }
+        }
+      }
+    }
+  }
+}

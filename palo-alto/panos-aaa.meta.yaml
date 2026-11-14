@@ -1,0 +1,26 @@
+title: "PAN-OS AAA and local credentials"
+description: "Password complexity enabled with a minimum length of 12 or more, and administrator authentication through an authentication profile."
+vendor: palo-alto
+os: panos
+config_format: panos-brace
+# collection_command: Pro app/Demo/Platforms/PanOs/PanOsGenerator.php:66 (primaryCommand)
+collection_command: "show config running"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "Brace format from show config running only; set format is not covered. Tested against synthetic samples only. The rules have not been checked against output from a real PAN-OS firewall, and settings pushed from Panorama may not appear in show config running."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "Password complexity is enabled with a minimum length of 12 or more (mgt-config password-complexity)"
+    references:
+      nist_800_53: ["IA-5"]
+      iso27001: ["A.5.17"]
+  - description: "Administrators authenticate through an authentication profile (deviceconfig system authentication-profile)"
+    references:
+      nist_800_53: ["AC-2"]
+      hipaa: ["164.312(a)(1)"]
+      nist_csf: ["PR.AC-1"]
+      iso27001: ["A.8.5"]

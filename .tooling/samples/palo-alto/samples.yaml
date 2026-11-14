@@ -1,0 +1,27 @@
+# Palo Alto Networks sample configs. Addresses, names and secrets are sanitised.
+# These are brace format, as collected with show config running. Set format is not covered.
+samples:
+  - file: pa3220-panos1114-hardened-synthetic.txt
+    name: Palo Alto PA-3220 perimeter firewall, one statement per line, built to pass the palo-alto/panos-* topic files
+    os: panos
+    os_version: "11.1.4"
+    config_format: panos-brace
+    source: synthetic
+    hardened: true
+    origin: "rConfig Pro demo template database/demo/platforms/panos/show-config-running.php (show config running) at Pro commit e3b946d347, rendered directly with php, read-only: only Pro's Composer autoloader was loaded, the app was not booted and no database was touched. The template variables mirror PanOsGenerator::initialVars for scenario device dub-hq-fw01 (PA-3220, HA peer dub-hq-fw02, database/demo/scenarios/enterprise.yml) and no mutations. SeededRandom was not run, so there is no seed; its only value, the boot time, does not reach show config running. Sanitised: example.com in place of the demo domain; the demo organisation name removed from the login banner and an administrator name; the trust, DMZ, PCI and store networks moved from 10.40.0.0/16 and 10.80.0.0/14 into 198.51.100.0/24, and the HA link addresses from 10.255.0.0/16 and 10.254.0.0/16 into 203.0.113.0/24; TACACS+ servers moved from 192.0.2.30 and .31 to 192.0.2.32 and .33. Then edited by hand, in the demo's layout, so that every rule in the palo-alto/panos-* hardening topic files passes and every operational standards example value is met: hostname dub-fw01, a config match-list that sends to CORP-SYSLOG added next to the system match-list, syslog server 192.0.2.20 in place of 192.0.2.50 and a second server 192.0.2.21, DNS servers 192.0.2.30 and 192.0.2.31 in place of 192.0.2.53 and .54, NTP servers 192.0.2.10 and 192.0.2.11 in place of 192.0.2.1 and .2, and an snmp-setting with an snmp-system location and contact (the demo has no SNMP settings). Finally rewritten with one statement per line and two-space indentation, as a real firewall prints show config running; the content is the same as pa3220-panos1114-hardened-oneline-synthetic.txt. The password hashes and TACACS+ secrets are made up. No device data."
+  - file: pa3220-panos1114-hardened-oneline-synthetic.txt
+    name: Palo Alto PA-3220 perimeter firewall, demo layout with one-line objects, built to pass the palo-alto/panos-* topic files
+    os: panos
+    os_version: "11.1.4"
+    config_format: panos-brace
+    source: synthetic
+    hardened: true
+    origin: "Same render, sanitising and hand edits as pa3220-panos1114-hardened-synthetic.txt (Pro commit e3b946d347, device dub-hq-fw01, no mutations, no seed), but left in the demo template's layout, which prints some objects on one line (for example interfaces, management profiles, TACACS+ servers, log match-list entries, admin-lockout and security rules). It is here so that every rule is tested against both layouts; a real firewall is expected to print one statement per line. The added config match-list and snmp-setting follow the demo's layout. The password hashes and TACACS+ secrets are made up. No device data."
+  - file: pa3220-panos1114-unhardened-synthetic.txt
+    name: Palo Alto PA-3220 perimeter firewall, unhardened
+    os: panos
+    os_version: "11.1.4"
+    config_format: panos-brace
+    source: synthetic
+    hardened: false
+    origin: "Built from the same render and sanitising as pa3220-panos1114-hardened-synthetic.txt (Pro commit e3b946d347, device dub-hq-fw01, no mutations, no seed), renamed dub-hq-fw02 on 192.0.2.6, then edited by hand so that every rule in the palo-alto/panos-* hardening topic files fails: disable-telnet no and disable-http no; http yes added to the MGMT-HTTPS-SSH interface management profile; the deviceconfig permitted-ip list removed; idle-timeout and admin-lockout removed; password-complexity minimum-length 8 in place of 14; the deviceconfig authentication-profile removed; an snmp-setting with a v2c snmp-community-string added; the CORP-SYSLOG syslog server profile removed and send-syslog removed from every log match-list. The demo has no config match-list, which is kept. For the operational standards file: the demo NTP servers 192.0.2.1 and .2 and DNS servers 192.0.2.53 and .54 kept, no syslog server, no login banner, no SNMP location, hostname dub-hq-fw02, and the comment removed from ethernet1/4. Finally rewritten with one statement per line, as for the hardened sample. The password hashes and TACACS+ secrets are made up. No device data."

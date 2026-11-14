@@ -1,0 +1,32 @@
+title: "PAN-OS logging"
+description: "A syslog server profile with a server address, and system and configuration logs forwarded to syslog."
+vendor: palo-alto
+os: panos
+config_format: panos-brace
+# collection_command: Pro app/Demo/Platforms/PanOs/PanOsGenerator.php:66 (primaryCommand)
+collection_command: "show config running"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "Brace format from show config running only; set format is not covered. Tested against synthetic samples only. The rules have not been checked against output from a real PAN-OS firewall, and settings pushed from Panorama may not appear in show config running."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "A syslog server profile has a server address (shared log-settings syslog ... server)"
+    references:
+      nist_800_53: ["AU-2", "AU-12"]
+      hipaa: ["164.312(b)"]
+      nist_csf: ["DE.CM-1"]
+      iso27001: ["A.8.15"]
+  - description: "System logs are forwarded to syslog (log-settings system match-list send-syslog)"
+    references:
+      nist_800_53: ["AU-2", "AU-12"]
+      hipaa: ["164.312(b)"]
+      iso27001: ["A.8.15"]
+  - description: "Configuration logs are forwarded to syslog (log-settings config match-list send-syslog)"
+    references:
+      nist_800_53: ["AU-2", "AU-12"]
+      hipaa: ["164.312(b)"]
+      iso27001: ["A.8.15"]

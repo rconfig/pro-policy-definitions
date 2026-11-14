@@ -1,0 +1,70 @@
+// ISO 27001 A.5.17: Password complexity is enabled with a minimum length of 12 or more (mgt-config password-complexity)
+#[evaluate_block]
+scope: ^password-complexity \{
+all:
+  - regex: '/(^|[{;])\s*enabled yes;/m'
+  - regex: '/(^|[{;])\s*minimum-length (1[2-6]);/m'
+
+// ISO 27001 A.8.5: Administrators authenticate through an authentication profile (deviceconfig system authentication-profile)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/(^|[{;])\s*authentication-profile [^{\s;]+;/m'
+
+// ISO 27001 A.8.5: Telnet is not enabled on the management interface (fails on disable-telnet no)
+#[must_not_match_regex]
+/(^|[{;])\s*disable-telnet no;/m
+
+// ISO 27001 A.8.5: HTTP is not enabled on the management interface (fails on disable-http no)
+#[must_not_match_regex]
+/(^|[{;])\s*disable-http no;/m
+
+// ISO 27001 A.8.5: No interface management profile enables Telnet or HTTP (fails on telnet yes or http yes)
+#[must_not_match_regex]
+/(^|[{;])\s*(telnet|http) yes;/m
+
+// ISO 27001 A.8.5: The administrator idle timeout is 1 to 10 minutes (deviceconfig setting management idle-timeout)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/(^|[{;])\s*idle-timeout ([1-9]|10);/m'
+
+// ISO 27001 A.8.5: A login banner is configured (deviceconfig system login-banner)
+#[must_match_regex]
+/(^|[{;])\s*login-banner \S/m
+
+// ISO 27001 A.8.5: Administrator accounts lock after 1 to 5 failed attempts (admin-lockout failed-attempts)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/\bfailed-attempts [1-5];/m'
+
+// ISO 27001 A.8.5: No SNMPv2c community is configured (fails on snmp-community-string)
+#[must_not_match_regex]
+/(^|[{;])\s*snmp-community-string /m
+
+// ISO 27001 A.8.15: A syslog server profile has a server address (shared log-settings syslog ... server)
+#[evaluate_block]
+scope: ^syslog \{
+all:
+  - regex: '/(^|[{;])\s*server [^{\s;]+;/m'
+
+// ISO 27001 A.8.15: System logs are forwarded to syslog (log-settings system match-list send-syslog)
+#[evaluate_block]
+scope: ^log-settings \{$
+any:
+  - regex: '/^(\s*)system \{\n(?:\1\s.*\n)*?\1\s.*\bsend-syslog /m'
+  - regex: '/^\s*system \{[^\n]*\bsend-syslog /m'
+
+// ISO 27001 A.8.15: Configuration logs are forwarded to syslog (log-settings config match-list send-syslog)
+#[evaluate_block]
+scope: ^log-settings \{$
+any:
+  - regex: '/^(\s*)config \{\n(?:\1\s.*\n)*?\1\s.*\bsend-syslog /m'
+  - regex: '/^\s*config \{[^\n]*\bsend-syslog /m'
+
+// ISO 27001 A.8.20: Management access is limited to permitted IP addresses (deviceconfig system permitted-ip)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/(^|[{;])\s*permitted-ip \{\s*[^\s}]/m'

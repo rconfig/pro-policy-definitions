@@ -1,0 +1,12 @@
+// Password complexity is enabled with a minimum length of 12 or more (mgt-config password-complexity)
+#[evaluate_block]
+scope: ^password-complexity \{
+all:
+  - regex: '/(^|[{;])\s*enabled yes;/m'
+  - regex: '/(^|[{;])\s*minimum-length (1[2-6]);/m'
+
+// Administrators authenticate through an authentication profile (deviceconfig system authentication-profile)
+#[evaluate_block]
+scope: ^deviceconfig \{$
+all:
+  - regex: '/(^|[{;])\s*authentication-profile [^{\s;]+;/m'
