@@ -1,0 +1,19 @@
+// The TFTP server is not enabled (fails on tftp ipv4 or ipv6 server)
+#[must_not_match_regex]
+/^tftp (vrf \S+ )?ipv[46] server /m
+
+// IPv4 source routing is not enabled (fails on ipv4 source-route)
+#[must_not_match_regex]
+/^ipv4 source-route$/m
+
+// Directed broadcast is not enabled on any interface (fails on ipv4 directed-broadcast)
+#[must_not_match_regex]
+/^\s+ipv4 directed-broadcast\b/m
+
+// Proxy ARP is not enabled on any interface (fails on proxy-arp)
+#[must_not_match_regex]
+/^\s+proxy-arp$/m
+
+// ICMP redirects are not enabled on any interface (fails on ipv4 redirects)
+#[must_not_match_regex]
+/^\s+ipv4 redirects$/m

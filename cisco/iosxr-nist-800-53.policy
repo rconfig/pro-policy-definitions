@@ -1,0 +1,78 @@
+// NIST AC-2: Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default group ...)
+#[must_match_regex]
+/^aaa authentication login default group \S+/m
+
+// NIST AC-3: No line sets an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)
+#[must_not_match_regex]
+/^\s+exec-timeout (?!(?:[1-9](?: [1-5]?[0-9])?|10(?: 0)?)\s*$)/m
+
+// NIST AC-17: SSH server is enabled for version 2 (ssh server v2)
+#[must_match_single_string]
+ssh server v2
+
+// NIST AC-17: The Telnet server is not enabled (fails on telnet ... ipv4 or ipv6 server max-servers)
+#[must_not_match_regex]
+/^telnet (vrf \S+ )?ipv[46] server max-servers/m
+
+// NIST AC-17: No transport input line permits Telnet (telnet or all)
+#[must_not_match_regex]
+/^\s*transport input .*\b(telnet|all)\b/m
+
+// NIST AU-2: A remote syslog host is configured by address (logging <address>)
+#[must_match_regex]
+/^logging (\d{1,3}(\.\d{1,3}){3}|[0-9A-Fa-f]*:[0-9A-Fa-f:]+)( |$)/m
+
+// NIST AU-3: Log timestamps include milliseconds (fails on service timestamps log without datetime msec)
+#[must_not_match_regex]
+/^service timestamps log (?!datetime\b.*\bmsec\b)/m
+
+// NIST AU-6: Console logging is disabled or limited to critical and above (logging console disable, critical, alerts or emergencies)
+#[must_match_regex]
+/^logging console (disable|critical|alerts|emergencies)$/m
+
+// NIST CM-7: The TFTP server is not enabled (fails on tftp ipv4 or ipv6 server)
+#[must_not_match_regex]
+/^tftp (vrf \S+ )?ipv[46] server /m
+
+// NIST IA-5: No local user has a reversible password (fails on password under a username)
+#[evaluate_block]
+scope: ^username
+not:
+  regex: '/^\s+password /m'
+
+// NIST IA-5: No local user secret uses an MD5 hash (fails on secret 5)
+#[must_not_match_regex]
+/^\s+secret 5 /m
+
+// NIST SC-5: IPv4 source routing is not enabled (fails on ipv4 source-route)
+#[must_not_match_regex]
+/^ipv4 source-route$/m
+
+// NIST SC-7: Directed broadcast is not enabled on any interface (fails on ipv4 directed-broadcast)
+#[must_not_match_regex]
+/^\s+ipv4 directed-broadcast\b/m
+
+// NIST SC-7: Proxy ARP is not enabled on any interface (fails on proxy-arp)
+#[must_not_match_regex]
+/^\s+proxy-arp$/m
+
+// NIST SC-12: No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// NIST SC-12: Every SNMP user is v3 with SHA authentication and AES privacy, and none uses v1, v2c, MD5, DES or 3DES (snmp-server user)
+#[evaluate_block]
+all:
+  - regex: '/^snmp-server user \S+ \S+ v3 auth sha\S* .*\bpriv aes /m'
+  - not:
+      regex: '/^snmp-server user \S+ \S+ (v1|v2c|remote)\b/m'
+  - not:
+      regex: '/^snmp-server user \S+ \S+ v3 auth md5\b/m'
+  - not:
+      regex: '/^snmp-server user \S+ \S+ v3 .*\bpriv (des56|3des)\b/m'
+  - not:
+      regex: '/^snmp-server user \S+ \S+ v3(?!.*\bpriv\b)/m'
+
+// NIST SC-12: An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)
+#[must_match_regex]
+/^snmp-server group \S+ v3 priv\b/m

@@ -1,0 +1,30 @@
+title: "Cisco IOS XR AAA and local credentials"
+description: "Login authentication through a TACACS+ or RADIUS server group, no reversible local passwords and no MD5 local secrets."
+vendor: cisco
+os: iosxr
+config_format: iosxr-running-config
+# collection_command: Pro app/Demo/Platforms/IosXr/IosXrGenerator.php:68 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic show running-config samples only. The rules have not been checked against output from a real IOS XR device."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default group ...)"
+    references:
+      nist_800_53: ["AC-2"]
+      hipaa: ["164.312(a)(1)"]
+      nist_csf: ["PR.AC-1"]
+      iso27001: ["A.8.5"]
+  - description: "No local user has a reversible password (fails on password under a username)"
+    references:
+      nist_800_53: ["IA-5"]
+      iso27001: ["A.5.17"]
+  - description: "No local user secret uses an MD5 hash (fails on secret 5)"
+    references:
+      nist_800_53: ["IA-5"]
+      iso27001: ["A.5.17"]

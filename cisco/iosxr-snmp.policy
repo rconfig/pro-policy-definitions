@@ -1,0 +1,20 @@
+// No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// Every SNMP user is v3 with SHA authentication and AES privacy, and none uses v1, v2c, MD5, DES or 3DES (snmp-server user)
+#[evaluate_block]
+all:
+  - regex: '/^snmp-server user \S+ \S+ v3 auth sha\S* .*\bpriv aes /m'
+  - not:
+      regex: '/^snmp-server user \S+ \S+ (v1|v2c|remote)\b/m'
+  - not:
+      regex: '/^snmp-server user \S+ \S+ v3 auth md5\b/m'
+  - not:
+      regex: '/^snmp-server user \S+ \S+ v3 .*\bpriv (des56|3des)\b/m'
+  - not:
+      regex: '/^snmp-server user \S+ \S+ v3(?!.*\bpriv\b)/m'
+
+// An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)
+#[must_match_regex]
+/^snmp-server group \S+ v3 priv\b/m

@@ -1,0 +1,358 @@
+Building configuration...
+!! IOS XR Configuration 7.9.2
+!! Last configuration change at Mon Nov  2 10:15:00 2026 by netops
+!
+hostname dub1-pr-asr02
+clock timezone IST Europe/Dublin
+logging trap informational
+logging events link-status software-interfaces
+logging console informational
+logging buffered 10000000
+logging source-interface MgmtEth0/RSP0/CPU0/0 vrf MGMT
+logging hostnameprefix dub1-pr-asr02
+service timestamps log datetime localtime show-timezone
+service timestamps debug datetime localtime msec show-timezone
+domain name example.com
+domain lookup disable
+ipv4 source-route
+tacacs source-interface MgmtEth0/RSP0/CPU0/0 vrf MGMT
+tacacs-server host 192.0.2.32 port 49
+ key 7 A905318D134D4D26775D
+!
+tacacs-server host 192.0.2.33 port 49
+ key 7 BDD38C1A30B381DCBC08
+!
+username operator
+ group operator
+ secret 5 $1$Xk3p$Q1u9aZqfF0p2n7HcV1mWt/
+!
+username breakglass
+ group root-lr
+ group cisco-support
+ password 7 0822455D0A165B5A
+!
+aaa accounting exec default start-stop group TACACS
+aaa accounting system default start-stop group TACACS
+aaa accounting commands default start-stop group TACACS
+aaa group server tacacs+ TACACS
+ vrf MGMT
+ server 192.0.2.32
+ server 192.0.2.33
+!
+aaa authorization exec default group TACACS local
+aaa authorization commands default group TACACS none
+aaa authentication login default local
+line console
+ exec-timeout 0 0
+ login authentication default
+!
+line default
+ exec-timeout 15 0
+ login authentication default
+ session-limit 10
+ transport input ssh telnet
+ transport output ssh
+!
+vty-pool default 0 9 line-template default
+ntp
+ server vrf MGMT 192.0.2.1 prefer
+ server vrf MGMT 192.0.2.2
+ source vrf MGMT MgmtEth0/RSP0/CPU0/0
+ update-calendar
+!
+vrf MGMT
+ address-family ipv4 unicast
+ !
+!
+control-plane
+ management-plane
+  inband
+   interface all
+    allow SSH peer
+     address ipv4 192.0.2.0/24
+     address ipv4 198.51.100.0/24
+    !
+    allow SNMP peer
+     address ipv4 192.0.2.60
+    !
+   !
+  !
+ !
+!
+snmp-server community public RO
+snmp-server vrf MGMT
+ host 192.0.2.60 traps version 3 priv nms
+!
+snmp-server user nms NMS v3 auth md5 encrypted 935E7CD3115894E84E10 priv des56 encrypted 33078F6308E54B746F42 SystemOwner
+snmp-server view NMS-VIEW iso included
+snmp-server group NMS v3 auth read NMS-VIEW notify NMS-VIEW
+snmp-server traps bgp
+snmp-server traps isis all
+snmp-server traps mpls ldp up
+snmp-server traps mpls ldp down
+snmp-server traps snmp linkup
+snmp-server traps snmp linkdown
+snmp-server contact noc@example.com
+key chain ISIS-KEY
+ key 1
+  accept-lifetime 00:00:00 january 01 2024 infinite
+  key-string password 7 91B19A2039A0D636CE02
+  send-lifetime 00:00:00 january 01 2024 infinite
+  cryptographic-algorithm HMAC-MD5
+ !
+!
+interface Loopback0
+ description Router ID, iBGP and LDP
+ ipv4 address 198.51.100.201 255.255.255.255
+!
+interface MgmtEth0/RSP0/CPU0/0
+ description OOB management
+ vrf MGMT
+ ipv4 address 192.0.2.42 255.255.255.0
+!
+interface TenGigE0/0/0/0
+ description Transit A AS64496, circuit TA-081E80
+ mtu 1514
+ ipv4 address 203.0.113.1 255.255.255.254
+ load-interval 30
+!
+interface TenGigE0/0/0/1
+ description Transit B AS64497, circuit TB-A27891
+ mtu 1514
+ ipv4 address 203.0.113.3 255.255.255.254
+ load-interval 30
+!
+interface TenGigE0/0/0/2
+ description IXP peering LAN
+ mtu 1514
+ ipv4 address 203.0.113.131 255.255.255.128
+ ipv4 directed-broadcast
+ proxy-arp
+ ipv4 redirects
+ load-interval 30
+!
+interface TenGigE0/0/0/6
+ ipv4 address 203.0.113.250 255.255.255.252
+!
+interface TenGigE0/0/0/3
+ description Spare
+ shutdown
+!
+interface TenGigE0/0/0/4
+ description Spare
+ shutdown
+!
+interface TenGigE0/0/0/5
+ description Spare
+ shutdown
+!
+interface HundredGigE0/0/1/0
+ description Core: dub1-pe-mx01 et-0/0/0
+ mtu 9216
+ ipv4 address 198.51.100.241 255.255.255.254
+ load-interval 30
+!
+interface HundredGigE0/0/1/1
+ description Core: dub1-pe-mx02 et-0/0/1
+ mtu 9216
+ ipv4 address 198.51.100.243 255.255.255.254
+ load-interval 30
+!
+prefix-set AGGREGATES
+  198.51.100.0/24,
+  203.0.113.0/24
+end-set
+!
+prefix-set CUSTOMER-PREFIXES
+  198.51.100.0/26 le 32
+end-set
+!
+route-policy PEER-IN
+  if destination in AGGREGATES then
+    drop
+  endif
+  if destination in (0.0.0.0/0 ge 25) then
+    drop
+  endif
+  set local-preference 200
+  set community (64511:2000) additive
+  pass
+end-policy
+!
+route-policy PEER-OUT
+  if destination in AGGREGATES or destination in CUSTOMER-PREFIXES then
+    pass
+  else
+    drop
+  endif
+end-policy
+!
+route-policy TRANSIT-IN
+  if destination in AGGREGATES then
+    drop
+  endif
+  set local-preference 100
+  set community (64511:1000) additive
+  pass
+end-policy
+!
+router static
+ address-family ipv4 unicast
+  198.51.100.0/24 Null0 tag 100
+  203.0.113.0/24 Null0 tag 100
+ !
+ vrf MGMT
+  address-family ipv4 unicast
+   0.0.0.0/0 MgmtEth0/RSP0/CPU0/0 192.0.2.1
+  !
+ !
+!
+router isis CORE
+ is-type level-2-only
+ net 49.0001.1980.5110.0201.00
+ log adjacency changes
+ lsp-password keychain ISIS-KEY level 2
+ address-family ipv4 unicast
+  metric-style wide
+  mpls ldp auto-config
+ !
+ interface Loopback0
+  passive
+  address-family ipv4 unicast
+  !
+ !
+ interface HundredGigE0/0/1/0
+  point-to-point
+  hello-password keychain ISIS-KEY
+  address-family ipv4 unicast
+   metric 10
+  !
+ !
+ interface HundredGigE0/0/1/1
+  point-to-point
+  hello-password keychain ISIS-KEY
+  address-family ipv4 unicast
+   metric 10
+  !
+ !
+!
+router bgp 64511
+ bgp router-id 198.51.100.201
+ bgp log neighbor changes detail
+ address-family ipv4 unicast
+  network 198.51.100.0/24
+  network 203.0.113.0/24
+ !
+ neighbor-group RR-IBGP
+  remote-as 64511
+  password encrypted DD464A3DC0E65823D006
+  update-source Loopback0
+  address-family ipv4 unicast
+   next-hop-self
+  !
+ !
+ neighbor 198.51.100.251
+  use neighbor-group RR-IBGP
+  description Route reflector 1
+ !
+ neighbor 198.51.100.252
+  use neighbor-group RR-IBGP
+  description Route reflector 2
+ !
+ neighbor 203.0.113.0
+  remote-as 64496
+  password encrypted 4DFEF4C5E62AE728358F
+  description Transit A, circuit TA-081E80
+  address-family ipv4 unicast
+   send-community-ebgp
+   route-policy TRANSIT-IN in
+   maximum-prefix 1200000 90
+   route-policy PEER-OUT out
+  !
+ !
+ neighbor 203.0.113.2
+  remote-as 64497
+  password encrypted 47BD1EEFA8826885936B
+  description Transit B, circuit TB-A27891
+  address-family ipv4 unicast
+   send-community-ebgp
+   route-policy TRANSIT-IN in
+   maximum-prefix 1200000 90
+   route-policy PEER-OUT out
+  !
+ !
+ neighbor 203.0.113.140
+  remote-as 64498
+  password encrypted FD1D0F07A99A0E4F703F
+  description IXP peer AS64498
+  address-family ipv4 unicast
+   route-policy PEER-IN in
+   maximum-prefix 5000 90
+   route-policy PEER-OUT out
+  !
+ !
+ neighbor 203.0.113.141
+  remote-as 64499
+  password encrypted 9EA46C9B9B1A01AB306E
+  description IXP peer AS64499
+  address-family ipv4 unicast
+   route-policy PEER-IN in
+   maximum-prefix 5000 90
+   route-policy PEER-OUT out
+  !
+ !
+ neighbor 203.0.113.142
+  remote-as 64500
+  password encrypted 4C504B4D838C20C88FC0
+  description IXP peer AS64500
+  address-family ipv4 unicast
+   route-policy PEER-IN in
+   maximum-prefix 5000 90
+   route-policy PEER-OUT out
+  !
+ !
+ neighbor 203.0.113.143
+  remote-as 64501
+  password encrypted C6ACD50BA74F701EAC7C
+  description IXP peer AS64501
+  address-family ipv4 unicast
+   route-policy PEER-IN in
+   maximum-prefix 5000 90
+   route-policy PEER-OUT out
+  !
+ !
+ neighbor 203.0.113.144
+  remote-as 64502
+  password encrypted 2E86B3BE2E8952815CD5
+  description IXP peer AS64502
+  address-family ipv4 unicast
+   route-policy PEER-IN in
+   maximum-prefix 5000 90
+   route-policy PEER-OUT out
+  !
+ !
+!
+mpls ldp
+ router-id 198.51.100.201
+ log
+  neighbor
+ !
+ address-family ipv4
+ !
+ interface HundredGigE0/0/1/0
+ !
+ interface HundredGigE0/0/1/1
+ !
+!
+lldp
+!
+telnet vrf default ipv4 server max-servers 10
+tftp ipv4 server homedir disk0:
+ssh client vrf MGMT
+ssh server logging
+ssh server rate-limit 60
+ssh server session-limit 10
+ssh server vrf MGMT
+ssh timeout 60
+end
+

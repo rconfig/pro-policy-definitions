@@ -1,0 +1,11 @@
+// A remote syslog host is configured by address (logging <address>)
+#[must_match_regex]
+/^logging (\d{1,3}(\.\d{1,3}){3}|[0-9A-Fa-f]*:[0-9A-Fa-f:]+)( |$)/m
+
+// Log timestamps include milliseconds (fails on service timestamps log without datetime msec)
+#[must_not_match_regex]
+/^service timestamps log (?!datetime\b.*\bmsec\b)/m
+
+// Console logging is disabled or limited to critical and above (logging console disable, critical, alerts or emergencies)
+#[must_match_regex]
+/^logging console (disable|critical|alerts|emergencies)$/m

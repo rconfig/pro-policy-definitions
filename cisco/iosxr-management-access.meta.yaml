@@ -1,0 +1,38 @@
+title: "Cisco IOS XR management access"
+description: "SSH version 2, no Telnet server or Telnet in transport input, an exec-timeout of 1 to 10 minutes on every line, and a MOTD or login banner."
+vendor: cisco
+os: iosxr
+config_format: iosxr-running-config
+# collection_command: Pro app/Demo/Platforms/IosXr/IosXrGenerator.php:68 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic show running-config samples only. The rules have not been checked against output from a real IOS XR device."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "SSH server is enabled for version 2 (ssh server v2)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.24"]
+  - description: "The Telnet server is not enabled (fails on telnet ... ipv4 or ipv6 server max-servers)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.5"]
+  - description: "No transport input line permits Telnet (telnet or all)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.5"]
+  - description: "No line sets an exec-timeout outside 1 to 10 minutes (no line means the 10 0 default)"
+    references:
+      nist_800_53: ["AC-3"]
+      iso27001: ["A.8.5"]
+  - description: "A MOTD or login banner is configured (banner motd or banner login)"
+    references:
+      iso27001: ["A.8.5"]

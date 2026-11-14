@@ -1,0 +1,13 @@
+// Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default group ...)
+#[must_match_regex]
+/^aaa authentication login default group \S+/m
+
+// No local user has a reversible password (fails on password under a username)
+#[evaluate_block]
+scope: ^username
+not:
+  regex: '/^\s+password /m'
+
+// No local user secret uses an MD5 hash (fails on secret 5)
+#[must_not_match_regex]
+/^\s+secret 5 /m

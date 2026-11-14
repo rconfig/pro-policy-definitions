@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Cisco IOS XR topic files for `show running-config` (`config_format: iosxr-running-config`), `kind: hardening`, `status: synthetic-tested`: `cisco/iosxr-management-access` (5 rules), `iosxr-aaa` (3), `iosxr-snmp` (3), `iosxr-logging` (3) and `iosxr-services` (5), each with a `.meta.yaml` and expected results. The rules come from the Cisco NCS 5500, NCS 540 and NCS 560 command references (Release 6.0 to 26.x) and have not yet been checked against a real IOS XR router; the IOS XR section of `cisco/README.md` says what to check. Rules for settings that are off by default (Telnet and TFTP servers, source routing, directed broadcast, proxy ARP, ICMP redirects) fail only on the enabling line, because IOS XR does not print defaults. There is no BGP neighbour password rule: rConfig's block splitter ends a scoped block at the first nested ` !`, which cuts `router bgp` short.
+- `cisco/iosxr-operational-standards` (`kind: operational`, rConfig V8.3.0), with seven rules on the same pattern as the IOS file: NTP, syslog and name servers, a MOTD or login banner, a description on every top-level interface that is not shut down, a hostname pattern and an SNMP location, using RFC 5737 example values.
+- Framework files generated from the IOS XR topic files: `cisco/iosxr-nist-800-53` (17 rules), `iosxr-nist-csf` (1), `iosxr-hipaa` (11) and `iosxr-iso27001` (18).
+- Cisco samples `xr-asr9901-iosxr792-hardened-synthetic.txt` and `xr-asr9901-iosxr792-unhardened-synthetic.txt`, rendered from rConfig Pro's IOS XR demo template and edited by hand. Every IOS XR rule passes on the hardened sample and fails on the unhardened one, and one edit per hardening rule to the hardened sample fails that rule and no other.
+
 ### Changed
 - `.tooling/scripts/generate_frameworks.py` supports several OSes per vendor folder. It matches topic files on the `os` field in their `.meta.yaml`, and stops with an error on a hardening topic file whose `os` is not registered for its folder. `.tooling/scripts/lint.py` accepts five new config formats: `iosxr-running-config`, `nxos-running-config`, `eos-running-config`, `ocnos-running-config` and `panos-brace`, and `CONTRIBUTING.md` lists them. `.tooling/scripts/test_lint.py` has two new tests.
 - Expected-results headers in `.tooling/expected/` refreshed to Pro `e3b946d347`. No result changed.
