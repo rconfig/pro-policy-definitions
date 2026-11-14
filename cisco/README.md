@@ -1,6 +1,6 @@
 # Cisco Policy Templates
 
-Policy definitions for Cisco IOS and IOS XE (`ios-*` files) and Cisco IOS XR (`iosxr-*` files). The two sets are separate: IOS rules do not match IOS XR configs, and IOS XR rules do not match IOS configs.
+Policy definitions for Cisco IOS and IOS XE (`ios-*` files), Cisco IOS XR (`iosxr-*` files) and Cisco NX-OS (`nxos-*` files). The sets are separate: each set's rules are written for its own OS and do not match the others' configs.
 
 ## Cisco IOS and IOS XE
 
@@ -119,4 +119,68 @@ Not stated. The rules were written from the Cisco NCS 5500, NCS 540 and NCS 560 
 - The remote syslog rule matches `logging` followed by an IPv4 or IPv6 address. A syslog host given by name is not matched, because a name cannot be told apart from keywords such as `logging buffered`.
 - The operational standards NTP rule matches ` server` lines with the standard address, with or without `vrf` and `ipv4`. It does not check that the line is inside the `ntp` block, so a TACACS+ group ` server` line with the same address would also count. Escape the dots when you replace an address, for example `192\.0\.2\.10`.
 - The `no local user has a reversible password` rule fails on a `password` line under any `username`; use `secret` instead. BGP `password encrypted` and key chain `key-string password` lines are outside `username` blocks and do not count.
+- Regex rules use the `/.../m` form so that `^` and `$` match at each line of the config.
+
+## Cisco NX-OS
+
+> [!WARNING]
+> These rules have not yet been checked against a real NX-OS switch. Their status is `synthetic-tested`: the expected results are recorded against synthetic `show running-config` samples rendered from rConfig Pro's NX-OS demo template and edited by hand in NX-OS command syntax. Before you rely on them, check two things on one of your own switches:
+> - How an SNMP user created on 10.x without a privacy keyword is printed in `show running-config` (with `priv aes-128` or with plain `priv`). This is why no rule requires AES privacy on every user.
+> - That `no feature telnet` is not printed on 10.3(2)F or later. The Telnet rule only fails on `feature telnet`, so it works either way, but the samples assume the line is absent.
+
+### Expected config format
+
+Running configuration as returned by `show running-config`. Top-level commands start in column 0 and sub-commands are indented two spaces. Blocks are not closed by `!`; each block ends at the next line in column 0:
+
+```
+feature tacacs+
+logging server 192.0.2.20 5 use-vrf management
+logging timestamp milliseconds
+line vty
+  exec-timeout 10
+```
+
+This is the command rConfig's NX-OS demo platform collects. rConfig has no NX-OS connection template of its own; NX-OS devices connect with the IOS SSH templates.
+
+### Available Policies
+
+| File | Purpose | Rules | Minimum rConfig |
+|---|---|---|---|
+| `nxos-operational-standards.policy` | Drift from your own operational standard, not a hardening check. Example values for NTP servers (192.0.2.10 and 192.0.2.11), logging servers (192.0.2.20 and 192.0.2.21) and a hostname pattern (`[a-z]{3}-(rtr\|sw)[0-9]{2}`, for example `dub-sw01`), plus a MOTD banner and an SNMP location. Replace the example values with your own before use. DNS servers and interface descriptions are not checked (see the notes). | 5 | V8.3.0 |
+| `nxos-management-access.policy` | No Telnet (`feature telnet`), SSH not disabled (`no feature ssh`), an exec-timeout of 1 to 10 minutes on the VTY and console lines, and a MOTD banner. | 5 | V8.3.0 |
+| `nxos-aaa.policy` | Login authentication and accounting through a server group, password strength checking left on, and AES encryption of stored keys (`feature password encryption aes`). | 4 | V8.0.2 |
+| `nxos-snmp.policy` | No SNMPv1 or SNMPv2c communities, no SNMP user with MD5 authentication, and SNMP message encryption enforced for all users (`snmp-server globalEnforcePriv`). | 3 | V8.0.2 |
+| `nxos-logging.policy` | A remote syslog server, millisecond or microsecond log timestamps, and console logging no more verbose than critical. | 3 | V8.0.2 |
+| `nxos-services.policy` | CDP disabled globally (`no cdp enable`), and no proxy ARP or directed broadcast on any interface. | 3 | V8.0.2 |
+
+The minimum version comes from the methods each file uses: `must_not_match_regex` needs V8.0.2 or later and `evaluate_block` needs V8.3.0 or later. Earlier releases skip the rules they do not support.
+
+Each topic file's `.meta.yaml` lists the references for each rule, where one exists: the NIST SP 800-53 control, the HIPAA 45 CFR section, the NIST CSF 1.1 subcategory and the ISO/IEC 27001:2022 Annex A control.
+
+### Framework files
+
+Generated from the NX-OS hardening topic files by `.tooling/scripts/generate_frameworks.py`, in the same way as the IOS framework files. Do not edit them.
+
+| File | Contents | Rules | Minimum rConfig |
+|---|---|---|---|
+| `nxos-nist-800-53.policy` | Every NX-OS topic rule that lists one or more NIST SP 800-53 controls. | 17 | V8.3.0 |
+| `nxos-nist-csf.policy` | Every NX-OS topic rule that lists one or more NIST CSF 1.1 subcategories. | 1 | V8.0.0 |
+| `nxos-hipaa.policy` | Every NX-OS topic rule that lists one or more HIPAA 45 CFR 164.312 sections. | 10 | V8.0.2 |
+| `nxos-iso27001.policy` | Every NX-OS topic rule that lists one or more ISO/IEC 27001:2022 Annex A controls. | 17 | V8.3.0 |
+
+A framework file lists checks relevant to that framework. It is not a certification or a full assessment.
+
+### Supported Models
+
+Not stated. The rules were written from the Cisco Nexus 9000 NX-OS 10.5(x) configuration guides, and the samples model a Nexus 93180YC-FX on 10.3(4a). Nexus 3000, 5000 and 7000 run NX-OS with small syntax differences and were not checked.
+
+### Implementation Notes
+
+- From NX-OS 10.3(2)F, `show running-config` prints only values that differ from the default. Before that release, defaults could be printed inconsistently. Every rule here either requires a line that is not the default or fails only on the insecure line, so a default line that is or is not printed does not change the result. Telnet is off and SSH is on by default, so the rules fail on `feature telnet` and `no feature ssh` and do not require `no feature telnet` or `feature ssh`.
+- The `exec-timeout` default is not printed and is not compliant: the 10.5 guide gives 30 minutes, and older releases 0 (no timeout). So the VTY and console rules need an explicit `exec-timeout` of 1 to 10 minutes under `line vty` and `line console`. NX-OS takes minutes only, with no seconds field. A switch with no `line vty` or `line console` block fails the rule.
+- The VTY and console rules use `evaluate_block` with `scope: ^line vty$` and `scope: ^line console$`. rConfig's block splitter matches the scope anchor against the line with its indentation removed. NX-OS has no indented `line vty` or `line console` sub-command, so the anchors match only the top-level lines.
+- The MD5 rule fails on any `snmp-server user` line with `auth md5`. Many switches have an SNMP user for `admin` created by the setup script with `auth md5`, and the rule fails on it by design. Change that user to `auth sha` (or a SHA-2 option) or remove it.
+- SNMP users are printed in `show running-config` with their localized keys, so the rule can see them. No rule requires AES privacy on every user: since 10.1(1) AES-128 is the default privacy protocol, and it is not documented whether a user created without the keyword prints `priv aes-128`. `snmp-server globalEnforcePriv` makes every user encrypt SNMP messages.
+- `no cdp enable` must be at column 0 to count. The per-interface `no cdp enable` lines are indented and are not matched.
+- No DNS server rule: the `ip name-server ... use-vrf` syntax could not be confirmed on a Cisco page. No interface description rule: whether a port with no `shutdown` line is up depends on `system default switchport shutdown`, which is set once for the switch and is not visible per interface.
 - Regex rules use the `/.../m` form so that `^` and `$` match at each line of the config.

@@ -1,0 +1,28 @@
+title: "Cisco NX-OS services"
+description: "CDP disabled globally, and no proxy ARP or directed broadcast on any interface."
+vendor: cisco
+os: nxos
+config_format: nxos-running-config
+# collection_command: Pro app/Demo/Platforms/NxOs/NxOsGenerator.php:57 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic show running-config samples only. The rules have not been checked against output from a real NX-OS switch."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "CDP is disabled globally (no cdp enable)"
+    references:
+      nist_800_53: ["CM-7"]
+      iso27001: ["A.8.9"]
+  - description: "Proxy ARP is not enabled on any interface (fails on ip proxy-arp)"
+    references:
+      nist_800_53: ["SC-7"]
+      iso27001: ["A.8.20"]
+  - description: "Directed broadcast is not enabled on any interface (fails on ip directed-broadcast)"
+    references:
+      nist_800_53: ["SC-7"]
+      iso27001: ["A.8.20"]

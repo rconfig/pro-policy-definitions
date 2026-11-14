@@ -1,0 +1,37 @@
+title: "Cisco NX-OS management access"
+description: "No Telnet, SSH not disabled, an exec-timeout of 1 to 10 minutes on the VTY and console lines, and a MOTD banner."
+vendor: cisco
+os: nxos
+config_format: nxos-running-config
+# collection_command: Pro app/Demo/Platforms/NxOs/NxOsGenerator.php:57 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic show running-config samples only. The rules have not been checked against output from a real NX-OS switch."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "Telnet is not enabled (fails on feature telnet)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.5"]
+  - description: "SSH is not disabled (fails on no feature ssh)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.24"]
+  - description: "The VTY line sets an exec-timeout of 1 to 10 minutes (line vty, exec-timeout)"
+    references:
+      nist_800_53: ["AC-3"]
+      iso27001: ["A.8.5"]
+  - description: "The console line sets an exec-timeout of 1 to 10 minutes (line console, exec-timeout)"
+    references:
+      nist_800_53: ["AC-3"]
+      iso27001: ["A.8.5"]
+  - description: "A MOTD banner is configured (banner motd)"
+    references:
+      iso27001: ["A.8.5"]

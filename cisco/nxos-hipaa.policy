@@ -1,0 +1,39 @@
+// HIPAA 164.312(a)(1): Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default group ...)
+#[must_match_regex]
+/^aaa authentication login default group \S+/m
+
+// HIPAA 164.312(a)(1): Telnet is not enabled (fails on feature telnet)
+#[must_not_match_regex]
+/^feature telnet$/m
+
+// HIPAA 164.312(a)(1): SSH is not disabled (fails on no feature ssh)
+#[must_not_match_regex]
+/^no feature ssh$/m
+
+// HIPAA 164.312(b): AAA accounting sends to a server group (aaa accounting default group ...)
+#[must_match_regex]
+/^aaa accounting default group \S+/m
+
+// HIPAA 164.312(b): A remote syslog server is configured (logging server)
+#[must_match_regex]
+/^logging server \S+/m
+
+// HIPAA 164.312(b): Log timestamps use milliseconds or microseconds (logging timestamp milliseconds)
+#[must_match_regex]
+/^logging timestamp (milliseconds|microseconds)$/m
+
+// HIPAA 164.312(b): Console logging is not more verbose than critical (fails on logging console 3 to 7)
+#[must_not_match_regex]
+/^logging console [3-7]$/m
+
+// HIPAA 164.312(e)(1): No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// HIPAA 164.312(e)(1): No SNMP user uses MD5 authentication (fails on snmp-server user ... auth md5)
+#[must_not_match_regex]
+/^snmp-server user \S+ .*\bauth md5\b/m
+
+// HIPAA 164.312(e)(1): SNMP message encryption is enforced for all users (snmp-server globalEnforcePriv)
+#[must_match_single_string]
+snmp-server globalEnforcePriv

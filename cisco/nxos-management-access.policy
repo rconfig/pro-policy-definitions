@@ -1,0 +1,23 @@
+// Telnet is not enabled (fails on feature telnet)
+#[must_not_match_regex]
+/^feature telnet$/m
+
+// SSH is not disabled (fails on no feature ssh)
+#[must_not_match_regex]
+/^no feature ssh$/m
+
+// The VTY line sets an exec-timeout of 1 to 10 minutes (line vty, exec-timeout)
+#[evaluate_block]
+scope: ^line vty$
+all:
+  - regex: '/^\s+exec-timeout ([1-9]|10)$/m'
+
+// The console line sets an exec-timeout of 1 to 10 minutes (line console, exec-timeout)
+#[evaluate_block]
+scope: ^line console$
+all:
+  - regex: '/^\s+exec-timeout ([1-9]|10)$/m'
+
+// A MOTD banner is configured (banner motd)
+#[must_match_regex]
+/^banner motd \S/m

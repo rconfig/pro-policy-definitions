@@ -44,7 +44,7 @@ Files are named `{vendor}/{os}-{topic}.policy`, in lower case with hyphens, for 
 You can browse the hardening checks by topic or by framework:
 
 - **Topic files**, such as `cisco/ios-snmp.policy`, hold the rules. Each rule appears in exactly one topic file.
-- **Framework files**, such as `cisco/ios-nist-800-53.policy`, collect the topic rules that list a reference for one framework: `{os}-nist-800-53`, `{os}-nist-csf`, `{os}-hipaa` and `{os}-iso27001`, for Cisco IOS, Cisco IOS XR, FortiOS and Junos. Each rule's description starts with its control reference, for example `NIST AC-17: ...`. A framework with no tagged rules for a vendor has no file.
+- **Framework files**, such as `cisco/ios-nist-800-53.policy`, collect the topic rules that list a reference for one framework: `{os}-nist-800-53`, `{os}-nist-csf`, `{os}-hipaa` and `{os}-iso27001`, for Cisco IOS, Cisco IOS XR, Cisco NX-OS, FortiOS and Junos. Each rule's description starts with its control reference, for example `NIST AC-17: ...`. A framework with no tagged rules for a vendor has no file.
 
 Framework files are generated from the topic files by `.tooling/scripts/generate_frameworks.py`. **Do not edit them**: change the topic file or its references and run the generator. The lint and CI fail when a framework file differs from the generator output. See [CONTRIBUTING.md](CONTRIBUTING.md#topic-files-and-framework-files).
 
@@ -56,6 +56,7 @@ Policy files must use LF line endings. rConfig's parser expects `\n` after each 
 
 - Juniper templates are written for `display set` format and are `synthetic-tested`: they have not yet been checked against a real Junos device. See `juniper/README.md`.
 - Cisco IOS XR templates (`cisco/iosxr-*`) are `synthetic-tested`: they have not yet been checked against a real IOS XR router. See the IOS XR section of `cisco/README.md`.
+- Cisco NX-OS templates (`cisco/nxos-*`) are `synthetic-tested`: they have not yet been checked against a real NX-OS switch. See the NX-OS section of `cisco/README.md`.
 - Files whose `.meta.yaml` says `status: under-review` carry a `notes:` entry explaining why.
 
 ## Contributing

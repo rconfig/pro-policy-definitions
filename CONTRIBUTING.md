@@ -18,7 +18,7 @@ If you cannot run rConfig Pro, open the pull request without the expected result
 
 Rules live in the hardening topic files, such as `cisco/ios-snmp.policy`. Each topic file covers one subject, and each rule appears in exactly one topic file.
 
-Framework files, such as `cisco/ios-nist-800-53.policy`, collect the topic rules that list a reference for one framework, so you can assign a framework's checks as one definition. `.tooling/scripts/generate_frameworks.py` writes them from the topic files for Cisco IOS, Cisco IOS XR, FortiOS and Junos, for `nist-800-53`, `nist-csf`, `hipaa` and `iso27001`:
+Framework files, such as `cisco/ios-nist-800-53.policy`, collect the topic rules that list a reference for one framework, so you can assign a framework's checks as one definition. `.tooling/scripts/generate_frameworks.py` writes them from the topic files for Cisco IOS, Cisco IOS XR, Cisco NX-OS, FortiOS and Junos, for `nist-800-53`, `nist-csf`, `hipaa` and `iso27001`:
 
 - Each rule is copied unchanged from its topic file, and its description starts with its control reference, for example `NIST AC-17: SSH version 2 is enabled (ip ssh version 2)`. A rule with several controls in one framework appears once, with all of them.
 - The `.meta.yaml` has `kind: framework`, `generated: true`, the source topic files under `sources`, and each rule's `source` and `source_rule`. Its minimum rConfig version is the highest that its rules need, and its status is the least tested status among its sources.

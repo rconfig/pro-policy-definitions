@@ -1,0 +1,15 @@
+// Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default group ...)
+#[must_match_regex]
+/^aaa authentication login default group \S+/m
+
+// AAA accounting sends to a server group (aaa accounting default group ...)
+#[must_match_regex]
+/^aaa accounting default group \S+/m
+
+// Password strength checking is not disabled (fails on no password strength-check)
+#[must_not_match_regex]
+/^no password strength-check$/m
+
+// AES password encryption is enabled for stored keys (feature password encryption aes)
+#[must_match_single_string]
+feature password encryption aes

@@ -1,0 +1,318 @@
+!Command: show running-config
+!Running configuration last done at: Mon Nov  2 10:15:00 2026
+!Time: Tue Nov 10 09:00:00 2026
+
+version 10.3(4a) Bios:version 05.47
+hostname dub-dc1-nx02
+vdc dub-dc1-nx02 id 1
+  limit-resource vlan minimum 16 maximum 4094
+  limit-resource vrf minimum 2 maximum 4096
+  limit-resource port-channel minimum 0 maximum 511
+  limit-resource m4route-mem minimum 58 maximum 58
+  limit-resource m6route-mem minimum 8 maximum 8
+
+feature tacacs+
+feature telnet
+no feature ssh
+feature interface-vlan
+feature lacp
+feature vpc
+feature lldp
+
+username admin password 5 $5$Kq3vT8xP$Zr7mW2nL9cH4bF6dJ1sQ8tY5uV0aE3gK7pX2wN4iM6o  role network-admin
+ssh key rsa 2048
+no password strength-check
+ip domain-lookup
+ip domain-name example.com
+tacacs-server key 7 "65f6a17914c00044"
+tacacs-server host 192.0.2.30 key 7 "65f6a17914c00044"
+tacacs-server host 192.0.2.31 key 7 "65f6a17914c00044"
+aaa group server tacacs+ ISE-TACACS
+    server 192.0.2.30
+    server 192.0.2.31
+    use-vrf management
+    source-interface mgmt0
+copp profile strict
+snmp-server contact noc@example.com
+snmp-server source-interface traps mgmt0
+snmp-server user admin network-admin auth md5 0xcc46e4ba8cbe8cf82d43dd6dc0275564 priv 0x54dece4b157150d7165ae38d03a2f97b localizedkey
+snmp-server user netmon network-operator auth md5 0xcc46e4ba8cbe8cf82d43dd6dc0275564 priv aes-128 0x54dece4b157150d7165ae38d03a2f97b localizedkey
+snmp-server host 192.0.2.60 traps version 2c dc1-ro
+snmp-server host 192.0.2.60 use-vrf management
+snmp-server enable traps link
+snmp-server enable traps vpc
+snmp-server community dc1-ro group network-operator
+ntp server 192.0.2.1 use-vrf management
+ntp server 192.0.2.2 use-vrf management
+ntp source-interface mgmt0
+clock timezone GMT 0 0
+clock summer-time IST 5 Sun Mar 01:00 5 Sun Oct 02:00 60
+aaa authentication login default local
+aaa authentication login console local
+aaa authorization commands default group ISE-TACACS local
+aaa accounting default local
+aaa authentication login error-enable
+
+ip access-list MGMT-ACCESS
+  10 permit ip 192.0.2.0/24 any
+  20 permit ip 198.51.100.0/24 any
+  1000 deny ip any any log
+system default switchport
+no system default switchport shutdown
+
+vlan 99
+  name MGMT
+vlan 210
+  name ISCSI-A
+vlan 211
+  name ISCSI-B
+vlan 220
+  name VMOTION
+
+spanning-tree port type edge bpduguard default
+spanning-tree vlan 1-3967 priority 8192
+vrf context management
+  ip route 0.0.0.0/0 198.51.100.1
+vpc domain 10
+  peer-switch
+  role priority 1000
+  peer-keepalive destination 198.51.100.41 source 198.51.100.42 vrf management
+  delay restore 150
+  peer-gateway
+  auto-recovery
+  ip arp synchronize
+
+
+interface Vlan1
+
+interface Vlan99
+  description Server management
+  no shutdown
+  no ip redirects
+  ip proxy-arp
+  ip directed-broadcast
+  ip address 203.0.113.2/25
+
+interface Vlan220
+  description vMotion
+  no shutdown
+  mtu 9216
+  no ip redirects
+  ip address 203.0.113.130/25
+
+interface port-channel1
+  description vPC peer-link to dub-dc1-nx01
+  switchport mode trunk
+  switchport trunk allowed vlan 99,210,211,220
+  spanning-tree port type network
+  vpc peer-link
+
+interface port-channel10
+  description Uplink to dub-core-sw01 (legacy core)
+  switchport mode trunk
+  switchport trunk allowed vlan 99,210,211,220
+  vpc 10
+
+interface port-channel20
+  description SAN01 ctrl A
+  switchport mode trunk
+  switchport trunk allowed vlan 210-211
+  spanning-tree port type edge trunk
+  mtu 9216
+  vpc 20
+
+interface port-channel21
+  description SAN01 ctrl B
+  switchport mode trunk
+  switchport trunk allowed vlan 210-211
+  spanning-tree port type edge trunk
+  mtu 9216
+  vpc 21
+
+interface Ethernet1/1
+  description SAN01 ctrl A iSCSI
+  switchport mode trunk
+  switchport trunk allowed vlan 210-211
+  mtu 9216
+  channel-group 20 mode active
+  no shutdown
+
+interface Ethernet1/2
+  description SAN01 ctrl B iSCSI
+  switchport mode trunk
+  switchport trunk allowed vlan 210-211
+  mtu 9216
+  channel-group 21 mode active
+  no shutdown
+
+interface Ethernet1/3
+  description ESXi-DC1-01 vmnic2
+  switchport mode trunk
+  switchport trunk allowed vlan 99,210-211,220
+  spanning-tree port type edge trunk
+  mtu 9216
+  no shutdown
+
+interface Ethernet1/4
+  description ESXi-DC1-02 vmnic2
+  switchport mode trunk
+  switchport trunk allowed vlan 99,210-211,220
+  spanning-tree port type edge trunk
+  mtu 9216
+  no shutdown
+
+interface Ethernet1/5
+  description ESXi-DC1-03 vmnic2
+  switchport mode trunk
+  switchport trunk allowed vlan 99,210-211,220
+  spanning-tree port type edge trunk
+  mtu 9216
+  no shutdown
+
+interface Ethernet1/6
+  description ESXi-DC1-04 vmnic2
+  switchport mode trunk
+  switchport trunk allowed vlan 99,210-211,220
+  spanning-tree port type edge trunk
+  mtu 9216
+  no shutdown
+
+interface Ethernet1/7
+  description Backup appliance BKP01
+  switchport access vlan 210
+  mtu 9216
+  no shutdown
+
+interface Ethernet1/8
+  description iDRAC/iLO management switch
+  switchport access vlan 99
+  no shutdown
+
+interface Ethernet1/9
+
+interface Ethernet1/10
+
+interface Ethernet1/11
+
+interface Ethernet1/12
+
+interface Ethernet1/13
+
+interface Ethernet1/14
+
+interface Ethernet1/15
+
+interface Ethernet1/16
+
+interface Ethernet1/17
+
+interface Ethernet1/18
+
+interface Ethernet1/19
+
+interface Ethernet1/20
+
+interface Ethernet1/21
+
+interface Ethernet1/22
+
+interface Ethernet1/23
+
+interface Ethernet1/24
+
+interface Ethernet1/25
+
+interface Ethernet1/26
+
+interface Ethernet1/27
+
+interface Ethernet1/28
+
+interface Ethernet1/29
+
+interface Ethernet1/30
+
+interface Ethernet1/31
+
+interface Ethernet1/32
+
+interface Ethernet1/33
+
+interface Ethernet1/34
+
+interface Ethernet1/35
+
+interface Ethernet1/36
+
+interface Ethernet1/37
+
+interface Ethernet1/38
+
+interface Ethernet1/39
+
+interface Ethernet1/40
+
+interface Ethernet1/41
+
+interface Ethernet1/42
+
+interface Ethernet1/43
+
+interface Ethernet1/44
+
+interface Ethernet1/45
+
+interface Ethernet1/46
+
+interface Ethernet1/47
+
+interface Ethernet1/48
+  description dub-core-sw01 (legacy core) Te1/1/3
+  switchport mode trunk
+  switchport trunk allowed vlan 99
+  spanning-tree port type edge trunk
+  no shutdown
+
+interface Ethernet1/49
+  description Uplink to dub-core-sw01 Hu1/0/1
+  switchport mode trunk
+  switchport trunk allowed vlan 99,210,211,220
+  channel-group 10 mode active
+  no shutdown
+
+interface Ethernet1/50
+
+interface Ethernet1/51
+
+interface Ethernet1/52
+
+interface Ethernet1/53
+  description vPC peer-link to dub-dc1-nx01 Eth1/53
+  switchport mode trunk
+  switchport trunk allowed vlan 99,210,211,220
+  channel-group 1 mode active
+  no shutdown
+
+interface Ethernet1/54
+  description vPC peer-link to dub-dc1-nx01 Eth1/54
+  switchport mode trunk
+  switchport trunk allowed vlan 99,210,211,220
+  channel-group 1 mode active
+  no shutdown
+
+interface mgmt0
+  description OOB management
+  vrf member management
+  ip address 198.51.100.42/24
+
+icam monitor scale
+
+line console
+  exec-timeout 15
+line vty
+  exec-timeout 15
+  session-limit 8
+  access-class MGMT-ACCESS in
+boot nxos bootflash:/nxos64-cs.10.3.4a.M.bin sup-1
+logging source-interface mgmt0
+logging console 6

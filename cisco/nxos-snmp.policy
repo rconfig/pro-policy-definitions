@@ -1,0 +1,11 @@
+// No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// No SNMP user uses MD5 authentication (fails on snmp-server user ... auth md5)
+#[must_not_match_regex]
+/^snmp-server user \S+ .*\bauth md5\b/m
+
+// SNMP message encryption is enforced for all users (snmp-server globalEnforcePriv)
+#[must_match_single_string]
+snmp-server globalEnforcePriv

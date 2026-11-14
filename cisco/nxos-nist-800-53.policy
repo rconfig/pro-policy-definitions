@@ -1,0 +1,71 @@
+// NIST AC-2: Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default group ...)
+#[must_match_regex]
+/^aaa authentication login default group \S+/m
+
+// NIST AC-3: The VTY line sets an exec-timeout of 1 to 10 minutes (line vty, exec-timeout)
+#[evaluate_block]
+scope: ^line vty$
+all:
+  - regex: '/^\s+exec-timeout ([1-9]|10)$/m'
+
+// NIST AC-3: The console line sets an exec-timeout of 1 to 10 minutes (line console, exec-timeout)
+#[evaluate_block]
+scope: ^line console$
+all:
+  - regex: '/^\s+exec-timeout ([1-9]|10)$/m'
+
+// NIST AC-17: Telnet is not enabled (fails on feature telnet)
+#[must_not_match_regex]
+/^feature telnet$/m
+
+// NIST AC-17: SSH is not disabled (fails on no feature ssh)
+#[must_not_match_regex]
+/^no feature ssh$/m
+
+// NIST AU-2: AAA accounting sends to a server group (aaa accounting default group ...)
+#[must_match_regex]
+/^aaa accounting default group \S+/m
+
+// NIST AU-2: A remote syslog server is configured (logging server)
+#[must_match_regex]
+/^logging server \S+/m
+
+// NIST AU-3: Log timestamps use milliseconds or microseconds (logging timestamp milliseconds)
+#[must_match_regex]
+/^logging timestamp (milliseconds|microseconds)$/m
+
+// NIST AU-6: Console logging is not more verbose than critical (fails on logging console 3 to 7)
+#[must_not_match_regex]
+/^logging console [3-7]$/m
+
+// NIST CM-6: AES password encryption is enabled for stored keys (feature password encryption aes)
+#[must_match_single_string]
+feature password encryption aes
+
+// NIST CM-7: CDP is disabled globally (no cdp enable)
+#[must_match_regex]
+/^no cdp enable$/m
+
+// NIST IA-5: Password strength checking is not disabled (fails on no password strength-check)
+#[must_not_match_regex]
+/^no password strength-check$/m
+
+// NIST SC-7: Proxy ARP is not enabled on any interface (fails on ip proxy-arp)
+#[must_not_match_regex]
+/^\s+ip proxy[- ]arp$/m
+
+// NIST SC-7: Directed broadcast is not enabled on any interface (fails on ip directed-broadcast)
+#[must_not_match_regex]
+/^\s+ip directed-broadcast\b/m
+
+// NIST SC-12: No SNMPv1 or SNMPv2c community is configured (line snmp-server community is absent)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// NIST SC-12: No SNMP user uses MD5 authentication (fails on snmp-server user ... auth md5)
+#[must_not_match_regex]
+/^snmp-server user \S+ .*\bauth md5\b/m
+
+// NIST SC-12: SNMP message encryption is enforced for all users (snmp-server globalEnforcePriv)
+#[must_match_single_string]
+snmp-server globalEnforcePriv

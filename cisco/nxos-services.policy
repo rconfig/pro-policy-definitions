@@ -1,0 +1,11 @@
+// CDP is disabled globally (no cdp enable)
+#[must_match_regex]
+/^no cdp enable$/m
+
+// Proxy ARP is not enabled on any interface (fails on ip proxy-arp)
+#[must_not_match_regex]
+/^\s+ip proxy[- ]arp$/m
+
+// Directed broadcast is not enabled on any interface (fails on ip directed-broadcast)
+#[must_not_match_regex]
+/^\s+ip directed-broadcast\b/m
