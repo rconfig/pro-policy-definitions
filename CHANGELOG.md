@@ -5,9 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [1.4.0] - 2026-10-22
+## [1.4.0] - 2026-11-14
 
 ### Added
+- Release process: a root `VERSION` file, annotated tags and a GitHub Release for every version, set out in `CLAUDE.md`. `v1.0.0` to `v1.3.0` were tagged without GitHub Releases; 1.4.0 is the first published release.
 - `cisco/ios-baseline`, a baseline standard for Cisco IOS and IOS XE (`kind: operational`, `status: synthetic-tested`, rConfig V8.3.0): edit the values to match your own. It has eleven blocks, each named `Cisco <Section> Standard`: services, DNS, NTP, other (AAA and IPv6 routing), creds (a local `admin` user with a type 9 secret), no plaintext passwords (fails on any `password 0` line), HTTP, routing (a default route), SSH, SNMP and VTY (every `line vty` block has `transport input ssh` and no `password` line). The values are RFC 5737 addresses, `example.com` and example names. The `.meta.yaml` records NIST SP 800-53, HIPAA and ISO/IEC 27001:2022 references where the control clearly covers a block. They are for reading only: `generate_frameworks.py` collects hardening topic files only, so the framework files are unchanged.
 - Expected results for `cisco/ios-baseline`. Every block passes on the hardened Catalyst 9500 sample. On the unhardened Cisco 1921 lab sample, seven blocks fail, and four pass because the lab router has those lines (services, other, routing and SSH).
 
