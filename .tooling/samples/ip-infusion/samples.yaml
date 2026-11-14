@@ -1,0 +1,19 @@
+# IP Infusion sample configs. Addresses, AS numbers, community strings and keys are sanitised.
+# These are show running-config output from OcNOS-SP 7.0.0, collected by rConfig.
+samples:
+  - file: s9510-ocnossp700-unhardened-sanitised-real.txt
+    name: UfiSpace S9510-28DC-B provider router (R4-P1), OcNOS-SP 7.0.0, as collected
+    os: ocnos
+    os_version: "7.0.0"
+    config_format: ocnos-running-config
+    source: sanitised-real
+    hardened: false
+    origin: "show running-config from a lab router in the IP Infusion EMEA lab, collected by rConfig. Device: Software Product OcNOS-SP, Version 7.0.0, Build Number 261, Release GA; Software Feature Code PLUS; Software Baseline Version 6.6.1-120; Hardware Model Ufi Space S9510-28DC-B; image OcNOS-SP-PLUS-Q2-7.0.0-261-GA-installer. Converted from CRLF to LF. The capture ended with a ! line and no final newline; a final newline was added. Sanitised, with every address mapped to one fixed RFC 5737 address so that /31 link pairs, TWAMP reflector peers and the loopback's use as router-id, BFD source and BGP update-source are kept: loopback 10.0.0.1 to 198.51.100.1; BGP neighbours and BFD peers 10.0.1.1 to .3 to 198.51.100.11 to .13; /31 links and reflectors 10.100.1.1, .2, .3, .4, .5 and .8 to 192.0.2.65, .66, .67, .68, .69 and .72; vlan1.100 192.168.1.4/24 to 203.0.113.4/24; the remote syslog server 172.16.10.17 to 198.51.100.217. Private AS 65000 changed to documentation AS 64500, and the SNMP community ocnos changed to lab7ro. Nothing else was changed: the hostname, model name, header comment lines (including the user name in the last change line), 127.0.0.1 and ::1 on the lo interfaces, the trailing spaces on eight lines, the indented exit after interface xe27, the blank line after end and the final ! line are as the device printed them."
+  - file: s9510-ocnossp700-hardened-synthetic.txt
+    name: UfiSpace S9510-28DC-B provider router, OcNOS-SP 7.0.0, edited to pass the ip-infusion/ocnos-* topic files
+    os: ocnos
+    os_version: "7.0.0"
+    config_format: ocnos-running-config
+    source: synthetic
+    hardened: true
+    origin: "A copy of s9510-ocnossp700-unhardened-sanitised-real.txt edited by hand so that every rule in the ip-infusion/ocnos-* hardening topic files passes and every operational standards example value is met, using only command forms from the IP Infusion OcNOS command references: hostname dub-rtr01 in place of R4-P1; banner motd with a one-line text added after the hostname; feature tacacs+ vrf management, tacacs-server login host 198.51.100.232 vrf management seq-num 1 key 7 and aaa authentication login default vrf management group tacacs+ added after feature ssh; the SNMP community replaced with snmp-server location vrf management; ntp server 192.0.2.10 and 192.0.2.11 vrf management, ntp authenticate vrf management, an ntp authentication-key and ntp trusted-key added after feature ntp; remote syslog servers 192.0.2.20 and 192.0.2.21 in place of 198.51.100.217, in the stored form of the original line. Where the added lines would print on a real device is a guess, and the keys are made up. Everything else is as in the sanitised capture."

@@ -1,0 +1,7 @@
+// Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default ... group)
+#[must_match_regex]
+/^aaa authentication login default (vrf \S+ )?group \S+/m
+
+// A TACACS+ server is configured with a key (tacacs-server login host ... key)
+#[must_match_regex]
+/^tacacs-server login host \S+ .*\bkey\b/m

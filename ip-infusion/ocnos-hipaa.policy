@@ -1,0 +1,23 @@
+// HIPAA 164.312(a)(1): Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default ... group)
+#[must_match_regex]
+/^aaa authentication login default (vrf \S+ )?group \S+/m
+
+// HIPAA 164.312(a)(1): Telnet is not enabled (fails on feature telnet)
+#[must_not_match_regex]
+/^feature telnet\b/m
+
+// HIPAA 164.312(a)(1): SSH is enabled on the management VRF (feature ssh vrf management)
+#[must_match_regex]
+/^feature ssh vrf management[ \t]*$/m
+
+// HIPAA 164.312(b): A remote syslog server is configured (logging remote server)
+#[must_match_regex]
+/^logging remote server \S+/m
+
+// HIPAA 164.312(b): Log timestamps are not set to seconds or none (fails on logging timestamp seconds or none)
+#[must_not_match_regex]
+/^logging timestamp (seconds|none)[ \t]*$/m
+
+// HIPAA 164.312(e)(1): No SNMPv1 or SNMPv2c community is configured (fails on snmp-server community)
+#[must_not_match_regex]
+/^snmp-server community /m

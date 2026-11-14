@@ -29,6 +29,7 @@ Compliance policy definitions for rConfig V8 Professional, organised by vendor. 
 ├── cisco/                          # {os}-{topic}.policy, {os}-{topic}.meta.yaml and README.md per vendor
 ├── f5/
 ├── fortinet/
+├── ip-infusion/
 ├── juniper/
 ├── mikrotik/
 ├── palo-alto/
@@ -46,7 +47,7 @@ Files are named `{vendor}/{os}-{topic}.policy`, in lower case with hyphens, for 
 You can browse the hardening checks by topic or by framework:
 
 - **Topic files**, such as `cisco/ios-snmp.policy`, hold the rules. Each rule appears in exactly one topic file.
-- **Framework files**, such as `cisco/ios-nist-800-53.policy`, collect the topic rules that list a reference for one framework: `{os}-nist-800-53`, `{os}-nist-csf`, `{os}-hipaa` and `{os}-iso27001`, for Arista EOS, Cisco IOS, Cisco IOS XR, Cisco NX-OS, FortiOS, Junos and PAN-OS. Each rule's description starts with its control reference, for example `NIST AC-17: ...`. A framework with no tagged rules for a vendor has no file.
+- **Framework files**, such as `cisco/ios-nist-800-53.policy`, collect the topic rules that list a reference for one framework: `{os}-nist-800-53`, `{os}-nist-csf`, `{os}-hipaa` and `{os}-iso27001`, for Arista EOS, Cisco IOS, Cisco IOS XR, Cisco NX-OS, FortiOS, IP Infusion OcNOS, Junos and PAN-OS. Each rule's description starts with its control reference, for example `NIST AC-17: ...`. A framework with no tagged rules for a vendor has no file.
 
 Framework files are generated from the topic files by `.tooling/scripts/generate_frameworks.py`. **Do not edit them**: change the topic file or its references and run the generator. The lint and CI fail when a framework file differs from the generator output. See [CONTRIBUTING.md](CONTRIBUTING.md#topic-files-and-framework-files).
 
@@ -61,6 +62,7 @@ Policy files must use LF line endings. rConfig's parser expects `\n` after each 
 - Cisco NX-OS templates (`cisco/nxos-*`) are `synthetic-tested`: they have not yet been checked against a real NX-OS switch. See the NX-OS section of `cisco/README.md`.
 - Arista EOS templates (`arista/eos-*`) are `synthetic-tested`: they have not yet been checked against a real EOS switch. See `arista/README.md`.
 - PAN-OS templates (`palo-alto/panos-*`) are `synthetic-tested` and cover brace format from `show config running` only: they have not yet been checked against a real firewall, and settings pushed from Panorama may not appear in that output. See `palo-alto/README.md`.
+- IP Infusion OcNOS templates (`ip-infusion/ocnos-*`) are `lab-tested` against a sanitised `show running-config` from a real OcNOS-SP 7.0.0 router; the DC edition has not been tested. See `ip-infusion/README.md`.
 - Files whose `.meta.yaml` says `status: under-review` carry a `notes:` entry explaining why.
 
 ## Contributing

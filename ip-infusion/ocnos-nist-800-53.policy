@@ -1,0 +1,27 @@
+// NIST AC-2: Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default ... group)
+#[must_match_regex]
+/^aaa authentication login default (vrf \S+ )?group \S+/m
+
+// NIST AC-17: Telnet is not enabled (fails on feature telnet)
+#[must_not_match_regex]
+/^feature telnet\b/m
+
+// NIST AC-17: SSH is enabled on the management VRF (feature ssh vrf management)
+#[must_match_regex]
+/^feature ssh vrf management[ \t]*$/m
+
+// NIST AU-2: A remote syslog server is configured (logging remote server)
+#[must_match_regex]
+/^logging remote server \S+/m
+
+// NIST AU-3: Log timestamps are not set to seconds or none (fails on logging timestamp seconds or none)
+#[must_not_match_regex]
+/^logging timestamp (seconds|none)[ \t]*$/m
+
+// NIST CM-6: Password encryption is enabled (service password-encryption)
+#[must_match_regex]
+/^service password-encryption[ \t]*$/m
+
+// NIST SC-12: No SNMPv1 or SNMPv2c community is configured (fails on snmp-server community)
+#[must_not_match_regex]
+/^snmp-server community /m

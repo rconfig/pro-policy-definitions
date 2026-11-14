@@ -1,0 +1,11 @@
+// Telnet is not enabled (fails on feature telnet)
+#[must_not_match_regex]
+/^feature telnet\b/m
+
+// SSH is enabled on the management VRF (feature ssh vrf management)
+#[must_match_regex]
+/^feature ssh vrf management[ \t]*$/m
+
+// A custom login banner is configured (banner motd, other than banner motd default)
+#[must_match_regex]
+/^banner motd (?!default[ \t]*$)\S/m

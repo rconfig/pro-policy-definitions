@@ -1,0 +1,275 @@
+!
+! Software version: UFI_S9510-28DC-OcNOS-SP-PLUS-7.0.0.261-GA 02/20/2026 15:31:02
+!
+! Last configuration change at 15:11:27 UTC Tue Nov 10 2026 by ocnos
+!
+feature netconf-ssh vrf management
+feature netconf-tls vrf management
+!
+feature streaming-telemetry vrf management
+!
+telemetry maximum-subscribe-paths 140
+!
+service password-encryption
+!
+logging level nsm 4 
+logging level cmm 4 
+!
+!
+snmp-server enable traps link linkDown
+snmp-server enable traps link linkUp
+!
+hardware-profile filter twamp-ipv4 enable
+hardware-profile statistics voq-full-color enable
+hardware-profile statistics cfm-ccm enable
+!
+qos enable
+!
+hostname R4-P1
+ip domain-lookup vrf management
+bridge 1 protocol rstp vlan-bridge
+tfo Disable
+errdisable cause stp-bpdu-guard
+feature ssh vrf management
+snmp-server enable snmp vrf management
+snmp-server view all .1 included vrf management
+snmp-server community lab7ro view all version v2c ro vrf management
+feature dns relay
+ip dns relay
+ipv6 dns relay
+feature ntp vrf management
+feature rsyslog
+logging remote server 198.51.100.217 5 port 1514 vrf management
+lldp run
+lldp tlv-select basic-mgmt port-description
+lldp tlv-select basic-mgmt system-name
+lldp tlv-select basic-mgmt system-capabilities
+lldp tlv-select basic-mgmt system-description
+lldp tlv-select basic-mgmt management-address
+lldp notification-interval 1000
+delay-profile interfaces
+ mode two-way
+ burst-interval 1000
+ burst-count 1
+ interval 30
+ advertisement periodic threshold 10
+ advertisement periodic minimum-change 1000
+ advertisement accelerated
+ advertisement accelerated threshold 20
+ advertisement accelerated minimum-change 2000
+fault-management enable
+!
+vlan database
+ vlan 100 bridge 1 state enable
+!
+evpn mpls enable
+!
+ip vrf management
+!
+segment-routing
+ mpls sr-prefer
+!
+router ldp
+ router-id 198.51.100.1
+ explicit-null
+ entropy-label-capability
+!
+router rsvp
+!
+interface cd0
+ description To R2
+ load-interval 30
+ ip address 192.0.2.65/31
+ mtu 9216
+ label-switching
+ isis network point-to-point
+ isis circuit-type level-2-only
+ ip router isis ISIS-NET
+ no isis hello padding
+ enable-ldp ipv4
+ enable-rsvp
+!
+interface cd1
+ description to R3
+ load-interval 30
+ ip address 192.0.2.72/31
+ mtu 9216
+ label-switching
+ isis network point-to-point
+ isis circuit-type level-2-only
+ ip router isis ISIS-NET
+ no isis hello padding
+ enable-ldp ipv4
+ enable-rsvp
+!
+interface ce2
+!
+interface ce3
+!
+interface eth0
+ ip vrf forwarding management
+ ip address dhcp
+!
+interface lo
+ ip address 127.0.0.1/8
+ ipv6 address ::1/128
+!
+interface lo.management
+ ip vrf forwarding management
+ ip address 127.0.0.1/8
+ ipv6 address ::1/128
+!
+interface loopback1
+ ip address 198.51.100.1/32
+ prefix-sid absolute 16001 no-php
+ ip router isis ISIS-NET
+ bfd session  198.51.100.1  198.51.100.11 multihop  
+ bfd session  198.51.100.1  198.51.100.12 multihop  
+ bfd session  198.51.100.1  198.51.100.13 multihop  
+!
+interface vlan1.100
+ ip address 203.0.113.4/24
+!
+interface xe4
+!
+interface xe5
+!
+interface xe6
+!
+interface xe7
+!
+interface xe8
+!
+interface xe9
+!
+interface xe10
+!
+interface xe11
+!
+interface xe12
+!
+interface xe13
+!
+interface xe14
+!
+interface xe15
+!
+interface xe16
+ description To R6
+ load-interval 30
+ ip address 192.0.2.66/31
+ mtu 9216
+ label-switching
+ isis network point-to-point
+ isis circuit-type level-2-only
+ ip router isis ISIS-NET
+ no isis hello padding
+ enable-ldp ipv4
+ enable-rsvp
+ delay-measurement dynamic twamp reflector-ip 192.0.2.67 reflector-port 1025 sender-ip 192.0.2.66
+!
+interface xe17
+!
+interface xe18
+ switchport
+ bridge-group 1
+ switchport mode trunk
+ switchport trunk allowed vlan add 100
+!
+interface xe19
+!
+interface xe20
+!
+interface xe21
+!
+interface xe22
+!
+interface xe23
+ description To R2
+ load-interval 30
+ ip address 192.0.2.68/31
+ mtu 9216
+ label-switching
+ isis network point-to-point
+ isis circuit-type level-2-only
+ ip router isis ISIS-NET
+ no isis hello padding
+ enable-rsvp
+ delay-measurement dynamic twamp reflector-ip 192.0.2.69 reflector-port 1025 sender-ip 192.0.2.68
+ loss-measurement dynamic 
+!
+interface xe24
+!
+interface xe25
+!
+interface xe26
+!
+interface xe27
+!
+ exit
+!
+twamp-light reflector
+ reflector-admin-state enable
+ reflector-name R4-R2 reflector-ip ipv4 192.0.2.68 reflector-port 1026
+ reflector-name R4-R6 reflector-ip ipv4 192.0.2.66 reflector-port 1026
+!
+twamp-light control
+ control-admin-state enable
+!
+router isis ISIS-NET
+ is-type level-2-only
+ metric-style wide
+ mpls traffic-eng router-id 198.51.100.1
+ mpls traffic-eng level-2
+ capability cspf
+ dynamic-hostname
+ fast-reroute per-prefix level-2 proto ipv4 all
+ fast-reroute ti-lfa level-2 proto ipv4
+ bfd all-interfaces
+ net 49.0001.0000.0000.0001.00
+ passive-interface loopback1
+ segment-routing entropy-label 
+ segment-routing mpls 
+!
+router bgp 64500
+ bgp router-id 198.51.100.1
+ neighbor 198.51.100.11 remote-as 64500
+ neighbor 198.51.100.11 update-source loopback1
+ neighbor 198.51.100.11 fall-over bfd multihop
+ neighbor 198.51.100.12 remote-as 64500
+ neighbor 198.51.100.12 update-source loopback1
+ neighbor 198.51.100.12 fall-over bfd multihop
+ neighbor 198.51.100.13 remote-as 64500
+ neighbor 198.51.100.13 update-source loopback1
+ neighbor 198.51.100.13 fall-over bfd multihop
+ !
+ address-family ipv4 unicast
+ neighbor 198.51.100.11 activate
+ neighbor 198.51.100.12 activate
+ neighbor 198.51.100.13 activate
+ exit-address-family
+ !
+ address-family vpnv4 unicast
+ neighbor 198.51.100.11 activate
+ neighbor 198.51.100.12 activate
+ neighbor 198.51.100.13 activate
+ exit-address-family
+ !
+ address-family l2vpn evpn
+ neighbor 198.51.100.11 activate
+ neighbor 198.51.100.12 activate
+ neighbor 198.51.100.13 activate
+ exit-address-family
+ !
+ address-family vpnv6 unicast
+ neighbor 198.51.100.11 activate
+ neighbor 198.51.100.12 activate
+ neighbor 198.51.100.13 activate
+ exit-address-family
+ !
+ exit
+!
+!
+end
+
+!

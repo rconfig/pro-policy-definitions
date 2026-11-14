@@ -1,0 +1,26 @@
+title: "IP Infusion OcNOS logging"
+description: "A remote syslog server, and log timestamps not set to seconds or none."
+vendor: ip-infusion
+os: ocnos
+config_format: ocnos-running-config
+# collection_command: rConfig-templates ip-infusion/README.md (typical retrieval commands); Pro has no OcNOS demo platform
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: lab-tested
+framework_claim: null
+notes: "Tested against a sanitised show running-config from a real OcNOS-SP 7.0.0 router and a copy edited by hand to pass every rule. The DC edition has not been tested."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "A remote syslog server is configured (logging remote server)"
+    references:
+      nist_800_53: ["AU-2"]
+      hipaa: ["164.312(b)"]
+      iso27001: ["A.8.15"]
+  - description: "Log timestamps are not set to seconds or none (fails on logging timestamp seconds or none)"
+    references:
+      nist_800_53: ["AU-3"]
+      hipaa: ["164.312(b)"]
+      iso27001: ["A.8.15"]

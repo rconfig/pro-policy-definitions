@@ -1,0 +1,41 @@
+// ISO 27001 A.5.17: Password encryption is enabled (service password-encryption)
+#[must_match_regex]
+/^service password-encryption[ \t]*$/m
+
+// ISO 27001 A.8.5: Login authentication uses a TACACS+ or RADIUS server group (aaa authentication login default ... group)
+#[must_match_regex]
+/^aaa authentication login default (vrf \S+ )?group \S+/m
+
+// ISO 27001 A.8.5: A TACACS+ server is configured with a key (tacacs-server login host ... key)
+#[must_match_regex]
+/^tacacs-server login host \S+ .*\bkey\b/m
+
+// ISO 27001 A.8.5: Telnet is not enabled (fails on feature telnet)
+#[must_not_match_regex]
+/^feature telnet\b/m
+
+// ISO 27001 A.8.5: A custom login banner is configured (banner motd, other than banner motd default)
+#[must_match_regex]
+/^banner motd (?!default[ \t]*$)\S/m
+
+// ISO 27001 A.8.5: No SNMPv1 or SNMPv2c community is configured (fails on snmp-server community)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// ISO 27001 A.8.15: A remote syslog server is configured (logging remote server)
+#[must_match_regex]
+/^logging remote server \S+/m
+
+// ISO 27001 A.8.15: Log timestamps are not set to seconds or none (fails on logging timestamp seconds or none)
+#[must_not_match_regex]
+/^logging timestamp (seconds|none)[ \t]*$/m
+
+// ISO 27001 A.8.17: NTP authentication is enabled with a trusted key (ntp authenticate, ntp trusted-key)
+#[evaluate_block]
+all:
+  - regex: '/^ntp authenticate( vrf \S+)?[ \t]*$/m'
+  - regex: '/^ntp trusted-key \d+( vrf \S+)?[ \t]*$/m'
+
+// ISO 27001 A.8.24: SSH is enabled on the management VRF (feature ssh vrf management)
+#[must_match_regex]
+/^feature ssh vrf management[ \t]*$/m

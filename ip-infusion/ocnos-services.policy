@@ -1,0 +1,9 @@
+// NTP authentication is enabled with a trusted key (ntp authenticate, ntp trusted-key)
+#[evaluate_block]
+all:
+  - regex: '/^ntp authenticate( vrf \S+)?[ \t]*$/m'
+  - regex: '/^ntp trusted-key \d+( vrf \S+)?[ \t]*$/m'
+
+// Password encryption is enabled (service password-encryption)
+#[must_match_regex]
+/^service password-encryption[ \t]*$/m

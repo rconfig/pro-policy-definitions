@@ -1,0 +1,3 @@
+// No SNMPv1 or SNMPv2c community is configured (fails on snmp-server community)
+#[must_not_match_regex]
+/^snmp-server community /m

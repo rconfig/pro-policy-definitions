@@ -1,0 +1,7 @@
+// A remote syslog server is configured (logging remote server)
+#[must_match_regex]
+/^logging remote server \S+/m
+
+// Log timestamps are not set to seconds or none (fails on logging timestamp seconds or none)
+#[must_not_match_regex]
+/^logging timestamp (seconds|none)[ \t]*$/m
