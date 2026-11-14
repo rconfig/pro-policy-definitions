@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- `.tooling/scripts/generate_frameworks.py` supports several OSes per vendor folder. It matches topic files on the `os` field in their `.meta.yaml`, and stops with an error on a hardening topic file whose `os` is not registered for its folder. `.tooling/scripts/lint.py` accepts five new config formats: `iosxr-running-config`, `nxos-running-config`, `eos-running-config`, `ocnos-running-config` and `panos-brace`, and `CONTRIBUTING.md` lists them. `.tooling/scripts/test_lint.py` has two new tests.
+- Expected-results headers in `.tooling/expected/` refreshed to Pro `e3b946d347`. No result changed.
+
 ## [1.4.0] - 2026-11-14
 
 ### Added

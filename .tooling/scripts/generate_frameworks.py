@@ -3,9 +3,10 @@
 
 Usage: python3 .tooling/scripts/generate_frameworks.py [--check] [--root DIR]
 
-For each vendor and framework, collects every rule in that vendor's hardening topic files whose
-.meta.yaml lists a reference for the framework, and writes {vendor}/{os}-{framework}.policy and its
-.meta.yaml. Rule bodies are copied from the topic file unchanged; each description is prefixed with
+For each platform (vendor folder and OS) and framework, collects every rule in that platform's
+hardening topic files whose .meta.yaml lists a reference for the framework, and writes
+{vendor}/{os}-{framework}.policy and its .meta.yaml. One vendor folder can hold several OSes; a
+topic file belongs to the OS named in the os field of its .meta.yaml. Rule bodies are copied from the topic file unchanged; each description is prefixed with
 the rule's control reference. A framework with no tagged rules gets no file.
 
 The topic files are the only source of rules. Never edit a generated file: edit the topic file and
@@ -27,12 +28,23 @@ import yaml
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
 
-# Vendor folders covered, with the OS name used in file names and titles.
-VENDORS = {
-    'cisco': ('ios', 'Cisco IOS'),
-    'fortinet': ('fortios', 'FortiOS'),
-    'juniper': ('junos', 'Junos'),
+# Platforms covered: (vendor folder, OS name used in file names and in the .meta.yaml os field),
+# with the label used in titles. A vendor folder can hold several OSes.
+PLATFORMS = {
+    ('cisco', 'ios'): 'Cisco IOS',
+    ('cisco', 'iosxr'): 'Cisco IOS XR',
+    ('cisco', 'nxos'): 'Cisco NX-OS',
+    ('fortinet', 'fortios'): 'FortiOS',
+    ('juniper', 'junos'): 'Junos',
+    ('arista', 'eos'): 'Arista EOS',
+    ('ip-infusion', 'ocnos'): 'IP Infusion OcNOS',
+    ('palo-alto', 'panos'): 'PAN-OS',
 }
+
+
+def vendor_folders():
+    """The vendor folders that hold at least one platform, in a stable order."""
+    return sorted({vendor for vendor, _ in PLATFORMS})
 
 # (file suffix, references key, description prefix, framework name, identifier scheme)
 FRAMEWORKS = (
@@ -87,22 +99,32 @@ def split_rules(text):
     return [(d, body) for d, body in rules]
 
 
-def topic_files(root, vendor):
-    """The vendor's hardening topic files, as (relative policy path, metadata), in file name order."""
+def topic_files(root, vendor, os_name):
+    """The platform's hardening topic files, as (relative policy path, metadata), in file name order.
+
+    A hardening topic file in the vendor folder whose os is not registered in PLATFORMS is an error,
+    so a missing PLATFORMS entry cannot silently produce no framework files.
+    """
+    registered = {o for v, o in PLATFORMS if v == vendor}
     topics = []
     for meta_path in sorted(glob.glob(os.path.join(root, vendor, '*.meta.yaml'))):
         with open(meta_path, encoding='utf-8') as fh:
             meta = yaml.safe_load(fh) or {}
         if meta.get('kind') != 'hardening' or meta.get('generated'):
             continue
-        topics.append((os.path.relpath(meta_path, root)[:-len('.meta.yaml')] + '.policy', meta))
+        rel = os.path.relpath(meta_path, root)
+        if meta.get('os') not in registered:
+            raise GeneratorError(f"{rel}: os {meta.get('os')!r} is not registered for {vendor}/ in PLATFORMS")
+        if meta.get('os') != os_name:
+            continue
+        topics.append((rel[:-len('.meta.yaml')] + '.policy', meta))
     return topics
 
 
-def collect(root, vendor):
-    """Every rule of the vendor's topic files, with its source, metadata and body."""
+def collect(root, vendor, os_name):
+    """Every rule of the platform's topic files, with its source, metadata and body."""
     rules = []
-    for rel, meta in topic_files(root, vendor):
+    for rel, meta in topic_files(root, vendor, os_name):
         if not meta.get('rules'):
             continue  # no rules list, so no references to collect
         with open(os.path.join(root, rel), encoding='utf-8') as fh:
@@ -116,9 +138,9 @@ def collect(root, vendor):
     return rules
 
 
-def render(vendor, framework, rules, methods):
+def render(vendor, os_name, framework, rules, methods):
     """Return (policy text, metadata text) for one framework file, or None when no rule is tagged."""
-    os_name, label = VENDORS[vendor]
+    label = PLATFORMS[(vendor, os_name)]
     suffix, key, prefix, name, ids = framework
     tagged = [r for r in rules if r['references'].get(key)]
     if not tagged:
@@ -130,7 +152,7 @@ def render(vendor, framework, rules, methods):
     for field in ('config_format', 'collection_command'):
         values = {m.get(field) for m in metas.values()}
         if len(values) != 1:
-            raise GeneratorError(f'{vendor} {suffix}: source topic files disagree on {field}')
+            raise GeneratorError(f'{vendor} {os_name} {suffix}: source topic files disagree on {field}')
     first = metas[sources[0]]
 
     used = set()
@@ -188,15 +210,15 @@ def generate(root):
     """Return {relative path: text} for every framework file the topic files produce."""
     methods = load_methods()
     out = {}
-    for vendor in VENDORS:
+    for vendor, os_name in PLATFORMS:
         if not os.path.isdir(os.path.join(root, vendor)):
             continue
-        rules = collect(root, vendor)
+        rules = collect(root, vendor, os_name)
         for framework in FRAMEWORKS:
-            rendered = render(vendor, framework, rules, methods)
+            rendered = render(vendor, os_name, framework, rules, methods)
             if rendered is None:
                 continue
-            stem = f'{vendor}/{VENDORS[vendor][0]}-{framework[0]}'
+            stem = f'{vendor}/{os_name}-{framework[0]}'
             out[stem + '.policy'], out[stem + '.meta.yaml'] = rendered
     return out
 
@@ -204,7 +226,7 @@ def generate(root):
 def existing_generated(root):
     """Relative paths of the framework files already in the repository (policy and metadata)."""
     found = set()
-    for vendor in VENDORS:
+    for vendor in vendor_folders():
         for meta_path in glob.glob(os.path.join(root, vendor, '*.meta.yaml')):
             with open(meta_path, encoding='utf-8') as fh:
                 meta = yaml.safe_load(fh) or {}

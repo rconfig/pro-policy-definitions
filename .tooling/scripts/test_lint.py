@@ -214,6 +214,14 @@ TOPIC_META = GOOD_META.replace('framework_claim: null\n', textwrap.dedent('''\
           nist_800_53: ["AC-2"]
 '''))
 
+NXOS_GOOD = '// Example: AAA accounting\n#[must_match_single_string]\naaa accounting default group TACACS\n'
+
+NXOS_TOPIC_META = (TOPIC_META
+                   .replace('os: ios\n', 'os: nxos\n')
+                   .replace('config_format: ios-running-config\n', 'config_format: nxos-running-config\n')
+                   .replace('"Example: AAA enabled"', '"Example: AAA accounting"')
+                   .replace('nist_800_53: ["AC-2"]', 'nist_800_53: ["AU-2"]'))
+
 RESULTS = textwrap.dedent('''\
     policy: {policy}
     rules:
@@ -276,6 +284,40 @@ class GeneratedFrameworkChecks(unittest.TestCase):
         files = self.base()
         files['.tooling/expected/ios-nist-800-53.yaml'] = files['.tooling/expected/ios-nist-800-53.yaml'].replace('pass', 'fail')
         self.assertIn('generated-results', repo_checks(files))
+
+    def test_two_oses_in_one_vendor_folder(self):
+        """cisco/ios-* and cisco/nxos-* topic files produce separate framework files, each with its own rules only."""
+        files = {
+            'cisco/ios-example.policy': GOOD,
+            'cisco/ios-example.meta.yaml': TOPIC_META,
+            'cisco/nxos-example.policy': NXOS_GOOD,
+            'cisco/nxos-example.meta.yaml': NXOS_TOPIC_META,
+            '.tooling/expected/ios-example.yaml': RESULTS.format(policy='cisco/ios-example.policy', description='Example: AAA enabled', result='pass'),
+            '.tooling/expected/ios-nist-800-53.yaml': RESULTS.format(policy='cisco/ios-nist-800-53.policy', description='NIST AC-2: Example: AAA enabled', result='pass'),
+            '.tooling/expected/nxos-example.yaml': RESULTS.format(policy='cisco/nxos-example.policy', description='Example: AAA accounting', result='fail'),
+            '.tooling/expected/nxos-nist-800-53.yaml': RESULTS.format(policy='cisco/nxos-nist-800-53.policy', description='NIST AU-2: Example: AAA accounting', result='fail'),
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            for rel, text in files.items():
+                os.makedirs(os.path.dirname(os.path.join(tmp, rel)), exist_ok=True)
+                with open(os.path.join(tmp, rel), 'w', encoding='utf-8', newline='\n') as fh:
+                    fh.write(text)
+            generated = generate_frameworks.generate(tmp)
+        self.assertIn('// NIST AC-2: Example: AAA enabled', generated['cisco/ios-nist-800-53.policy'])
+        self.assertNotIn('AAA accounting', generated['cisco/ios-nist-800-53.policy'])
+        self.assertIn('// NIST AU-2: Example: AAA accounting', generated['cisco/nxos-nist-800-53.policy'])
+        self.assertNotIn('AAA enabled', generated['cisco/nxos-nist-800-53.policy'])
+        self.assertIn('os: nxos\n', generated['cisco/nxos-nist-800-53.meta.yaml'])
+        self.assertIn('title: "Cisco NX-OS NIST SP 800-53"', generated['cisco/nxos-nist-800-53.meta.yaml'])
+        files.update(generated)
+        self.assertEqual(repo_checks(files), set())
+
+    def test_unregistered_os_in_vendor_folder(self):
+        files = self.base()
+        files['cisco/asa-example.policy'] = GOOD
+        files['cisco/asa-example.meta.yaml'] = TOPIC_META.replace('os: ios\n', 'os: asa\n')
+        files['.tooling/expected/asa-example.yaml'] = RESULTS.format(policy='cisco/asa-example.policy', description='Example: AAA enabled', result='pass')
+        self.assertIn('generated', repo_checks(files))
 
 
 if __name__ == '__main__':

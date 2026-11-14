@@ -34,6 +34,8 @@ DRAFTS_DIR = '.drafts'
 CONFIG_FORMATS = (
     'ios-running-config', 'junos-display-set', 'junos-brace',
     'fortios-full-config', 'routeros-export', 'bigip-scf',
+    'iosxr-running-config', 'nxos-running-config', 'eos-running-config',
+    'ocnos-running-config', 'panos-brace',
 )
 KINDS = ('hardening', 'operational', 'template', 'framework')
 STATUSES = ('lab-tested', 'synthetic-tested', 'under-review')

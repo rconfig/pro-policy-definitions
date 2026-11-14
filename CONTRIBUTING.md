@@ -81,7 +81,7 @@ rules:
 
 | Field | Values |
 |---|---|
-| `config_format` | `ios-running-config`, `junos-display-set`, `junos-brace`, `fortios-full-config`, `routeros-export`, `bigip-scf` |
+| `config_format` | `ios-running-config`, `iosxr-running-config`, `nxos-running-config`, `eos-running-config`, `ocnos-running-config`, `panos-brace`, `junos-display-set`, `junos-brace`, `fortios-full-config`, `routeros-export`, `bigip-scf` |
 | `collection_command` | The command rConfig runs to collect the config, or `null` if rConfig has none |
 | `kind` | `hardening`, `operational` or `template`. `framework` is for generated framework files only, which also have `generated: true` and `sources` |
 | `min_rconfig_version` | At least the release that introduced every method the policy uses (see `min_version` in `.tooling/scripts/methods.json`); the lint checks this |
