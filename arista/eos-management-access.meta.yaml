@@ -1,0 +1,31 @@
+title: "Arista EOS management access"
+description: "No Telnet, an SSH idle timeout of 1 to 10 minutes, no weak SSH cipher or MAC, and a login banner."
+vendor: arista
+os: eos
+config_format: eos-running-config
+# collection_command: Pro app/Demo/Platforms/Eos/EosGenerator.php:80 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.3.0
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic show running-config samples only. The rules have not been checked against output from a real EOS switch."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "Telnet is not enabled (fails on no shutdown under management telnet)"
+    references:
+      nist_800_53: ["AC-17"]
+      hipaa: ["164.312(a)(1)"]
+      iso27001: ["A.8.5"]
+  - description: "The SSH idle timeout is 1 to 10 minutes (idle-timeout under management ssh)"
+    references:
+      nist_800_53: ["AC-3"]
+      iso27001: ["A.8.5"]
+  - description: "No SSH cipher or MAC line selects a CBC, 3DES, arcfour, blowfish, MD5 or SHA-1 algorithm (cipher, mac)"
+    references:
+      iso27001: ["A.8.24"]
+  - description: "A login banner is configured (banner login)"
+    references:
+      iso27001: ["A.8.5"]

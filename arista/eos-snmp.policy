@@ -1,0 +1,11 @@
+// No SNMPv1 or SNMPv2c community is configured (fails on snmp-server community)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)
+#[must_match_regex]
+/^snmp-server group \S+ v3 priv\b/m
+
+// No SNMPv3 user uses MD5 authentication or DES privacy (fails on snmp-server user ... auth md5 or priv des)
+#[must_not_match_regex]
+/^snmp-server user \S+ \S+ .*\b(auth md5|priv (des|3des))\b/m

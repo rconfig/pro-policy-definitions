@@ -1,0 +1,17 @@
+// Telnet is not enabled (fails on no shutdown under management telnet)
+#[must_not_match_regex]
+/^management telnet\n(?:[ \t]+.*\n)*?[ \t]+no shutdown$/m
+
+// The SSH idle timeout is 1 to 10 minutes (idle-timeout under management ssh)
+#[evaluate_block]
+scope: ^management ssh$
+all:
+  - regex: '/^\s+idle-timeout ([1-9]|10)$/m'
+
+// No SSH cipher or MAC line selects a CBC, 3DES, arcfour, blowfish, MD5 or SHA-1 algorithm (cipher, mac)
+#[must_not_match_regex]
+/^[ \t]+(cipher .*(cbc|3des|arcfour|blowfish)|mac .*\bhmac-(md5|sha1)\b)/m
+
+// A login banner is configured (banner login)
+#[must_match_regex]
+/^banner login$/m

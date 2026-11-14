@@ -1,0 +1,31 @@
+title: "Arista EOS SNMP"
+description: "No SNMPv1 or SNMPv2c communities, an SNMPv3 authPriv group, and no SNMPv3 user with MD5 authentication or DES privacy."
+vendor: arista
+os: eos
+config_format: eos-running-config
+# collection_command: Pro app/Demo/Platforms/Eos/EosGenerator.php:80 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic show running-config samples only. The rules have not been checked against output from a real EOS switch."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "No SNMPv1 or SNMPv2c community is configured (fails on snmp-server community)"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]
+      iso27001: ["A.8.5"]
+  - description: "An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]
+      iso27001: ["A.8.5", "A.8.24"]
+  - description: "No SNMPv3 user uses MD5 authentication or DES privacy (fails on snmp-server user ... auth md5 or priv des)"
+    references:
+      nist_800_53: ["SC-12"]
+      hipaa: ["164.312(e)(1)"]
+      iso27001: ["A.8.5", "A.8.24"]

@@ -1,0 +1,7 @@
+// A remote syslog host is configured (logging host, in any VRF)
+#[must_match_regex]
+/^logging (vrf \S+ )?host \S+/m
+
+// Log timestamps use high resolution (logging format timestamp high-resolution)
+#[must_match_regex]
+/^logging format timestamp high-resolution\b/m

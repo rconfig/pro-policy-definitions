@@ -1,0 +1,31 @@
+// HIPAA 164.312(a)(1): Login authentication uses a remote server group with local fallback (aaa authentication login default group ... local)
+#[must_match_regex]
+/^aaa authentication login default group \S+(?: \S+)* local$/m
+
+// HIPAA 164.312(a)(1): Telnet is not enabled (fails on no shutdown under management telnet)
+#[must_not_match_regex]
+/^management telnet\n(?:[ \t]+.*\n)*?[ \t]+no shutdown$/m
+
+// HIPAA 164.312(b): All commands are sent to a remote accounting group (aaa accounting commands all default ... group)
+#[must_match_regex]
+/^aaa accounting commands all default (start-stop|stop-only) group /m
+
+// HIPAA 164.312(b): A remote syslog host is configured (logging host, in any VRF)
+#[must_match_regex]
+/^logging (vrf \S+ )?host \S+/m
+
+// HIPAA 164.312(b): Log timestamps use high resolution (logging format timestamp high-resolution)
+#[must_match_regex]
+/^logging format timestamp high-resolution\b/m
+
+// HIPAA 164.312(e)(1): No SNMPv1 or SNMPv2c community is configured (fails on snmp-server community)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// HIPAA 164.312(e)(1): An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)
+#[must_match_regex]
+/^snmp-server group \S+ v3 priv\b/m
+
+// HIPAA 164.312(e)(1): No SNMPv3 user uses MD5 authentication or DES privacy (fails on snmp-server user ... auth md5 or priv des)
+#[must_not_match_regex]
+/^snmp-server user \S+ \S+ .*\b(auth md5|priv (des|3des))\b/m

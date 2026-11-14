@@ -1,0 +1,35 @@
+title: "Arista EOS AAA and local credentials"
+description: "The root account disabled, login authentication through a server group with local fallback, no local user without a password, and command accounting to a server group."
+vendor: arista
+os: eos
+config_format: eos-running-config
+# collection_command: Pro app/Demo/Platforms/Eos/EosGenerator.php:80 (primaryCommand)
+collection_command: "show running-config"
+kind: hardening
+min_rconfig_version: 8.0.2
+status: synthetic-tested
+framework_claim: null
+notes: "Tested against synthetic show running-config samples only. The rules have not been checked against output from a real EOS switch."
+# References for each rule, in file order. nist_800_53: NIST SP 800-53 control; hipaa: 45 CFR
+# section; nist_csf: NIST CSF 1.1 subcategory; iso27001: ISO/IEC 27001:2022 Annex A control.
+# They record controls the rule is relevant to; they do not claim the rule fully meets them.
+rules:
+  - description: "The root account is not enabled (fails on an aaa root line)"
+    references:
+      nist_800_53: ["AC-2"]
+      iso27001: ["A.8.2"]
+  - description: "Login authentication uses a remote server group with local fallback (aaa authentication login default group ... local)"
+    references:
+      nist_800_53: ["AC-2"]
+      hipaa: ["164.312(a)(1)"]
+      nist_csf: ["PR.AC-1"]
+      iso27001: ["A.8.5"]
+  - description: "No local user is configured without a password (fails on username ... nopassword)"
+    references:
+      nist_800_53: ["IA-5"]
+      iso27001: ["A.5.17"]
+  - description: "All commands are sent to a remote accounting group (aaa accounting commands all default ... group)"
+    references:
+      nist_800_53: ["AU-2"]
+      hipaa: ["164.312(b)"]
+      iso27001: ["A.8.15"]

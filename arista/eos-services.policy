@@ -1,0 +1,3 @@
+// The eAPI does not serve plain HTTP (fails on protocol http under management api http-commands)
+#[must_not_match_regex]
+/^[ \t]+protocol http( port \d+)?$/m

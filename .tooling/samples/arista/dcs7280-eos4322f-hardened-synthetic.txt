@@ -1,0 +1,309 @@
+! Command: show running-config
+! device: dub-sw01 (DCS-7280CR3-32P4, EOS-4.32.2F)
+!
+! boot system flash:/EOS-4.32.2F.swi
+!
+no aaa root
+!
+username admin privilege 15 role network-admin secret sha512 $6$e7dc509350d7ea2d$2da893d759d5bc49dc260f5985837b8059f55a9f051a64eb793f73bc0f2d1894c63057645085aceab10d0a
+username netops privilege 15 role network-admin secret sha512 $6$d20dbb56268343f0$3027497f2ebb43be26aa06626839bfa8335b08214d62a9e21e5c25c44266cd0969642df578e228fdb5c7f7
+!
+vlan internal order ascending range 1006 1199
+!
+transceiver qsfp default-mode 4x10G
+!
+service routing protocols model multi-agent
+!
+logging buffered 10000
+logging trap informational
+logging vrf MGMT host 192.0.2.20
+logging vrf MGMT host 192.0.2.21
+logging format timestamp high-resolution
+logging vrf MGMT source-interface Management1
+!
+hostname dub-sw01
+ip domain lookup vrf MGMT source-interface Management1
+ip name-server vrf MGMT 192.0.2.30
+ip name-server vrf MGMT 192.0.2.31
+dns domain example.com
+!
+ntp local-interface vrf MGMT Management1
+ntp server vrf MGMT 192.0.2.10 prefer
+ntp server vrf MGMT 192.0.2.11
+!
+snmp-server contact NetOps <netops@example.com>
+snmp-server location Dublin DC1, Hall A
+snmp-server group NMS v3 priv
+snmp-server user nms NMS v3 localized f5717f2899ab0100 auth sha 7d1e4b0c2f9a8e6d5c4b3a291807f6e5d4c3b2a1 priv aes 0a1b2c3d4e5f60718293a4b5c6d7e8f9
+snmp-server host 192.0.2.60 vrf MGMT version 3 priv nms
+snmp-server vrf MGMT
+!
+spanning-tree mode mstp
+spanning-tree mst 0 priority 4096
+!
+tacacs-server host 192.0.2.32 vrf MGMT key 7 F20F4E1CF3A1FE1512
+tacacs-server host 192.0.2.33 vrf MGMT key 7 3479A216A853FE5A8F
+!
+aaa authentication login default group tacacs+ local
+aaa authorization exec default group tacacs+ local
+aaa authorization commands all default group tacacs+ local
+aaa accounting exec default start-stop group tacacs+
+aaa accounting commands all default start-stop group tacacs+
+!
+vrf instance MGMT
+!
+interface Ethernet1/1
+   description P2P_LINK_TO_DUB-DC1-LF01_Ethernet49/1
+   mtu 9214
+   no switchport
+   ip address 192.0.2.128/31
+!
+interface Ethernet2/1
+   description P2P_LINK_TO_DUB-DC1-LF02_Ethernet49/1
+   mtu 9214
+   no switchport
+   ip address 192.0.2.130/31
+!
+interface Ethernet3/1
+   description P2P_LINK_TO_DUB-DC1-LF03_Ethernet49/1
+   mtu 9214
+   no switchport
+   ip address 192.0.2.132/31
+!
+interface Ethernet4/1
+   description P2P_LINK_TO_DUB-DC1-LF04_Ethernet49/1
+   mtu 9214
+   no switchport
+   ip address 192.0.2.134/31
+!
+interface Ethernet5/1
+   description P2P_LINK_TO_DUB-DC1-LF05_Ethernet49/1
+   mtu 9214
+   no switchport
+   ip address 192.0.2.136/31
+!
+interface Ethernet6/1
+   description P2P_LINK_TO_DUB-DC1-LF06_Ethernet49/1
+   mtu 9214
+   no switchport
+   ip address 192.0.2.138/31
+!
+interface Ethernet7/1
+   description P2P_LINK_TO_DUB-DC1-LF07_Ethernet49/1
+   mtu 9214
+   no switchport
+   ip address 192.0.2.140/31
+!
+interface Ethernet8/1
+   description P2P_LINK_TO_DUB-DC1-LF08_Ethernet49/1
+   mtu 9214
+   no switchport
+   ip address 192.0.2.142/31
+!
+interface Ethernet9/1
+   shutdown
+!
+interface Ethernet10/1
+   shutdown
+!
+interface Ethernet11/1
+   shutdown
+!
+interface Ethernet12/1
+   shutdown
+!
+interface Ethernet13/1
+   shutdown
+!
+interface Ethernet14/1
+   shutdown
+!
+interface Ethernet15/1
+   shutdown
+!
+interface Ethernet16/1
+   shutdown
+!
+interface Ethernet17/1
+   shutdown
+!
+interface Ethernet18/1
+   shutdown
+!
+interface Ethernet19/1
+   shutdown
+!
+interface Ethernet20/1
+   shutdown
+!
+interface Ethernet21/1
+   shutdown
+!
+interface Ethernet22/1
+   shutdown
+!
+interface Ethernet23/1
+   shutdown
+!
+interface Ethernet24/1
+   shutdown
+!
+interface Ethernet25/1
+   shutdown
+!
+interface Ethernet26/1
+   shutdown
+!
+interface Ethernet27/1
+   shutdown
+!
+interface Ethernet28/1
+   shutdown
+!
+interface Ethernet29/1
+   shutdown
+!
+interface Ethernet30/1
+   shutdown
+!
+interface Ethernet31/1
+   description RESERVED_DCI_1
+   shutdown
+   no switchport
+!
+interface Ethernet32/1
+   description RESERVED_DCI_2
+   shutdown
+   no switchport
+!
+interface Ethernet33/1
+   shutdown
+!
+interface Ethernet34/1
+   shutdown
+!
+interface Ethernet35/1
+   shutdown
+!
+interface Ethernet36/1
+   shutdown
+!
+interface Loopback0
+   description ROUTER_ID
+   ip address 203.0.113.1/32
+!
+interface Management1
+   description OOB_MANAGEMENT
+   vrf MGMT
+   ip address 198.51.100.10/24
+!
+ip access-list standard SNMP-MGMT
+   10 permit 192.0.2.0/24
+   20 permit 198.51.100.0/24
+!
+ip routing
+no ip routing vrf MGMT
+!
+ip prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+   seq 10 permit 203.0.113.0/24 eq 32
+!
+ip route vrf MGMT 0.0.0.0/0 198.51.100.1
+!
+ip tacacs vrf MGMT source-interface Management1
+!
+route-map RM-CONN-2-BGP permit 10
+   match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+!
+router bgp 64500
+   router-id 203.0.113.1
+   no bgp default ipv4-unicast
+   distance bgp 20 200 200
+   maximum-paths 4 ecmp 4
+   neighbor EVPN-OVERLAY-PEERS peer group
+   neighbor EVPN-OVERLAY-PEERS update-source Loopback0
+   neighbor EVPN-OVERLAY-PEERS bfd
+   neighbor EVPN-OVERLAY-PEERS ebgp-multihop 3
+   neighbor EVPN-OVERLAY-PEERS next-hop-unchanged
+   neighbor EVPN-OVERLAY-PEERS send-community
+   neighbor EVPN-OVERLAY-PEERS maximum-routes 0
+   neighbor IPv4-UNDERLAY-PEERS peer group
+   neighbor IPv4-UNDERLAY-PEERS send-community
+   neighbor IPv4-UNDERLAY-PEERS maximum-routes 12000
+   neighbor 192.0.2.129 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.0.2.129 remote-as 64501
+   neighbor 192.0.2.129 description dub-dc1-lf01_Ethernet49/1
+   neighbor 192.0.2.131 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.0.2.131 remote-as 64502
+   neighbor 192.0.2.131 description dub-dc1-lf02_Ethernet49/1
+   neighbor 192.0.2.133 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.0.2.133 remote-as 64503
+   neighbor 192.0.2.133 description dub-dc1-lf03_Ethernet49/1
+   neighbor 192.0.2.135 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.0.2.135 remote-as 64504
+   neighbor 192.0.2.135 description dub-dc1-lf04_Ethernet49/1
+   neighbor 192.0.2.137 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.0.2.137 remote-as 64505
+   neighbor 192.0.2.137 description dub-dc1-lf05_Ethernet49/1
+   neighbor 192.0.2.139 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.0.2.139 remote-as 64506
+   neighbor 192.0.2.139 description dub-dc1-lf06_Ethernet49/1
+   neighbor 192.0.2.141 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.0.2.141 remote-as 64507
+   neighbor 192.0.2.141 description dub-dc1-lf07_Ethernet49/1
+   neighbor 192.0.2.143 peer group IPv4-UNDERLAY-PEERS
+   neighbor 192.0.2.143 remote-as 64508
+   neighbor 192.0.2.143 description dub-dc1-lf08_Ethernet49/1
+   neighbor 203.0.113.11 peer group EVPN-OVERLAY-PEERS
+   neighbor 203.0.113.11 remote-as 64501
+   neighbor 203.0.113.11 description dub-dc1-lf01_Loopback0
+   neighbor 203.0.113.12 peer group EVPN-OVERLAY-PEERS
+   neighbor 203.0.113.12 remote-as 64502
+   neighbor 203.0.113.12 description dub-dc1-lf02_Loopback0
+   neighbor 203.0.113.13 peer group EVPN-OVERLAY-PEERS
+   neighbor 203.0.113.13 remote-as 64503
+   neighbor 203.0.113.13 description dub-dc1-lf03_Loopback0
+   neighbor 203.0.113.14 peer group EVPN-OVERLAY-PEERS
+   neighbor 203.0.113.14 remote-as 64504
+   neighbor 203.0.113.14 description dub-dc1-lf04_Loopback0
+   neighbor 203.0.113.15 peer group EVPN-OVERLAY-PEERS
+   neighbor 203.0.113.15 remote-as 64505
+   neighbor 203.0.113.15 description dub-dc1-lf05_Loopback0
+   neighbor 203.0.113.16 peer group EVPN-OVERLAY-PEERS
+   neighbor 203.0.113.16 remote-as 64506
+   neighbor 203.0.113.16 description dub-dc1-lf06_Loopback0
+   neighbor 203.0.113.17 peer group EVPN-OVERLAY-PEERS
+   neighbor 203.0.113.17 remote-as 64507
+   neighbor 203.0.113.17 description dub-dc1-lf07_Loopback0
+   neighbor 203.0.113.18 peer group EVPN-OVERLAY-PEERS
+   neighbor 203.0.113.18 remote-as 64508
+   neighbor 203.0.113.18 description dub-dc1-lf08_Loopback0
+   redistribute connected route-map RM-CONN-2-BGP
+   !
+   address-family evpn
+      neighbor EVPN-OVERLAY-PEERS activate
+   !
+   address-family ipv4
+      no neighbor EVPN-OVERLAY-PEERS activate
+      neighbor IPv4-UNDERLAY-PEERS activate
+!
+banner login
+Authorised access only. This device belongs to Example Ltd.
+All activity is logged and monitored. Disconnect now if you are not an authorised user.
+EOF
+!
+management ssh
+   idle-timeout 10
+   authentication protocol password
+   !
+   vrf MGMT
+      no shutdown
+!
+!
+management api http-commands
+   protocol https
+   no shutdown
+   !
+   vrf MGMT
+      no shutdown
+!
+end

@@ -1,0 +1,49 @@
+// NIST AC-2: The root account is not enabled (fails on an aaa root line)
+#[must_not_match_regex]
+/^aaa root /m
+
+// NIST AC-2: Login authentication uses a remote server group with local fallback (aaa authentication login default group ... local)
+#[must_match_regex]
+/^aaa authentication login default group \S+(?: \S+)* local$/m
+
+// NIST AC-3: The SSH idle timeout is 1 to 10 minutes (idle-timeout under management ssh)
+#[evaluate_block]
+scope: ^management ssh$
+all:
+  - regex: '/^\s+idle-timeout ([1-9]|10)$/m'
+
+// NIST AC-17: Telnet is not enabled (fails on no shutdown under management telnet)
+#[must_not_match_regex]
+/^management telnet\n(?:[ \t]+.*\n)*?[ \t]+no shutdown$/m
+
+// NIST AU-2: All commands are sent to a remote accounting group (aaa accounting commands all default ... group)
+#[must_match_regex]
+/^aaa accounting commands all default (start-stop|stop-only) group /m
+
+// NIST AU-2: A remote syslog host is configured (logging host, in any VRF)
+#[must_match_regex]
+/^logging (vrf \S+ )?host \S+/m
+
+// NIST AU-3: Log timestamps use high resolution (logging format timestamp high-resolution)
+#[must_match_regex]
+/^logging format timestamp high-resolution\b/m
+
+// NIST CM-7: The eAPI does not serve plain HTTP (fails on protocol http under management api http-commands)
+#[must_not_match_regex]
+/^[ \t]+protocol http( port \d+)?$/m
+
+// NIST IA-5: No local user is configured without a password (fails on username ... nopassword)
+#[must_not_match_regex]
+/^username \S+ .*\bnopassword\b/m
+
+// NIST SC-12: No SNMPv1 or SNMPv2c community is configured (fails on snmp-server community)
+#[must_not_match_regex]
+/^snmp-server community /m
+
+// NIST SC-12: An SNMPv3 group uses authPriv (snmp-server group ... v3 priv)
+#[must_match_regex]
+/^snmp-server group \S+ v3 priv\b/m
+
+// NIST SC-12: No SNMPv3 user uses MD5 authentication or DES privacy (fails on snmp-server user ... auth md5 or priv des)
+#[must_not_match_regex]
+/^snmp-server user \S+ \S+ .*\b(auth md5|priv (des|3des))\b/m

@@ -1,0 +1,3 @@
+// NIST CSF PR.AC-1: Login authentication uses a remote server group with local fallback (aaa authentication login default group ... local)
+#[must_match_regex]
+/^aaa authentication login default group \S+(?: \S+)* local$/m

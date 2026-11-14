@@ -1,0 +1,15 @@
+// The root account is not enabled (fails on an aaa root line)
+#[must_not_match_regex]
+/^aaa root /m
+
+// Login authentication uses a remote server group with local fallback (aaa authentication login default group ... local)
+#[must_match_regex]
+/^aaa authentication login default group \S+(?: \S+)* local$/m
+
+// No local user is configured without a password (fails on username ... nopassword)
+#[must_not_match_regex]
+/^username \S+ .*\bnopassword\b/m
+
+// All commands are sent to a remote accounting group (aaa accounting commands all default ... group)
+#[must_match_regex]
+/^aaa accounting commands all default (start-stop|stop-only) group /m
